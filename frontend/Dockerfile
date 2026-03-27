@@ -1,27 +1,51 @@
-# Stage 1: Compile and Build angular codebase
+# ========================================
+# Build Stage
+# ========================================
+FROM node:18-alpine AS builder
 
-# Use official node image as the base image
-FROM node:latest AS build
+WORKDIR /app
 
-# Set the working directory
-WORKDIR /usr/local/app
+# Copy package files
+COPY package*.json ./
 
-# Add the source code to app
-COPY ./ /usr/local/app/
+# Install dependencies
+RUN npm ci
 
-# Install all the dependencies
-RUN npm install
+# Copy source code
+COPY . .
 
-# Generate the build of the application
-RUN npm run build
+# Build Angular application
+ARG ANGULAR_ENV=production
+ENV ANGULAR_ENV=${ANGULAR_ENV}
+RUN npm run build -- --configuration ${ANGULAR_ENV}
 
-# Stage 2: Serve app with nginx server
+# ========================================
+# Runtime Stage - Nginx
+# ========================================
+FROM nginx:alpine
 
-# Use official nginx image as the base image
-FROM nginx:latest
+# Remove default nginx config
+RUN rm /etc/nginx/conf.d/default.conf
 
-COPY nginx.conf /etc/nginx/conf.d/default.conf
-# Copy the build output to replace the default nginx contents.
-COPY --from=build /usr/local/app/dist/frontend/browser /usr/share/nginx/html/
-# Expose port 80
+# Copy custom nginx config
+COPY nginx.conf /etc/nginx/nginx.conf
+
+# Copy built application from builder
+COPY --from=builder /app/dist/frontend/browser /usr/share/nginx/html
+
+# Create a non-root user
+RUN addgroup -g 101 -S nginx && \
+    adduser -S -D -H -u 101 -h /var/cache/nginx -s /sbin/nologin -c "nginx user" -G nginx nginx
+
+# Change ownership
+RUN chown -R nginx:nginx /usr/share/nginx/html
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+    CMD wget --quiet --tries=1 --spider http://localhost/ || exit 1
+
+# Expose ports
 EXPOSE 80 443
+
+# Start nginx
+CMD ["nginx", "-g", "daemon off;"]

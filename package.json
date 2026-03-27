@@ -1,0 +1,33 @@
+{
+  "name": "site-perso",
+  "version": "1.0.0",
+  "description": "Site personnel - Portfolio avec galerie de photos",
+  "private": true,
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "scripts": {
+    "setup": "npm run setup:deps && npm run setup:env",
+    "setup:deps": "cd backend && npm install && cd ../frontend && npm install",
+    "setup:env": "cp .env.example .env && cp backend/.env.example backend/.env && cp frontend/.env.example frontend/.env",
+    "install": "npm run setup:deps",
+    "dev": "docker-compose up",
+    "dev:build": "docker-compose up --build",
+    "prod": "docker-compose -f docker-compose.yml up -d --build",
+    "stop": "docker-compose down",
+    "restart": "docker-compose restart",
+    "logs": "docker-compose logs -f",
+    "logs:backend": "docker-compose logs -f backend",
+    "logs:frontend": "docker-compose logs -f frontend",
+    "logs:db": "docker-compose logs -f mongodb",
+    "clean": "docker-compose down -v",
+    "backend:dev": "cd backend && npm run dev",
+    "backend:start": "cd backend && npm start",
+    "frontend:dev": "cd frontend && npm start",
+    "frontend:build": "cd frontend && npm run build",
+    "lint": "cd backend && npm run lint && cd ../frontend && npm run lint",
+    "test": "cd backend && npm test && cd ../frontend && npm test"
+  },
+  "devDependencies": {}
+}

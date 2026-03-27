@@ -1,0 +1,63 @@
+header {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+h1 {
+  font-weight: bold;
+  font-size: 32px;
+  letter-spacing: 3px;
+}
+
+nav {
+  font-size: 18px;
+  font-weight: bold;
+  letter-spacing: 1px;
+
+  a {
+    color: #666666;
+    text-decoration: none;
+    transition: color 0.2s ease;
+    position: relative; /* Nécessaire pour positionner le point à gauche */
+  }
+
+  a:hover {
+    cursor: pointer;
+    color: #000000;
+    text-decoration: underline;
+  }
+
+  /* Styles pour le point à gauche de l'élément actif */
+  a.router-link-active::before {
+    content: "•"; /* Le caractère pour le point */
+    color: #000000; /* La couleur du point */
+    font-size: 20px; /* Taille du point */
+    position: absolute; /* Positionnement absolu */
+    left: -25px; /* Décalage du point vers la gauche */
+    top: 50%; /* Centrage vertical */
+    transform: translateY(-50%); /* Ajuste le centrage vertical */
+  }
+}
+
+li {
+  padding-bottom: 8px;
+}
+
+.lang {
+  font-weight: bold;
+  font-size: 18px;
+  letter-spacing: 1px;
+  color: #666666;
+
+  a {
+    color: #666666;
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+
+  a:hover {
+    text-decoration: underline;
+    color: #000000;
+  }
+}

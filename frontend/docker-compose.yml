@@ -1,0 +1,13 @@
+services:
+  frontend:
+    container_name: frontend
+    build:
+      context: .
+    image: frontend
+    restart: unless-stopped
+    networks:
+      - npm-network
+
+networks:
+  npm-network:
+    external: true

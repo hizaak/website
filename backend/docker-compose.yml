@@ -1,0 +1,33 @@
+services:
+  backend:
+    container_name: backend
+    build:
+      context: .
+    image: backend
+    depends_on:
+      - mongodb
+    restart: unless-stopped
+    networks:
+      - npm-network
+
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+      - ./init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: mongodb
+      MONGO_INITDB_ROOT_PASSWORD: mongodb
+    networks:
+      - npm-network
+
+networks:
+  npm-network:
+    external: true
+
+volumes:
+  mongodb_data:

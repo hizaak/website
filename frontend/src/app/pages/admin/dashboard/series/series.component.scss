@@ -1,0 +1,85 @@
+.form-container {
+  width: 100%;
+  margin: auto;
+}
+
+.serie {
+  border-bottom: 4px solid black;
+  padding: 20px 0;
+  margin-bottom: 20px;
+}
+
+.serie-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 15px !important;
+}
+
+.photos {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.photo {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: right;
+  gap: 10px;
+}
+
+input[type="text"],
+input[type="number"],
+input[type="file"],
+input[type="date"] {
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.delete-btn {
+  background: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+.add-photo-btn {
+  background: #28a745;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 8px 12px;
+  cursor: pointer;
+  width: auto;
+  margin-top: 10px;
+  align-self: flex-end;
+}
+
+.add-serie-btn {
+  background: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 8px 12px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.add-serie-btn {
+  display: block;
+  width: 100%;
+  margin: 20px auto 0 auto;
+  text-align: center;
+}
+
+.photo-thumbnail {
+  max-width: 200px;
+  max-height: 200px;
+  object-fit: cover;
+  margin-top: 10px;
+}

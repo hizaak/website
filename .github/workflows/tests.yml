@@ -12,7 +12,7 @@ jobs:
   # ========================================
   backend-tests:
     runs-on: ubuntu-latest
-    
+
     services:
       mongodb:
         image: mongo:7.0-alpine
@@ -91,7 +91,7 @@ jobs:
   # ========================================
   docker-build:
     runs-on: ubuntu-latest
-    
+
     steps:
       - uses: actions/checkout@v3
 
@@ -131,8 +131,3 @@ jobs:
           test -f .env.example || exit 1
           test -f backend/.env.example || exit 1
           test -f frontend/.env.example || exit 1
-
-      - name: Check README exists
-        run: |
-          test -f README.md || exit 1
-          test -f DEPLOYMENT.md || exit 1

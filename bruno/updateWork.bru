@@ -1,0 +1,21 @@
+meta {
+  name: Update Work
+  type: http
+  seq: 4
+}
+
+put {
+  url: {{base_url}}/api/works/{{work_id}}
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:json {
+  {
+    "title": "Trees"
+  }
+}

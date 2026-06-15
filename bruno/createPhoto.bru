@@ -1,0 +1,21 @@
+meta {
+  name: Create Photo
+  type: http
+  seq: 6
+}
+
+post {
+  url: {{base_url}}/api/works/{{work_id}}/photos
+  body: multipartForm
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:multipart-form {
+  title: Morning Light
+  photoDate: 14/08/2023
+  photo: @file(./sample.jpg)
+}

@@ -1,34 +1,36 @@
 import { Routes } from '@angular/router';
-import { AuthGuard } from './guards/auth.guard'; // Le guard pour l'accès au dashboard
-import { NoAuthGuard } from './guards/no-auth.guard'; // Le guard pour empêcher l'accès à auth quand déjà connecté
+import { AuthGuard } from './guards/auth.guard';
+import { NoAuthGuard } from './guards/no-auth.guard';
 
 export const routes: Routes = [
   {
     path: '',
-    redirectTo: 'home',
+    redirectTo: 'works',
     pathMatch: 'full',
   },
   {
-    path: 'home',
+    path: 'works',
     loadComponent: () =>
-      import('./pages/home/home.component').then((m) => m.HomeComponent),
+      import('./pages/works/works.component').then((m) => m.WorksComponent),
   },
   {
-    path: 'gallery',
+    path: 'works/:id',
     loadComponent: () =>
-      import('./pages/gallery/gallery.component').then(
-        (m) => m.GalleryComponent
+      import('./pages/works/work-detail.component').then(
+        (m) => m.WorkDetailComponent
+      ),
+  },
+  {
+    path: 'photos/:id',
+    loadComponent: () =>
+      import('./pages/photos/photo-detail.component').then(
+        (m) => m.PhotoDetailComponent
       ),
   },
   {
     path: 'about',
     loadComponent: () =>
       import('./pages/about/about.component').then((m) => m.AboutComponent),
-  },
-  {
-    path: 'blog',
-    loadComponent: () =>
-      import('./pages/blog/blog.component').then((m) => m.BlogComponent),
   },
   {
     path: 'contact',
@@ -43,6 +45,7 @@ export const routes: Routes = [
       import('./pages/admin/auth/admin.component').then(
         (m) => m.AdminComponent
       ),
+    canActivate: [NoAuthGuard],
   },
   {
     path: 'dashboard',
@@ -53,29 +56,36 @@ export const routes: Routes = [
     canActivate: [AuthGuard],
     children: [
       {
-        path: 'series',
+        path: 'works',
         loadComponent: () =>
-          import('./pages/admin/dashboard/series/series.component').then(
-            (m) => m.SeriesComponent
+          import('./pages/admin/dashboard/works/works-admin.component').then(
+            (m) => m.WorksAdminComponent
           ),
       },
       {
-        path: 'photos',
+        path: 'works/:id',
         loadComponent: () =>
-          import('./pages/admin/dashboard/photos/photos.component').then(
-            (m) => m.PhotosComponent
+          import('./pages/admin/dashboard/works/work-detail-admin.component').then(
+            (m) => m.WorkDetailAdminComponent
+          ),
+      },
+      {
+        path: 'works/:workId/photos/:photoId',
+        loadComponent: () =>
+          import('./pages/admin/dashboard/works/photo-detail-admin.component').then(
+            (m) => m.PhotoDetailAdminComponent
           ),
       },
       {
         path: '',
-        redirectTo: 'series',
+        redirectTo: 'works',
         pathMatch: 'full',
       },
     ],
   },
   {
     path: '**',
-    redirectTo: 'home',
+    redirectTo: 'works',
     pathMatch: 'full',
   },
 ];

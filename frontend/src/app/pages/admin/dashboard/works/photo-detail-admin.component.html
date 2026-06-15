@@ -1,0 +1,26 @@
+<button type="button" (click)="backToWork()">← Retour au work</button>
+
+<div *ngIf="error">{{ error }}</div>
+
+<div *ngIf="photo">
+  <h2>Modifier la photo</h2>
+  <img *ngIf="photoUrl" [src]="photoUrl" [alt]="photo.title" />
+
+  <form (ngSubmit)="updatePhoto()">
+    <label>
+      Title
+      <input type="text" [(ngModel)]="editTitle" name="editTitle" required />
+    </label>
+    <label>
+      Photo date (JJ/MM/AAAA)
+      <input type="text" [(ngModel)]="editPhotoDate" name="editPhotoDate" required />
+    </label>
+    <label>
+      Remplacer l'image (optionnel)
+      <input type="file" accept="image/png,image/jpeg,.png,.jpg,.jpeg" (change)="onReplaceFileSelected($event)" />
+    </label>
+    <button type="submit">Enregistrer</button>
+  </form>
+</div>
+
+<div *ngIf="!photo && !error">Chargement...</div>

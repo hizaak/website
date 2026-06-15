@@ -3,20 +3,31 @@ const { Schema } = mongoose;
 
 const photoSchema = new Schema(
   {
+    workId: {
+      type: Schema.Types.ObjectId,
+      ref: "Work",
+      required: true,
+    },
     title: {
       type: String,
       required: true,
+      trim: true,
     },
-    path: {
+    photoDate: {
       type: String,
+      required: true,
+      trim: true,
     },
-    date: {
-      type: Date,
+    filename: {
+      type: String,
       required: true,
     },
-    serie: {
-      type: Schema.Types.ObjectId,
-      ref: "Serie",
+    originalFilename: {
+      type: String,
+      required: true,
+    },
+    mimeType: {
+      type: String,
       required: true,
     },
   },
@@ -24,17 +35,6 @@ const photoSchema = new Schema(
     timestamps: true,
   }
 );
-
-photoSchema.pre("remove", async function (next) {
-  const Serie = require("./Serie");
-
-  await Serie.updateMany(
-    { photos: this._id },
-    { $pull: { photos: this._id } }
-  );
-
-  next();
-});
 
 const Photo = mongoose.model("Photo", photoSchema);
 

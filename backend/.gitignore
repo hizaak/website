@@ -30,6 +30,8 @@ pnpm-lock.yaml
 # ========================================
 # Uploads & Media
 # ========================================
+uploads/*
+!uploads/.gitkeep
 public/uploads/*
 !public/uploads/.gitkeep
 

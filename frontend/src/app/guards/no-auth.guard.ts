@@ -5,7 +5,7 @@ import {
   RouterStateSnapshot,
   Router,
 } from '@angular/router';
-import { AuthService } from '../core/auth.service'; // Assurez-vous que votre service AuthService est bien importé
+import { AuthService } from '../core/auth.service';
 
 @Injectable({
   providedIn: 'root',
@@ -17,13 +17,10 @@ export class NoAuthGuard implements CanActivate {
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
   ): boolean {
-    // Vérifie si l'utilisateur est authentifié (si un token est présent dans le localStorage)
     if (this.authService.isAuthenticated()) {
-      // Si l'utilisateur est authentifié, on le redirige vers le tableau de bord
-      this.router.navigate(['/admin-dashboard']);
-      return false; // Empêche l'accès à la route de connexion
+      this.router.navigate(['/dashboard']);
+      return false;
     }
-    // Si l'utilisateur n'est pas authentifié, il peut accéder à la route de connexion
     return true;
   }
 }

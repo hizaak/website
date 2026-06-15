@@ -1,0 +1,20 @@
+meta {
+  name: Update Photo
+  type: http
+  seq: 9
+}
+
+put {
+  url: {{base_url}}/api/photos/{{photo_id}}
+  body: multipartForm
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}
+
+body:multipart-form {
+  title: Granite Wall
+  photoDate: 03/11/2024
+}

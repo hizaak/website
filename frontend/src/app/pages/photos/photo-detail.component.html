@@ -1,0 +1,9 @@
+<div *ngIf="error">{{ error }}</div>
+
+<div *ngIf="photo">
+  <h2>{{ photo.title }}</h2>
+  <p>{{ photo.photoDate }}</p>
+  <img *ngIf="photoUrl" [src]="photoUrl" [alt]="photo.title" />
+</div>
+
+<div *ngIf="!photo && !error">Chargement...</div>

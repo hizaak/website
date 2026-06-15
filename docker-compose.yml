@@ -41,6 +41,7 @@ services:
       - ./backend/public/uploads:/app/public/uploads
     networks:
       - site-perso-network
+      - npm-network
 
   frontend:
     build:

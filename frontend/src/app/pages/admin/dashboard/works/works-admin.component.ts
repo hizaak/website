@@ -1,0 +1,73 @@
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { Router, RouterModule } from '@angular/router';
+import { WorkService } from '../../../../services/api/work.service';
+import { AuthService } from '../../../../core/auth.service';
+import { Work } from '../../../../interfaces/Work';
+
+@Component({
+  selector: 'app-admin-works',
+  standalone: true,
+  imports: [CommonModule, FormsModule, RouterModule],
+  templateUrl: './works-admin.component.html',
+  styleUrl: './works-admin.component.scss',
+})
+export class WorksAdminComponent implements OnInit {
+  works: Work[] = [];
+  newTitle = '';
+  error: string | null = null;
+
+  constructor(
+    private workService: WorkService,
+    private authService: AuthService,
+    private router: Router
+  ) {}
+
+  ngOnInit(): void {
+    this.loadWorks();
+  }
+
+  loadWorks(): void {
+    this.workService.getAllWorks().subscribe({
+      next: (works) => (this.works = works),
+      error: () => (this.error = 'Erreur lors du chargement.'),
+    });
+  }
+
+  createWork(): void {
+    if (!this.newTitle.trim()) {
+      return;
+    }
+
+    this.workService.createWork(this.newTitle.trim()).subscribe({
+      next: () => {
+        this.newTitle = '';
+        this.loadWorks();
+      },
+      error: (err) => {
+        this.error = err.error?.message || 'Erreur lors de la création.';
+      },
+    });
+  }
+
+  deleteWork(work: Work): void {
+    if (!confirm(`Supprimer le work "${work.title}" et toutes ses photos ?`)) {
+      return;
+    }
+
+    this.workService.deleteWork(work._id).subscribe({
+      next: () => this.loadWorks(),
+      error: () => (this.error = 'Erreur lors de la suppression.'),
+    });
+  }
+
+  openWork(work: Work): void {
+    this.router.navigate(['/dashboard/works', work._id]);
+  }
+
+  logout(): void {
+    this.authService.logout();
+    this.router.navigate(['/admin']);
+  }
+}

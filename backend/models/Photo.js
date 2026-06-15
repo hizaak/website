@@ -1,32 +1,38 @@
 const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
-const photoSchema = new Schema({
-  title: {
-    type: String,
-    required: true,
-  },
-  path: {
-    type: String,
-  },
-  date: {
-    type: Date,
-    required: true,
-  },
-  serie: {
-    type: Schema.Types.ObjectId,
-    ref: "Serie",
-    required: true,
+const photoSchema = new Schema(
+  {
+    title: {
+      type: String,
+      required: true,
+    },
+    path: {
+      type: String,
+    },
+    date: {
+      type: Date,
+      required: true,
+    },
+    serie: {
+      type: Schema.Types.ObjectId,
+      ref: "Serie",
+      required: true,
+    },
   },
   {
     timestamps: true,
   }
-});
+);
 
 photoSchema.pre("remove", async function (next) {
   const Serie = require("./Serie");
 
-  await Serie.updateMany({ photos: this._id }, { $pull: { photos: this._id } });
+  await Serie.updateMany(
+    { photos: this._id },
+    { $pull: { photos: this._id } }
+  );
+
   next();
 });
 

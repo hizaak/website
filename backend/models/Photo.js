@@ -18,12 +18,9 @@ const photoSchema = new Schema({
     ref: "Serie",
     required: true,
   },
-  timestamps: true,
-});
-
-photoSchema.pre("save", function (next) {
-  this.updatedAt = Date.now();
-  next();
+  {
+    timestamps: true,
+  }
 });
 
 photoSchema.pre("remove", async function (next) {

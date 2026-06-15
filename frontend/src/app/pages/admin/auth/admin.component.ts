@@ -42,7 +42,7 @@ export class AdminComponent {
     this.authService.login(username, password).subscribe(
       (response) => {
         if (response) {
-          this.router.navigate(['/dashboard']);
+          this.router.navigate(['/dashboard/works']);
           this.toastService.showSuccess(
             'Connexion réussie',
             'Bienvenue dans le dashboard'

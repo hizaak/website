@@ -45,18 +45,17 @@ initializeAdminAccount();
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
 
 const authRoutes = require("./routes/authRoutes.js");
+const worksRoutes = require("./routes/worksRoutes.js");
 const photosRoutes = require("./routes/photosRoutes.js");
-const serieRoutes = require("./routes/seriesRoutes.js");
 
 app.use("/login", authLimiter);
 app.use(authRoutes);
-app.use("/favicon.ico", express.static("public/favicon.ico"));
-app.use("/photos", express.static(path.join(__dirname, "public/uploads")));
-app.use("/photos", photosRoutes);
-app.use("/series", serieRoutes);
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+app.use("/api/works", worksRoutes);
+app.use("/api/photos", photosRoutes);
 
 app.get("/", (req, res) => {
-  res.json({ message: "API Photo Gallery - Consultez /api-docs pour la documentation" });
+  res.json({ message: "Portfolio API - Consultez /api-docs pour la documentation" });
 });
 
 app.use((req, res) => {

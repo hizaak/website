@@ -13,32 +13,30 @@ export class PhotoService extends AbstractRequestService {
     super(http, environment.apiUrl);
   }
 
+  getPhotosByWorkId(workId: string): Observable<Photo[]> {
+    return this.get<Photo[]>(`api/works/${workId}/photos`);
+  }
+
   getPhoto(id: string): Observable<Photo> {
-    return this.get<Photo>(`photos/${id}`);
+    return this.get<Photo>(`api/photos/${id}`);
   }
 
-  getAllPhotos(): Observable<Photo[]> {
-    return this.get<Photo[]>('photos');
+  createPhoto(workId: string, formData: FormData): Observable<Photo> {
+    return this.http.post<Photo>(
+      `${this.apiUrl}/api/works/${workId}/photos`,
+      formData
+    );
   }
 
-  getRandomPhoto(): Observable<Photo> {
-    return this.get<Photo>('photos/random');
+  updatePhoto(id: string, formData: FormData): Observable<Photo> {
+    return this.http.put<Photo>(`${this.apiUrl}/api/photos/${id}`, formData);
   }
 
-  createPhoto(
-    photo: Omit<Photo, '_id' | 'createdAt' | 'updatedAt'>
-  ): Observable<Photo> {
-    return this.post<Photo>('photos', photo);
+  deletePhoto(id: string): Observable<{ message: string }> {
+    return this.delete<{ message: string }>(`api/photos/${id}`);
   }
 
-  updatePhoto(
-    id: string,
-    photo: Partial<Omit<Photo, '_id' | 'createdAt' | 'updatedAt'>>
-  ): Observable<Photo> {
-    return this.put<Photo>(`photos/${id}`, photo);
-  }
-
-  deletePhoto(id: string): Observable<any> {
-    return this.delete<any>(`photos/${id}`);
+  getPhotoUrl(filename: string): string {
+    return `${environment.apiUrl}/uploads/${filename}`;
   }
 }

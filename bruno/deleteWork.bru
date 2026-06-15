@@ -1,0 +1,15 @@
+meta {
+  name: Delete Work
+  type: http
+  seq: 5
+}
+
+delete {
+  url: {{base_url}}/api/works/{{work_id}}
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{token}}
+}

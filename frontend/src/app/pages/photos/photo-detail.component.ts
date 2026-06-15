@@ -1,13 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterModule } from '@angular/router';
+
 import { PhotoService } from '../../services/api/photo.service';
-import { Photo } from '../../interfaces/Photo';
+import { Photo, extractYearFromPhotoDate } from '../../interfaces/Photo';
 
 @Component({
   selector: 'app-photo-detail',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterModule],
   templateUrl: './photo-detail.component.html',
   styleUrl: './photo-detail.component.scss',
 })
@@ -16,13 +17,25 @@ export class PhotoDetailComponent implements OnInit {
   photoUrl: string | null = null;
   error: string | null = null;
 
+  previousPhoto: Photo | null = null;
+  nextPhoto: Photo | null = null;
+
   constructor(
     private route: ActivatedRoute,
     private photoService: PhotoService
   ) {}
 
+  get photoYear(): string {
+    if (!this.photo) {
+      return '';
+    }
+
+    return extractYearFromPhotoDate(this.photo.photoDate);
+  }
+
   ngOnInit(): void {
     const photoId = this.route.snapshot.paramMap.get('id');
+
     if (!photoId) {
       this.error = 'Photo introuvable.';
       return;
@@ -32,8 +45,31 @@ export class PhotoDetailComponent implements OnInit {
       next: (photo) => {
         this.photo = photo;
         this.photoUrl = this.photoService.getPhotoUrl(photo.filename);
+
+        this.photoService.getPhotosByWorkId(photo.workId).subscribe({
+          next: (photos) => {
+            const index = photos.findIndex(
+              (p) => p._id === photo._id
+            );
+
+            this.previousPhoto =
+              index > 0 ? photos[index - 1] : null;
+
+            this.nextPhoto =
+              index < photos.length - 1
+                ? photos[index + 1]
+                : null;
+          },
+          error: () => {
+            console.error(
+              'Impossible de charger les photos du work'
+            );
+          },
+        });
       },
-      error: () => (this.error = 'Photo introuvable.'),
+      error: () => {
+        this.error = 'Photo introuvable.';
+      },
     });
   }
 }

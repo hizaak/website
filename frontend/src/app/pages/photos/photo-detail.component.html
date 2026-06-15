@@ -1,9 +1,50 @@
-<div *ngIf="error">{{ error }}</div>
+<div class="photo-page" *ngIf="photo as currentPhoto; else loading">
+  <div class="viewer">
 
-<div *ngIf="photo">
-  <h2>{{ photo.title }}</h2>
-  <p>{{ photo.photoDate }}</p>
-  <img *ngIf="photoUrl" [src]="photoUrl" [alt]="photo.title" />
+    <div class="nav-column">
+      <a
+        *ngIf="previousPhoto"
+        [routerLink]="['/photos', previousPhoto._id]"
+        class="nav-button"
+      >
+        ←lala
+      </a>
+    </div>
+
+    <div class="content">
+
+      <div class="photo-wrapper">
+
+        <img
+          *ngIf="photoUrl"
+          [src]="photoUrl"
+          [alt]="currentPhoto.title"
+          class="photo"
+        />
+
+        <div class="meta">
+          <h2>{{ currentPhoto.title }}</h2>
+          <p>{{ photoYear }}</p>
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="nav-column">
+      <a
+        *ngIf="nextPhoto"
+        [routerLink]="['/photos', nextPhoto._id]"
+        class="nav-button"
+      >
+        →
+      </a>
+    </div>
+
+  </div>
 </div>
 
-<div *ngIf="!photo && !error">Chargement...</div>
+<ng-template #loading>
+  <div *ngIf="error">{{ error }}</div>
+  <div *ngIf="!error">Chargement...</div>
+</ng-template>

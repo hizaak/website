@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { BlogComponent } from './blog.component';
+import { SiteNavigationComponent } from './site-navigation.component';
 
-describe('BlogComponent', () => {
-  let component: BlogComponent;
-  let fixture: ComponentFixture<BlogComponent>;
+describe('SiteNavigationComponent', () => {
+  let component: SiteNavigationComponent;
+  let fixture: ComponentFixture<SiteNavigationComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [BlogComponent]
+      imports: [SiteNavigationComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(BlogComponent);
+    fixture = TestBed.createComponent(SiteNavigationComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

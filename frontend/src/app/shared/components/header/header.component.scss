@@ -10,5 +10,14 @@
   font-weight: 700;
   line-height: 0.95;
 
-  text-transform: uppercase;
+  // text-transform: uppercase;
+}
+
+.brand a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.brand h1 {
+  margin: 0;
 }

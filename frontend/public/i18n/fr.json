@@ -1,15 +1,15 @@
 {
   "nav": {
-    "works": "Travaux",
-    "about": "Biographie",
-    "contact": "Contact"
+    "works": "travaux",
+    "about": "biographie",
+    "contact": "contact"
   },
 
   "about": {
-    "title": "Biographie"
+    "title": "biographie"
   },
 
   "contact": {
-    "title": "Contact"
+    "title": "contact"
   }
 }

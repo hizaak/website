@@ -4,6 +4,8 @@ import { ActivatedRoute, RouterModule } from '@angular/router';
 
 import { PhotoService } from '../../services/api/photo.service';
 import { Photo, extractYearFromPhotoDate } from '../../interfaces/Photo';
+import { Router } from '@angular/router';
+import { LanguageService } from '../../core/language.service';
 
 @Component({
   selector: 'app-photo-detail',
@@ -13,6 +15,8 @@ import { Photo, extractYearFromPhotoDate } from '../../interfaces/Photo';
   styleUrl: './photo-detail.component.scss',
 })
 export class PhotoDetailComponent implements OnInit {
+  currentLang = 'en';
+
   photo: Photo | null = null;
   photoUrl: string | null = null;
   error: string | null = null;
@@ -22,7 +26,9 @@ export class PhotoDetailComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private photoService: PhotoService
+    private router: Router,
+    private photoService: PhotoService,
+    public languageService: LanguageService
   ) {}
 
   get photoYear(): string {
@@ -34,6 +40,13 @@ export class PhotoDetailComponent implements OnInit {
   }
 
   ngOnInit(): void {
+
+    const lang = this.router.url.split('/')[1];
+
+    if (lang === 'fr' || lang === 'en') {
+      this.currentLang = lang;
+    }
+
     const photoId = this.route.snapshot.paramMap.get('id');
 
     if (!photoId) {

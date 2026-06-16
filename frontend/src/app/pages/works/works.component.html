@@ -2,7 +2,16 @@
 
 <ul *ngIf="works.length > 0">
   <li *ngFor="let work of works">
-    <a [routerLink]="['/works', work._id]">{{ work.title }}</a>
+    <a
+      [routerLink]="[
+        '/',
+        languageService.currentLang,
+        'works',
+        work._id
+      ]"
+    >
+      {{ work.title }}
+    </a>
   </li>
 </ul>
 

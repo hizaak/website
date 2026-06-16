@@ -1,0 +1,15 @@
+{
+  "nav": {
+    "works": "Travaux",
+    "about": "Biographie",
+    "contact": "Contact"
+  },
+
+  "about": {
+    "title": "Biographie"
+  },
+
+  "contact": {
+    "title": "Contact"
+  }
+}

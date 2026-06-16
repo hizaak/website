@@ -1,41 +1,41 @@
 .site-navigation {
   display: flex;
   flex-direction: column;
-  font-weight: 600;
   gap: 1rem;
 
   font-size: 1.05rem;
+  font-weight: 600;
   line-height: 1.2;
+
+  text-transform: uppercase;
 }
 
 .site-navigation ul {
-  list-style: none;
   margin: 0;
   padding: 0;
-}
-
-.site-navigation li {
+  list-style: none;
 }
 
 .site-navigation a,
 .lang a {
-  color: #000;
-
+  color: inherit;
   text-decoration: none;
-  transition: color 120ms ease;
-}
-
-.site-navigation a:hover,
-.lang a:hover {
-  color: #000;
 }
 
 .site-navigation a.active {
-  color: #555;
-
+  color: #666;
 }
 
 .lang {
   margin-top: auto;
-  color: #666;
+}
+
+.lang a {
+  display: inline-block;
+}
+
+.lang a.active {
+  text-decoration: none;
+  color: inherit;
+  border-bottom: 1px solid currentColor;
 }

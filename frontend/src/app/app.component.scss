@@ -1,22 +1,28 @@
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-}
-
 .layout {
-  display: flex;
-  height: 100vh;
+  display: grid;
+
+  grid-template-columns: max-content 1fr;
+  grid-template-rows: auto 1fr;
+
+  grid-template-areas:
+    "header empty"
+    "nav content";
+
+  column-gap: 0.5rem;
+  row-gap: 1rem;
+
+  padding: 1rem;
 }
 
-app-header {
-  flex: 0 0 350px;
-  height: 100%;
-  padding-top: 32px;
-  padding-left: 64px;
-  box-sizing: border-box;
+.header {
+  grid-area: header;
+}
+
+.nav {
+  grid-area: nav;
 }
 
 .content {
-  flex: 1;
-  overflow-y: auto;
+  grid-area: content;
+  min-width: 0;
 }

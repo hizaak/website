@@ -5,6 +5,9 @@ import { WorkService } from '../../services/api/work.service';
 import { PhotoService } from '../../services/api/photo.service';
 import { Work } from '../../interfaces/Work';
 import { Photo, extractYearFromPhotoDate } from '../../interfaces/Photo';
+import { Router } from '@angular/router';
+import { LanguageService } from '../../core/language.service';
+
 
 @Component({
   selector: 'app-work-detail',
@@ -14,17 +17,28 @@ import { Photo, extractYearFromPhotoDate } from '../../interfaces/Photo';
   styleUrl: './work-detail.component.scss',
 })
 export class WorkDetailComponent implements OnInit {
+  currentLang = 'en';
+
   work: Work | null = null;
   photos: Photo[] = [];
   error: string | null = null;
 
   constructor(
     private route: ActivatedRoute,
+    private router: Router,
     private workService: WorkService,
-    private photoService: PhotoService
+    private photoService: PhotoService,
+      public languageService: LanguageService
   ) {}
 
   ngOnInit(): void {
+
+    const lang = this.router.url.split('/')[1];
+
+    if (lang === 'fr' || lang === 'en') {
+      this.currentLang = lang;
+    }
+
     const workId = this.route.snapshot.paramMap.get('id');
     if (!workId) {
       this.error = 'Work introuvable.';

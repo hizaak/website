@@ -1,0 +1,15 @@
+{
+  "nav": {
+    "works": "Works",
+    "about": "About",
+    "contact": "Contact"
+  },
+
+  "about": {
+    "title": "About"
+  },
+
+  "contact": {
+    "title": "Contact"
+  }
+}

@@ -1,0 +1,28 @@
+.mobile-header {
+    display: none;
+}
+
+@media (max-width: 500px) {
+
+    .desktop-header {
+        display: none;
+    }
+
+    .mobile-header {
+        display: block;
+    }
+
+    .mobile-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+    }
+
+    .mobile-language {
+        white-space: nowrap;
+    }
+
+    .mobile-nav {
+        margin-top: 4px;
+    }
+}

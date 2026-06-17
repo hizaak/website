@@ -1,13 +1,58 @@
-<header class="header">
-  <div class="brand">
-    <h1>ALEXANDRE MAURICE</h1>
+<header>
+
+  <div class="mobile-header">
+
+    <div class="mobile-top">
+      <b>alexandre maurice</b>
+
+      <div class="mobile-language">
+        <a [routerLink]="['/fr']">fr</a>
+        /
+        <a [routerLink]="['/en']">en</a>
+      </div>
+    </div>
+
+    <div class="mobile-nav">
+      <a [routerLink]="['/', languageService.currentLang, 'works']" routerLinkActive="active">{{ 'nav.works' | translate
+        }}</a>
+      |
+      <a [routerLink]="['/', languageService.currentLang, 'contact']" routerLinkActive="active">{{ 'nav.contact' |
+        translate }}</a>
+      |
+      <a [routerLink]="['/', languageService.currentLang, 'about']" routerLinkActive="active">{{ 'nav.about' | translate
+        }}</a>
+    </div>
+
   </div>
-  <nav class="sidebar">
-    <ul>
-      <li><a routerLink="/works" routerLinkActive="active">WORKS</a></li>
-      <li><a routerLink="/about" routerLinkActive="active">ABOUT</a></li>
-      <li><a routerLink="/contact" routerLinkActive="active">CONTACT</a></li>
-    </ul>
-  </nav>
-  <div class="lang"><a href="#">FR</a> / <a href="#">EN</a></div>
+
+  <table width="100%" class="desktop-header">
+    <tr>
+      <td align="left">
+        <b>alexandre maurice</b>
+        &nbsp;
+
+        <a [routerLink]="['/', languageService.currentLang, 'works']" routerLinkActive="active">{{ 'nav.works' |
+          translate }}</a>
+
+        |
+
+        <a [routerLink]="['/', languageService.currentLang, 'contact']" routerLinkActive="active">{{ 'nav.contact' |
+          translate }}</a>
+
+        |
+
+        <a [routerLink]="['/', languageService.currentLang, 'about']" routerLinkActive="active">{{ 'nav.about' |
+          translate }}</a>
+      </td>
+
+      <td align="right">
+        <a [routerLink]="['/fr']">fr</a>
+        /
+        <a [routerLink]="['/en']">en</a>
+      </td>
+    </tr>
+  </table>
+
+  <hr>
+
 </header>

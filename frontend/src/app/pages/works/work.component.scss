@@ -1,0 +1,15 @@
+.photo {
+    display: block;
+
+    width: auto;
+    height: auto;
+
+    max-width: calc(100vw - 100px);
+    max-height: calc(100vh - 200px);
+}
+
+@media (max-width: 768px) {
+    .photo {
+        max-width: 100%;
+    }
+}

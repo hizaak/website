@@ -1,0 +1,51 @@
+<div *ngIf="work && selectedPhoto && currentPhotoInfo">
+
+  <div class="work-navigation">
+
+    <b>{{ work.title }}</b>
+
+    |
+
+    <ng-container *ngFor="
+        let photo of work.photos;
+        let i = index
+      ">
+      <a *ngIf="i !== currentPhotoIndex" [routerLink]="[
+          '/',
+          languageService.currentLang,
+          'work',
+          work._id,
+          i
+        ]">
+        {{ i + 1 }}
+      </a>
+
+      <b *ngIf="i === currentPhotoIndex">
+        {{ i + 1 }}
+      </b>
+
+      &nbsp;
+
+    </ng-container>
+
+  </div>
+
+  <hr>
+
+  <div class="photo-block">
+
+    <img *ngIf="photoUrl" [src]="photoUrl" [alt]="selectedPhoto.title" class="photo">
+
+    <div class="photo-info">
+
+      <b>{{ selectedPhoto.title }}</b>
+
+      <br>
+
+      {{ selectedPhoto.photoDate }}
+
+    </div>
+
+  </div>
+
+</div>

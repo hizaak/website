@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 
-const photoController = require("../controllers/photoController");
+const photoController = require("../controllers/photo");
 const { verifyToken } = require("../config/authMiddleware");
 const { validateRequest, photoUpdateSchema } = require("../config/validation");
 const { upload } = require("../config/upload");

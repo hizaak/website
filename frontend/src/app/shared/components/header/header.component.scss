@@ -1,63 +1,28 @@
-header {
-  display: flex;
-  flex-direction: column;
-  gap: 32px;
+.mobile-header {
+    display: none;
 }
 
-h1 {
-  font-weight: bold;
-  font-size: 32px;
-  letter-spacing: 3px;
-}
+@media (max-width: 500px) {
 
-nav {
-  font-size: 18px;
-  font-weight: bold;
-  letter-spacing: 1px;
+    .desktop-header {
+        display: none;
+    }
 
-  a {
-    color: #666666;
-    text-decoration: none;
-    transition: color 0.2s ease;
-    position: relative; /* Nécessaire pour positionner le point à gauche */
-  }
+    .mobile-header {
+        display: block;
+    }
 
-  a:hover {
-    cursor: pointer;
-    color: #000000;
-    text-decoration: underline;
-  }
+    .mobile-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+    }
 
-  /* Styles pour le point à gauche de l'élément actif */
-  a.router-link-active::before {
-    content: "•"; /* Le caractère pour le point */
-    color: #000000; /* La couleur du point */
-    font-size: 20px; /* Taille du point */
-    position: absolute; /* Positionnement absolu */
-    left: -25px; /* Décalage du point vers la gauche */
-    top: 50%; /* Centrage vertical */
-    transform: translateY(-50%); /* Ajuste le centrage vertical */
-  }
-}
+    .mobile-language {
+        white-space: nowrap;
+    }
 
-li {
-  padding-bottom: 8px;
-}
-
-.lang {
-  font-weight: bold;
-  font-size: 18px;
-  letter-spacing: 1px;
-  color: #666666;
-
-  a {
-    color: #666666;
-    text-decoration: none;
-    transition: color 0.3s ease;
-  }
-
-  a:hover {
-    text-decoration: underline;
-    color: #000000;
-  }
+    .mobile-nav {
+        margin-top: 4px;
+    }
 }

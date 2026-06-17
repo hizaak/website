@@ -8,7 +8,6 @@ import {
 import { filter } from 'rxjs';
 
 import { HeaderComponent } from './shared/components/header/header.component';
-import { SiteNavigationComponent } from './shared/components/site-navigation/site-navigation.component';
 
 import { LanguageService } from './core/language.service';
 
@@ -17,7 +16,6 @@ import { LanguageService } from './core/language.service';
   imports: [
     RouterOutlet,
     HeaderComponent,
-    SiteNavigationComponent,
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
@@ -38,6 +36,9 @@ export class AppComponent {
       )
       .subscribe(() => {
         const lang = this.router.url.split('/')[1];
+
+        console.log('LANG DETECTED:', lang);
+        console.log('URL:', this.router.url);
 
         if (lang === 'fr' || lang === 'en') {
           this.languageService.setLanguage(lang);

@@ -1,10 +1,31 @@
-<header class="header">
-  <div class="brand">
-    <a [routerLink]="['/', languageService.currentLang]">
-      <h1>
-        alexandre <br>
-        maurice
-      </h1>
-    </a>
-  </div>
+<header>
+  <table width="100%">
+    <tr>
+      <td align="left">
+        <b>alexandre maurice</b>
+        &nbsp;
+        
+        <a [routerLink]="['/', languageService.currentLang, 'works']"
+          routerLinkActive="active">{{ 'nav.works' | translate }}</a>
+
+        |
+
+        <a [routerLink]="['/', languageService.currentLang, 'contact']"
+          routerLinkActive="active">{{ 'nav.contact' | translate }}</a>
+
+        |
+
+        <a [routerLink]="['/', languageService.currentLang, 'about']"
+          routerLinkActive="active">{{ 'nav.about' | translate }}</a>
+      </td>
+
+      <td align="right">
+        <a [routerLink]="['/fr']">fr</a>
+        /
+        <a [routerLink]="['/en']">en</a>
+      </td>
+    </tr>
+  </table>
+
+  <hr>
 </header>

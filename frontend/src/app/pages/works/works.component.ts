@@ -2,8 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 
-import { WorkService } from '../../services/api/work.service';
-import { Work } from '../../interfaces/Work';
+import { WorksPageService } from '../../services/pages/works-page.service';
+import { WorkListItem } from '../../interfaces/pages/WorksPage';
+
 import { LanguageService } from '../../core/language.service';
 
 @Component({
@@ -14,18 +15,22 @@ import { LanguageService } from '../../core/language.service';
   styleUrl: './works.component.scss',
 })
 export class WorksComponent implements OnInit {
-  works: Work[] = [];
+  works: WorkListItem[] = [];
   error: string | null = null;
 
-constructor(
-  private workService: WorkService,
-  public languageService: LanguageService
-) {}
+  constructor(
+    private worksPageService: WorksPageService,
+    public languageService: LanguageService
+  ) {}
 
   ngOnInit(): void {
-    this.workService.getAllWorks().subscribe({
-      next: (works) => (this.works = works),
-      error: () => (this.error = 'Erreur lors du chargement des works.'),
+    this.worksPageService.getWorks().subscribe({
+      next: (works) => {
+        this.works = works;
+      },
+      error: () => {
+        this.error = 'Erreur lors du chargement des works.';
+      },
     });
   }
 }

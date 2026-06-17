@@ -8,12 +8,12 @@ const specs = require("./config/swagger");
 const { initializeAdminAccount } = require("./models/User");
 const path = require("path");
 
+require("dotenv").config();
+
 const app = express();
 const port = process.env.PORT || 3000;
 
 connectDB();
-
-require("dotenv").config();
 
 const corsOptions = {
   origin: process.env.CORS_ORIGIN || "*",
@@ -28,13 +28,15 @@ app.use(bodyParser.json());
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 100,
-  message: "Trop de requêtes depuis cette adresse IP, veuillez réessayer plus tard.",
+  message:
+    "Trop de requêtes depuis cette adresse IP, veuillez réessayer plus tard.",
 });
 
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 5,
-  message: "Trop de tentatives de connexion, veuillez réessayer plus tard.",
+  message:
+    "Trop de tentatives de connexion, veuillez réessayer plus tard.",
   skipSuccessfulRequests: true,
 });
 
@@ -42,27 +44,63 @@ app.use(limiter);
 
 initializeAdminAccount();
 
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
+app.use(
+  "/api-docs",
+  swaggerUi.serve,
+  swaggerUi.setup(specs)
+);
 
-const authRoutes = require("./routes/authRoutes.js");
-const worksRoutes = require("./routes/worksRoutes.js");
-const photosRoutes = require("./routes/photosRoutes.js");
+const authRoutes = require("./routes/auth");
+const getWorksRoutes = require("./routes/pages/getWorks");
+const getWorkPhotosRoutes = require("./routes/pages/getWork");
+const photoRoutes = require("./routes/photos");
 
 app.use("/login", authLimiter);
+
 app.use(authRoutes);
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
-app.use("/api/works", worksRoutes);
-app.use("/api/photos", photosRoutes);
+
+
+app.use(
+  "/api/pages/works",
+  getWorksRoutes
+);
+
+app.use(
+  "/api/pages/work",
+  getWorkPhotosRoutes
+);
+
+app.use(
+  "/api/photos",
+  photoRoutes
+);
+
+app.use(
+  "/uploads",
+  express.static(
+    path.join(__dirname, "uploads")
+  )
+);
 
 app.get("/", (req, res) => {
-  res.json({ message: "Portfolio API - Consultez /api-docs pour la documentation" });
+  res.json({
+    message:
+      "Portfolio API - Consultez /api-docs pour la documentation",
+  });
 });
 
 app.use((req, res) => {
-  res.status(404).json({ message: "Endpoint introuvable" });
+  res.status(404).json({
+    message: "Endpoint introuvable",
+  });
 });
 
 app.listen(port, () => {
-  console.log(`App listening on port ${port}`);
-  console.log(`Swagger UI available at http://localhost:${port}/api-docs`);
+  console.log(
+    `App listening on port ${port}`
+  );
+
+  console.log(
+    `Swagger UI available at http://localhost:${port}/api-docs`
+  );
 });

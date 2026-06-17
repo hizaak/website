@@ -1,28 +1,11 @@
-.layout {
-  display: grid;
-
-  grid-template-columns: max-content 1fr;
-  grid-template-rows: auto 1fr;
-
-  grid-template-areas:
-    "header empty"
-    "nav content";
-
-  column-gap: 0.5rem;
-  row-gap: 1rem;
-
-  padding: 1rem;
+:host {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
 }
 
-.header {
-  grid-area: header;
-}
-
-.nav {
-  grid-area: nav;
-}
-
-.content {
-  grid-area: content;
-  min-width: 0;
+main {
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
 }

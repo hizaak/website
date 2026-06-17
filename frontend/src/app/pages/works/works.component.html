@@ -1,7 +1,9 @@
 <div *ngIf="error">{{ error }}</div>
 
-<ul *ngIf="works.length > 0">
-  <li *ngFor="let work of works">
+<div *ngIf="works.length">
+  <ng-container *ngFor="let work of works">
+    {{ work.yearRange }}
+
     <a
       [routerLink]="[
         '/',
@@ -12,7 +14,11 @@
     >
       {{ work.title }}
     </a>
-  </li>
-</ul>
 
-<div *ngIf="!works.length && !error">Chargement...</div>
+    <br />
+  </ng-container>
+</div>
+
+<div *ngIf="!works.length && !error">
+  Chargement...
+</div>

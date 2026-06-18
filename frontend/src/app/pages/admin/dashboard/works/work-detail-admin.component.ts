@@ -29,10 +29,10 @@ export class WorkDetailAdminComponent implements OnInit {
     private router: Router,
     private workService: WorkService,
     private photoService: PhotoService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
-    const workId = this.route.snapshot.paramMap.get('id');
+    const workId = this.route.snapshot.paramMap.get('workId');
     if (!workId) {
       this.error = 'Work introuvable.';
       return;
@@ -119,7 +119,12 @@ export class WorkDetailAdminComponent implements OnInit {
   }
 
   openPhoto(photo: Photo): void {
-    this.router.navigate(['/dashboard/works', this.work!._id, 'photos', photo._id]);
+    this.router.navigate([
+      '/en/admin/works',
+      this.work!._id,
+      'photos',
+      photo._id
+    ]);
   }
 
   deletePhoto(photo: Photo): void {
@@ -134,6 +139,6 @@ export class WorkDetailAdminComponent implements OnInit {
   }
 
   backToList(): void {
-    this.router.navigate(['/dashboard/works']);
+    this.router.navigate(['/en/admin/works']);
   }
 }

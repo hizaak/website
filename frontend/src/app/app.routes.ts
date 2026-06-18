@@ -2,15 +2,20 @@ import { Routes } from '@angular/router';
 import { AuthGuard } from './guards/auth.guard';
 import { NoAuthGuard } from './guards/no-auth.guard';
 
-export const routes: Routes = [
+const localizedRoutes: Routes = [
   {
     path: '',
-    redirectTo: 'en',
+    redirectTo: 'works',
     pathMatch: 'full',
   },
 
   {
-    path: ':lang',
+    path: 'admin',
+    canActivate: [AuthGuard],
+    loadComponent: () =>
+      import('./pages/admin/dashboard/dashboard.component')
+        .then(m => m.DashboardComponent),
+
     children: [
       {
         path: '',
@@ -21,34 +26,86 @@ export const routes: Routes = [
       {
         path: 'works',
         loadComponent: () =>
-          import('./pages/works/works.component').then(
-            m => m.WorksComponent
-          ),
+          import('./pages/admin/dashboard/works/works-admin.component')
+            .then(m => m.WorksAdminComponent),
       },
 
       {
-        path: 'works/:id',
+        path: 'works/:workId',
         loadComponent: () =>
-          import('./pages/works/work.component').then(
-            m => m.WorkComponent
-          ),
+          import('./pages/admin/dashboard/works/work-detail-admin.component')
+            .then(m => m.WorkDetailAdminComponent),
       },
 
       {
-        path: 'about',
+        path: 'works/:workId/photos/:photoId',
         loadComponent: () =>
-          import('./pages/about/about.component').then(
-            m => m.AboutComponent
-          ),
-      },
-
-      {
-        path: 'contact',
-        loadComponent: () =>
-          import('./pages/contact/contact.component').then(
-            m => m.ContactComponent
-          ),
+          import('./pages/admin/dashboard/works/photo-detail-admin.component')
+            .then(m => m.PhotoDetailAdminComponent),
       },
     ],
+  },
+
+  {
+    path: 'admin/auth',
+    canActivate: [NoAuthGuard],
+    loadComponent: () =>
+      import('./pages/admin/auth/admin.component').then(
+        m => m.AdminComponent
+      ),
+  },
+  {
+    path: 'works',
+    loadComponent: () =>
+      import('./pages/works/works.component').then(
+        m => m.WorksComponent
+      ),
+  },
+
+  {
+    path: 'works/:id',
+    loadComponent: () =>
+      import('./pages/works/work.component').then(
+        m => m.WorkComponent
+      ),
+  },
+
+  {
+    path: 'about',
+    loadComponent: () =>
+      import('./pages/about/about.component').then(
+        m => m.AboutComponent
+      ),
+  },
+
+  {
+    path: 'contact',
+    loadComponent: () =>
+      import('./pages/contact/contact.component').then(
+        m => m.ContactComponent
+      ),
+  },
+];
+
+export const routes: Routes = [
+  {
+    path: '',
+    redirectTo: 'en/works',
+    pathMatch: 'full',
+  },
+
+  {
+    path: 'fr',
+    children: localizedRoutes,
+  },
+
+  {
+    path: 'en',
+    children: localizedRoutes,
+  },
+
+  {
+    path: '**',
+    redirectTo: 'en/works',
   },
 ];

@@ -6,21 +6,22 @@
       <b>alexandre maurice</b>
 
       <div class="mobile-language">
-        <a [routerLink]="['/fr']">fr</a>
+        <a [routerLink]="languageLink('fr')">fr</a>
         /
-        <a [routerLink]="['/en']">en</a>
+        <a [routerLink]="languageLink('en')">en</a>
       </div>
     </div>
 
     <div class="mobile-nav">
-      <a [routerLink]="['/', languageService.currentLang, 'works']" routerLinkActive="active">{{ 'nav.works' | translate
-        }}</a>
+      <a [routerLink]="['/', languageService.currentLang, 'works']" routerLinkActive="active">{{ 'nav.works' | translate }}</a>
       |
-      <a [routerLink]="['/', languageService.currentLang, 'contact']" routerLinkActive="active">{{ 'nav.contact' |
-        translate }}</a>
+      <a [routerLink]="['/', languageService.currentLang, 'contact']" routerLinkActive="active">{{ 'nav.contact' | translate }}</a>
       |
-      <a [routerLink]="['/', languageService.currentLang, 'about']" routerLinkActive="active">{{ 'nav.about' | translate
-        }}</a>
+      <a [routerLink]="['/', languageService.currentLang, 'about']" routerLinkActive="active">{{ 'nav.about' | translate }}</a>
+      <ng-container *ngIf="authService.isAuthenticated()">
+        |
+        <a [routerLink]="['/', languageService.currentLang, 'admin']" routerLinkActive="active">{{ 'nav.admin' | translate }}</a>
+      </ng-container>
     </div>
 
   </div>
@@ -31,24 +32,29 @@
         <b>alexandre maurice</b>
         &nbsp;
 
-        <a [routerLink]="['/', languageService.currentLang, 'works']" routerLinkActive="active">{{ 'nav.works' |
-          translate }}</a>
+        <a [routerLink]="['/', languageService.currentLang, 'works']" routerLinkActive="active">{{ 'nav.works' | translate }}</a>
 
         |
 
-        <a [routerLink]="['/', languageService.currentLang, 'contact']" routerLinkActive="active">{{ 'nav.contact' |
-          translate }}</a>
+        <a [routerLink]="['/', languageService.currentLang, 'contact']" routerLinkActive="active">{{ 'nav.contact' | translate }}</a>
 
         |
 
-        <a [routerLink]="['/', languageService.currentLang, 'about']" routerLinkActive="active">{{ 'nav.about' |
-          translate }}</a>
+        <a [routerLink]="['/', languageService.currentLang, 'about']" routerLinkActive="active">{{ 'nav.about' | translate }}</a>
+
+        <ng-container *ngIf="authService.isAuthenticated()">
+
+          |
+
+          <a [routerLink]="['/', languageService.currentLang, 'admin']" routerLinkActive="active">{{ 'nav.admin' | translate }}</a>
+
+        </ng-container>
       </td>
 
       <td align="right">
-        <a [routerLink]="['/fr']">fr</a>
+        <a [routerLink]="languageLink('fr')">fr</a>
         /
-        <a [routerLink]="['/en']">en</a>
+        <a [routerLink]="languageLink('en')">en</a>
       </td>
     </tr>
   </table>

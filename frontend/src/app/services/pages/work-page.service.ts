@@ -8,6 +8,7 @@ import { environment } from '../../../environments/environment';
 import { AbstractRequestService } from '../api/abstract-request.service';
 
 import { WorkPage } from '../../interfaces/pages/WorkPage';
+import { API_ENDPOINTS } from '../../core/api-endpoints';
 
 @Injectable({
   providedIn: 'root',
@@ -19,7 +20,7 @@ export class WorkPageService extends AbstractRequestService {
 
   getWork(id: string): Observable<WorkPage> {
     return this.get<WorkPage>(
-      `api/pages/work/${id}`
+      API_ENDPOINTS.pages.work(id)
     );
   }
 }

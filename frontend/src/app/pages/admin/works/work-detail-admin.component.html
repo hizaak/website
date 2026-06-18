@@ -1,0 +1,119 @@
+<button type="button" (click)="backToList()">← {{ 'admin.back' | translate }}</button>
+
+<p *ngIf="error" style="color: red;">{{ error }}</p>
+
+<div *ngIf="work">
+  <p><b>{{ 'admin.edit' | translate }}</b></p>
+
+  <form (ngSubmit)="updateWork()">
+    <label>
+      {{ 'admin.title' | translate }} :
+      <input type="text" [(ngModel)]="editTitle" name="editTitle" required />
+    </label>
+
+    <button type="submit">{{ 'admin.confirmChanges' | translate }}</button>
+  </form>
+
+  <p>
+    <button type="button" (click)="deleteWork()">{{ 'admin.deleteWork' | translate }}</button>
+  </p>
+
+  <hr>
+
+  <p><b>{{ 'admin.existingPhotos' | translate }}</b></p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>{{ 'admin.order' | translate }}</th>
+        <th>{{ 'admin.date' | translate }}</th>
+        <th>{{ 'admin.title' | translate }}</th>
+        <th>{{ 'admin.actions' | translate }}</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let photo of photos; let i = index">
+        <td>
+          <button type="button" (click)="movePhotoUp(i)" [disabled]="i === 0">↑</button>
+          &nbsp;
+          <button type="button" (click)="movePhotoDown(i)" [disabled]="i === photos.length - 1">↓</button>
+        </td>
+        <td>{{ photo.photoDate }}</td>
+        <td>{{ photo.title }}</td>
+        <td>
+          <button type="button" (click)="editPhoto(photo)">{{ 'admin.edit' | translate }}</button>
+          &nbsp;
+          <button type="button" (click)="deletePhoto(photo)">{{ 'admin.delete' | translate }}</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <hr>
+
+  <div *ngIf="selectedPhoto">
+    <p><b>{{ 'admin.editPhoto' | translate }}</b></p>
+
+    <form (ngSubmit)="updateSelectedPhoto()">
+      <p>
+        <label>
+          {{ 'admin.title' | translate }}
+          <br>
+          <input [(ngModel)]="selectedPhoto.title" name="selectedPhotoTitle" required>
+        </label>
+      </p>
+
+      <p>
+        <label>
+          {{ 'admin.date' | translate }}
+          <br>
+          <input [(ngModel)]="selectedPhoto.photoDate" name="selectedPhotoDate" required>
+        </label>
+      </p>
+
+      <p>
+        <label>
+          {{ 'admin.replaceImage' | translate }}
+          <br>
+          <input type="file" accept="image/png,image/jpeg,.png,.jpg,.jpeg" (change)="onReplaceFileSelected($event)">
+        </label>
+      </p>
+
+      <button type="submit">{{ 'admin.save' | translate }}</button>
+    </form>
+  </div>
+
+  <hr>
+
+  <p><b>{{ 'admin.addPhoto' | translate }}</b></p>
+
+  <form (ngSubmit)="createPhoto()">
+    <p>
+      <label>
+        {{ 'admin.title' | translate }}
+        <br>
+        <input type="text" [(ngModel)]="newPhotoTitle" name="newPhotoTitle" required />
+      </label>
+    </p>
+
+    <p>
+      <label>
+        {{ 'admin.date' | translate }}
+        <br>
+        <input type="text" [(ngModel)]="newPhotoDate" name="newPhotoDate" required />
+      </label>
+    </p>
+
+    <p>
+      <label>
+        {{ 'admin.image' | translate }}
+        <br>
+        <input type="file" accept="image/png,image/jpeg,.png,.jpg,.jpeg" (change)="onNewPhotoFileSelected($event)" />
+      </label>
+    </p>
+
+    <button type="submit">{{ 'admin.addPhoto' | translate }}</button>
+  </form>
+</div>
+
+<p *ngIf="!work && !error">{{ 'admin.loading' | translate }}</p>

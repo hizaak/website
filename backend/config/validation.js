@@ -20,14 +20,22 @@ const photoSchema = Joi.object({
   photoDate: Joi.string()
     .pattern(photoDatePattern)
     .required()
-    .messages({ "string.pattern.base": "photoDate doit être au format JJ/MM/AAAA." }),
+    .messages({ "string.pattern.base": "photoDate doit etre au format JJ/MM/AAAA." }),
 });
 
 const photoUpdateSchema = Joi.object({
   title: Joi.string().min(1).max(255),
   photoDate: Joi.string()
     .pattern(photoDatePattern)
-    .messages({ "string.pattern.base": "photoDate doit être au format JJ/MM/AAAA." }),
+    .messages({ "string.pattern.base": "photoDate doit etre au format JJ/MM/AAAA." }),
+});
+
+const photoReorderSchema = Joi.object({
+  photoIds: Joi.array()
+    .items(Joi.string().hex().length(24))
+    .min(1)
+    .unique()
+    .required(),
 });
 
 const validateRequest = (schema) => {
@@ -39,7 +47,7 @@ const validateRequest = (schema) => {
 
     if (error) {
       const messages = error.details.map((detail) => detail.message);
-      return res.status(400).json({ message: "Validation échouée.", errors: messages });
+      return res.status(400).json({ message: "Validation echouee.", errors: messages });
     }
 
     req.body = value;
@@ -53,5 +61,6 @@ module.exports = {
   workUpdateSchema,
   photoSchema,
   photoUpdateSchema,
+  photoReorderSchema,
   validateRequest,
 };

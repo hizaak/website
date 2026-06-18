@@ -6,6 +6,7 @@ export interface Photo {
   filename: string;
   originalFilename: string;
   mimeType: string;
+  position: number;
   createdAt: string;
   updatedAt: string;
 }

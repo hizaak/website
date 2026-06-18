@@ -22,7 +22,7 @@ export class WorksAdminComponent implements OnInit {
     private workService: WorkService,
     private authService: AuthService,
     private router: Router
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.loadWorks();
@@ -63,11 +63,11 @@ export class WorksAdminComponent implements OnInit {
   }
 
   openWork(work: Work): void {
-    this.router.navigate(['/dashboard/works', work._id]);
+    this.router.navigate(['/en/admin/works', work._id]);
   }
 
   logout(): void {
     this.authService.logout();
-    this.router.navigate(['/admin']);
+    this.router.navigate(['/en/admin/auth']);
   }
 }

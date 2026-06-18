@@ -11,16 +11,20 @@ import { AuthService } from '../core/auth.service';
   providedIn: 'root',
 })
 export class NoAuthGuard implements CanActivate {
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(private authService: AuthService, private router: Router) { }
 
   canActivate(
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
   ): boolean {
     if (this.authService.isAuthenticated()) {
-      this.router.navigate(['/dashboard']);
+      const lang = route.paramMap.get('lang') || 'en';
+
+      this.router.navigate([lang, 'admin']);
+
       return false;
     }
+
     return true;
   }
 }

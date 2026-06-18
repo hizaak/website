@@ -1,17 +1,32 @@
-import { TestBed } from '@angular/core/testing';
-import { CanActivateFn } from '@angular/router';
+import { Injectable } from '@angular/core';
+import {
+  ActivatedRouteSnapshot,
+  CanActivate,
+  Router,
+  RouterStateSnapshot,
+  UrlTree,
+} from '@angular/router';
+import { AuthService } from '../core/auth.service';
 
-import { noAuthGuard } from './no-auth.guard';
+@Injectable({
+  providedIn: 'root',
+})
+export class NoAuthGuard implements CanActivate {
+  constructor(
+    private authService: AuthService,
+    private router: Router
+  ) { }
 
-describe('noAuthGuard', () => {
-  const executeGuard: CanActivateFn = (...guardParameters) => 
-      TestBed.runInInjectionContext(() => noAuthGuard(...guardParameters));
+  canActivate(
+    route: ActivatedRouteSnapshot,
+    state: RouterStateSnapshot
+  ): boolean | UrlTree {
+    if (!this.authService.isAuthenticated()) {
+      return true;
+    }
 
-  beforeEach(() => {
-    TestBed.configureTestingModule({});
-  });
+    const lang = state.url.startsWith('/fr') ? 'fr' : 'en';
 
-  it('should be created', () => {
-    expect(executeGuard).toBeTruthy();
-  });
-});
+    return this.router.createUrlTree([lang, 'admin']);
+  }
+}

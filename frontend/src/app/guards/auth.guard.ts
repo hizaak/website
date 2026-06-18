@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
 import {
-  CanActivate,
   ActivatedRouteSnapshot,
-  RouterStateSnapshot,
+  CanActivate,
   Router,
+  RouterStateSnapshot,
+  UrlTree,
 } from '@angular/router';
 import { AuthService } from '../core/auth.service';
 
@@ -11,20 +12,30 @@ import { AuthService } from '../core/auth.service';
   providedIn: 'root',
 })
 export class AuthGuard implements CanActivate {
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(
+    private authService: AuthService,
+    private router: Router
+  ) { }
 
   canActivate(
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
   ): boolean {
-    // Vérifier si l'utilisateur est authentifié
+
+    console.log('AUTH GUARD');
+    console.log('URL =', state.url);
+    console.log('AUTH =', this.authService.isAuthenticated());
+
     if (this.authService.isAuthenticated()) {
-      // Si l'utilisateur est authentifié, continuer vers la route demandée
       return true;
-    } else {
-      // Sinon, rediriger vers la page de connexion
-      this.router.navigate(['/admin']);
-      return false;
     }
+
+    const lang = state.url.startsWith('/fr') ? 'fr' : 'en';
+
+    console.log('REDIRECT TO', `/${lang}/admin/auth`);
+
+    this.router.navigate([lang, 'admin', 'auth']);
+
+    return false;
   }
 }

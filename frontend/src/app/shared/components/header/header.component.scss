@@ -2,6 +2,11 @@
     display: none;
 }
 
+a,
+a:visited {
+    color: blue;
+}
+
 @media (max-width: 500px) {
 
     .desktop-header {

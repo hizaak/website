@@ -25,7 +25,7 @@ export class PhotoDetailAdminComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private photoService: PhotoService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.workId = this.route.snapshot.paramMap.get('workId');
@@ -91,9 +91,9 @@ export class PhotoDetailAdminComponent implements OnInit {
 
   backToWork(): void {
     if (this.workId) {
-      this.router.navigate(['/dashboard/works', this.workId]);
+      this.router.navigate(['/en/admin/works', this.workId]);
     } else {
-      this.router.navigate(['/dashboard/works']);
+      this.router.navigate(['/en/admin/works']);
     }
   }
 }

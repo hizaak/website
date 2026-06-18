@@ -30,6 +30,11 @@ const photoSchema = new Schema(
       type: String,
       required: true,
     },
+    position: {
+      type: Number,
+      required: true,
+      default: 0,
+    },
   },
   {
     timestamps: true,

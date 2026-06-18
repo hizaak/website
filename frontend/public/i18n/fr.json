@@ -2,7 +2,8 @@
   "nav": {
     "works": "travaux",
     "about": "biographie",
-    "contact": "contact"
+    "contact": "contact",
+    "admin": "admin"
   },
 
   "about": {
@@ -11,5 +12,32 @@
 
   "contact": {
     "title": "contact"
+  },
+
+  "admin": {
+    "login": "connexion admin",
+    "username": "nom d'utilisateur",
+    "password": "mot de passe",
+    "signIn": "se connecter",
+    "logout": "déconnexion",
+    "back": "retour",
+    "works": "travaux",
+    "addWork": "ajouter un work",
+    "title": "titre",
+    "create": "créer",
+    "edit": "modifier",
+    "delete": "supprimer",
+    "save": "enregistrer",
+    "confirmChanges": "confirmer les modifications",
+    "deleteWork": "supprimer le work",
+    "existingPhotos": "photos existantes",
+    "order": "ordre",
+    "date": "date",
+    "actions": "actions",
+    "editPhoto": "modifier la photo",
+    "replaceImage": "remplacer image",
+    "addPhoto": "ajouter une photo",
+    "image": "image",
+    "loading": "chargement..."
   }
 }

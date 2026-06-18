@@ -1,0 +1,30 @@
+<p>
+  <b>{{ 'admin.works' | translate }}</b>
+  &nbsp;
+  <button type="button" (click)="logout()">{{ 'admin.logout' | translate }}</button>
+</p>
+
+<p *ngIf="error" style="color: red;">{{ error }}</p>
+
+<div class="works-list">
+  <div class="work-row" *ngFor="let work of works">
+    <span>{{ work.yearRange }}</span>&nbsp;
+    <span>{{ work.title }}</span>
+    &nbsp;
+    <button type="button" (click)="openWork(work)">{{ 'admin.edit' | translate }}</button>
+    &nbsp;
+    <button type="button" (click)="deleteWork(work)">{{ 'admin.delete' | translate }}</button>
+  </div>
+</div>
+
+<hr>
+
+<p><b>{{ 'admin.addWork' | translate }}</b></p>
+
+<form (ngSubmit)="createWork()">
+  <label>
+    {{ 'admin.title' | translate }} :
+    <input type="text" [(ngModel)]="newTitle" name="newTitle" required />
+  </label>
+  <button type="submit">{{ 'admin.create' | translate }}</button>
+</form>

@@ -14,13 +14,8 @@ export class LanguageService {
 
   setLanguage(lang: string) {
     if (lang === 'fr' || lang === 'en') {
-      console.log('SET LANGUAGE:', lang);
-
       this.lang = lang;
-
       this.translate.use(lang);
-
-      console.log('CURRENT LANG:', this.translate.currentLang);
     }
   }
 

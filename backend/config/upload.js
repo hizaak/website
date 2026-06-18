@@ -38,6 +38,16 @@ const upload = multer({
   limits: { fileSize: 10 * 1024 * 1024 },
 });
 
+const uploadSingleImage = (fieldName) => (req, res, next) => {
+  upload.single(fieldName)(req, res, (err) => {
+    if (err) {
+      return res.status(400).json({ message: err.message });
+    }
+
+    next();
+  });
+};
+
 const deleteFile = (filename) => {
   if (!filename) {
     return;
@@ -50,4 +60,11 @@ const deleteFile = (filename) => {
   }
 };
 
-module.exports = { upload, UPLOAD_DIR, deleteFile, ALLOWED_MIMES, ALLOWED_EXTENSIONS };
+module.exports = {
+  upload,
+  uploadSingleImage,
+  UPLOAD_DIR,
+  deleteFile,
+  ALLOWED_MIMES,
+  ALLOWED_EXTENSIONS,
+};

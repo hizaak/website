@@ -134,8 +134,8 @@ export class WorkComponent implements OnInit {
     this.router.navigate([
       '/',
       this.languageService.currentLang,
-      'work',
-      this.work._id,
+      'works',
+      this.work.slug,
       photoIndex,
     ]);
   }

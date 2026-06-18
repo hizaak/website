@@ -53,12 +53,17 @@ app.use(
 const authRoutes = require("./routes/auth");
 const getWorksRoutes = require("./routes/pages/getWorks");
 const getWorkPhotosRoutes = require("./routes/pages/getWork");
+const workRoutes = require("./routes/works");
 const photoRoutes = require("./routes/photos");
 
 app.use("/login", authLimiter);
 
 app.use(authRoutes);
 
+app.use(
+  "/api/works",
+  workRoutes
+);
 
 app.use(
   "/api/pages/works",

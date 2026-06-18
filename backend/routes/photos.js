@@ -4,22 +4,13 @@ const router = express.Router();
 const photoController = require("../controllers/photo");
 const { verifyToken } = require("../config/authMiddleware");
 const { validateRequest, photoUpdateSchema } = require("../config/validation");
-const { upload } = require("../config/upload");
-
-const handleMulterUpload = (fieldName) => (req, res, next) => {
-  upload.single(fieldName)(req, res, (err) => {
-    if (err) {
-      return res.status(400).json({ message: err.message });
-    }
-    next();
-  });
-};
+const { uploadSingleImage } = require("../config/upload");
 
 router.get("/:id", photoController.get);
 router.put(
   "/:id",
   verifyToken,
-  handleMulterUpload("photo"),
+  uploadSingleImage("photo"),
   validateRequest(photoUpdateSchema),
   photoController.update
 );

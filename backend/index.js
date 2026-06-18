@@ -2,7 +2,6 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const connectDB = require("./config/db");
 const cors = require("cors");
-const rateLimit = require("express-rate-limit");
 const swaggerUi = require("swagger-ui-express");
 const specs = require("./config/swagger");
 const { initializeAdminAccount } = require("./models/User");
@@ -25,23 +24,6 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(bodyParser.json());
 
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 100,
-  message:
-    "Trop de requêtes depuis cette adresse IP, veuillez réessayer plus tard.",
-});
-
-const authLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 5,
-  message:
-    "Trop de tentatives de connexion, veuillez réessayer plus tard.",
-  skipSuccessfulRequests: true,
-});
-
-app.use(limiter);
-
 initializeAdminAccount();
 
 app.use(
@@ -55,8 +37,6 @@ const getWorksRoutes = require("./routes/pages/getWorks");
 const getWorkPhotosRoutes = require("./routes/pages/getWork");
 const workRoutes = require("./routes/works");
 const photoRoutes = require("./routes/photos");
-
-app.use("/login", authLimiter);
 
 app.use(authRoutes);
 

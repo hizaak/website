@@ -2,7 +2,8 @@
   "nav": {
     "works": "works",
     "about": "about",
-    "contact": "contact"
+    "contact": "contact",
+    "admin": "admin"
   },
 
   "about": {
@@ -11,5 +12,32 @@
 
   "contact": {
     "title": "contact"
+  },
+
+  "admin": {
+    "login": "admin login",
+    "username": "username",
+    "password": "password",
+    "signIn": "sign in",
+    "logout": "logout",
+    "back": "back",
+    "works": "works",
+    "addWork": "add work",
+    "title": "title",
+    "create": "create",
+    "edit": "edit",
+    "delete": "delete",
+    "save": "save",
+    "confirmChanges": "confirm changes",
+    "deleteWork": "delete work",
+    "existingPhotos": "existing photos",
+    "order": "order",
+    "date": "date",
+    "actions": "actions",
+    "editPhoto": "edit photo",
+    "replaceImage": "replace image",
+    "addPhoto": "add photo",
+    "image": "image",
+    "loading": "loading..."
   }
 }

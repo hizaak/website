@@ -7,5 +7,6 @@ export interface WorkPagePhoto {
 export interface WorkPage {
   _id: string;
   title: string;
+  slug: string;
   photos: WorkPagePhoto[];
 }

@@ -1,4 +1,5 @@
 const Work = require("../../models/Work");
+const { slugify } = require("../../utils/slug");
 
 exports.getWorksPage = async (req, res) => {
   try {
@@ -14,6 +15,7 @@ exports.getWorksPage = async (req, res) => {
       {
         $project: {
           title: 1,
+          slug: 1,
           years: {
             $map: {
               input: "$photos",
@@ -35,6 +37,7 @@ exports.getWorksPage = async (req, res) => {
       {
         $project: {
           title: 1,
+          slug: 1,
           minYear: { $min: "$years" },
           maxYear: { $max: "$years" },
         },
@@ -49,10 +52,8 @@ exports.getWorksPage = async (req, res) => {
     const result = works.map((work) => ({
       _id: work._id,
       title: work.title,
-      yearRange:
-        work.minYear === work.maxYear
-          ? String(work.minYear)
-          : `${work.minYear}-${work.maxYear}`,
+      slug: work.slug || slugify(work.title),
+      yearRange: getYearRange(work.minYear, work.maxYear),
     }));
 
     res.json(result);
@@ -62,4 +63,16 @@ exports.getWorksPage = async (req, res) => {
       error: error.message,
     });
   }
+};
+
+const getYearRange = (minYear, maxYear) => {
+  if (minYear === undefined || minYear === null) {
+    return "";
+  }
+
+  if (minYear === maxYear) {
+    return String(minYear);
+  }
+
+  return `${minYear}-${maxYear}`;
 };

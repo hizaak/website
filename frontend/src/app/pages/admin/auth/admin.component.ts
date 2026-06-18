@@ -1,19 +1,20 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from '../../../core/auth.service';
 import { ToastService } from '../../../core/toast.service';
+import { AdminNavigationService } from '../../../core/admin-navigation.service';
 import { MessageService } from 'primeng/api';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ToastModule } from 'primeng/toast';
+import { TranslatePipe } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-admin',
   templateUrl: './admin.component.html',
   styleUrls: ['./admin.component.css'],
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, ToastModule],
+  imports: [CommonModule, ReactiveFormsModule, ToastModule, TranslatePipe],
   providers: [MessageService, ToastService],
 })
 export class AdminComponent {
@@ -23,8 +24,8 @@ export class AdminComponent {
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
-    private router: Router,
-    private toastService: ToastService
+    private toastService: ToastService,
+    private adminNavigation: AdminNavigationService
   ) {
     this.adminForm = this.fb.group({
       username: ['', [Validators.required]],
@@ -42,7 +43,7 @@ export class AdminComponent {
     this.authService.login(username, password).subscribe(
       (response) => {
         if (response) {
-          this.router.navigate(['/dashboard/works']);
+          this.adminNavigation.toWorks();
           this.toastService.showSuccess(
             'Connexion réussie',
             'Bienvenue dans le dashboard'

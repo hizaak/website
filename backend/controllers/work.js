@@ -1,11 +1,87 @@
 const Work = require("../models/Work");
 const Photo = require("../models/Photo");
 const { deleteFile } = require("../config/upload");
+const { reorderWorkPhotos } = require("../services/photo-order");
+const { slugify } = require("../utils/slug");
 
 exports.getAll = async (req, res) => {
   try {
-    const works = await Work.find().sort({ title: 1 });
-    res.status(200).json(works);
+    const works = await Work.aggregate([
+      {
+        $lookup: {
+          from: "photos",
+          localField: "_id",
+          foreignField: "workId",
+          as: "photos",
+        },
+      },
+      {
+        $project: {
+          title: 1,
+          slug: 1,
+          createdAt: 1,
+          updatedAt: 1,
+          years: {
+            $map: {
+              input: "$photos",
+              as: "photo",
+              in: {
+                $toInt: {
+                  $arrayElemAt: [
+                    { $split: ["$$photo.photoDate", "/"] },
+                    2,
+                  ],
+                },
+              },
+            },
+          },
+        },
+      },
+      {
+        $project: {
+          title: 1,
+          slug: 1,
+          createdAt: 1,
+          updatedAt: 1,
+          minYear: { $min: "$years" },
+          maxYear: { $max: "$years" },
+        },
+      },
+      {
+        $addFields: {
+          yearRange: {
+            $cond: [
+              { $eq: ["$minYear", null] },
+              "",
+              {
+                $cond: [
+                  { $eq: ["$minYear", "$maxYear"] },
+                  { $toString: "$minYear" },
+                  {
+                    $concat: [
+                      { $toString: "$minYear" },
+                      "-",
+                      { $toString: "$maxYear" },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+        },
+      },
+      {
+        $sort: {
+          title: 1,
+        },
+      },
+    ]);
+    res.status(200).json(
+      works.map((work) => ({
+        ...work,
+        slug: work.slug || slugify(work.title),
+      }))
+    );
   } catch (error) {
     console.error("Error fetching works:", error);
     res.status(500).json({ message: "Erreur serveur.", error: error.message });
@@ -14,7 +90,7 @@ exports.getAll = async (req, res) => {
 
 exports.get = async (req, res) => {
   try {
-    const work = await Work.findById(req.params.id);
+    const work = await findWorkByIdOrSlug(req.params.id);
     if (!work) {
       return res.status(404).json({ message: "Work introuvable." });
     }
@@ -27,7 +103,17 @@ exports.get = async (req, res) => {
 
 exports.create = async (req, res) => {
   try {
-    const work = new Work(req.body);
+    const slug = slugify(req.body.title);
+    const existingWork = await findWorkByIdOrSlug(slug);
+
+    if (existingWork) {
+      return res.status(409).json({ message: "Ce slug existe deja." });
+    }
+
+    const work = new Work({
+      ...req.body,
+      slug,
+    });
     await work.save();
     res.status(201).json(work);
   } catch (error) {
@@ -41,7 +127,19 @@ exports.create = async (req, res) => {
 
 exports.update = async (req, res) => {
   try {
-    const work = await Work.findByIdAndUpdate(req.params.id, req.body, {
+    const nextBody = { ...req.body };
+
+    if (nextBody.title) {
+      nextBody.slug = slugify(nextBody.title);
+
+      const existingWork = await findWorkByIdOrSlug(nextBody.slug);
+
+      if (existingWork && String(existingWork._id) !== req.params.id) {
+        return res.status(409).json({ message: "Ce slug existe deja." });
+      }
+    }
+
+    const work = await Work.findByIdAndUpdate(req.params.id, nextBody, {
       new: true,
       runValidators: true,
     });
@@ -77,4 +175,46 @@ exports.delete = async (req, res) => {
     console.error("Error deleting work:", error);
     res.status(500).json({ message: "Erreur serveur.", error: error.message });
   }
+};
+
+exports.reorderPhotos = async (req, res) => {
+  try {
+    const work = await Work.findById(req.params.workId);
+    if (!work) {
+      return res.status(404).json({ message: "Work introuvable." });
+    }
+
+    const photos = await reorderWorkPhotos(work._id, req.body.photoIds);
+
+    if (!photos) {
+      return res.status(400).json({
+        message: "La liste des photos ne correspond pas a ce work.",
+      });
+    }
+
+    res.status(200).json(photos);
+  } catch (error) {
+    console.error("Error reordering photos:", error);
+    res.status(500).json({ message: "Erreur serveur.", error: error.message });
+  }
+};
+
+const findWorkByIdOrSlug = async (idOrSlug) => {
+  if (/^[0-9a-fA-F]{24}$/.test(idOrSlug)) {
+    const work = await Work.findById(idOrSlug);
+
+    if (work) {
+      return work;
+    }
+  }
+
+  const work = await Work.findOne({ slug: idOrSlug });
+
+  if (work) {
+    return work;
+  }
+
+  const works = await Work.find();
+
+  return works.find((item) => slugify(item.title) === idOrSlug) || null;
 };

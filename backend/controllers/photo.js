@@ -1,6 +1,10 @@
 const Photo = require("../models/Photo");
 const Work = require("../models/Work");
 const { deleteFile } = require("../config/upload");
+const {
+  getNextPhotoPosition,
+  getOrderedPhotosForWork,
+} = require("../services/photo-order");
 
 exports.getByWorkId = async (req, res) => {
   try {
@@ -9,10 +13,7 @@ exports.getByWorkId = async (req, res) => {
       return res.status(404).json({ message: "Work introuvable." });
     }
 
-    const photos = await Photo.find({ workId: req.params.workId }).sort({
-      photoDate: 1,
-      title: 1,
-    });
+    const photos = await getOrderedPhotosForWork(req.params.workId);
     res.status(200).json(photos);
   } catch (error) {
     console.error("Error fetching photos by work:", error);
@@ -39,6 +40,7 @@ exports.create = async (req, res) => {
       filename: req.file.filename,
       originalFilename: req.file.originalname,
       mimeType: req.file.mimetype,
+      position: await getNextPhotoPosition(work._id),
     });
 
     await photo.save();

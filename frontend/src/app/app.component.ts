@@ -37,9 +37,6 @@ export class AppComponent {
       .subscribe(() => {
         const lang = this.router.url.split('/')[1];
 
-        console.log('LANG DETECTED:', lang);
-        console.log('URL:', this.router.url);
-
         if (lang === 'fr' || lang === 'en') {
           this.languageService.setLanguage(lang);
         }

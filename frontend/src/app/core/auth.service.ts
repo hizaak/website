@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { AbstractRequestService } from '../services/api/abstract-request.service';
+import { API_ENDPOINTS } from './api-endpoints';
 
 @Injectable({
   providedIn: 'root',
@@ -14,7 +15,7 @@ export class AuthService extends AbstractRequestService {
   }
 
   login(username: string, password: string): Observable<any> {
-    return this.post<any>('login', { username, password }).pipe(
+    return this.post<any>(API_ENDPOINTS.auth.login, { username, password }).pipe(
       tap((response: any) => {
         if (response.token) {
           localStorage.setItem('jwt', response.token);
@@ -25,10 +26,30 @@ export class AuthService extends AbstractRequestService {
 
   isAuthenticated(): boolean {
     const token = localStorage.getItem('jwt');
-    return !!token;
+
+    if (!token) {
+      return false;
+    }
+
+    const payload = this.decodeTokenPayload(token);
+
+    if (!payload?.exp) {
+      return true;
+    }
+
+    return payload.exp * 1000 > Date.now();
   }
 
   logout(): void {
     localStorage.removeItem('jwt');
+  }
+
+  private decodeTokenPayload(token: string): { exp?: number } | null {
+    try {
+      const payload = token.split('.')[1];
+      return JSON.parse(atob(payload));
+    } catch {
+      return null;
+    }
   }
 }

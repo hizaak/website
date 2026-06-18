@@ -1,23 +1,25 @@
 <div class="admin-login-container">
-  <h2>Connexion Admin</h2>
-  <div class="card flex justify-center"></div>
+  <p><b>{{ 'admin.login' | translate }}</b></p>
+
   <form [formGroup]="adminForm" (ngSubmit)="onSubmit()">
-    <div class="form-group">
-      <label for="username">Nom d'utilisateur</label>
+    <p>
+      <label for="username">{{ 'admin.username' | translate }}</label>
+      <br>
       <input id="username" type="text" formControlName="username" class="form-control" />
-    </div>
+    </p>
 
-    <div class="form-group">
-      <label for="password">Mot de passe</label>
+    <p>
+      <label for="password">{{ 'admin.password' | translate }}</label>
+      <br>
       <input id="password" type="password" formControlName="password" class="form-control" />
-    </div>
+    </p>
 
-    <div *ngIf="errorMessage" class="error-message">
-      <p>{{ errorMessage }}</p>
-    </div>
+    <p *ngIf="errorMessage" style="color: red;">
+      {{ errorMessage }}
+    </p>
 
     <button type="submit" [disabled]="adminForm.invalid" class="btn btn-primary">
-      Se connecter
+      {{ 'admin.signIn' | translate }}
     </button>
   </form>
 </div>

@@ -10,9 +10,7 @@ import { RouterModule } from '@angular/router';
   styleUrls: ['./dashboard.component.scss'],
 })
 export class DashboardComponent {
-  constructor(private router: Router) {
-    console.log('DASHBOARD LOADED');
-  }
+  constructor(private router: Router) {}
 
   navigateTo(route: string) {
     this.router.navigate(['/dashboard', route]);

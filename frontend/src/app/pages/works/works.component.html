@@ -2,14 +2,14 @@
 
 <div *ngIf="works.length">
   <ng-container *ngFor="let work of works">
-    {{ work.yearRange }}
+    {{ work.yearRange }}&nbsp;
 
     <a
       [routerLink]="[
         '/',
         languageService.currentLang,
         'works',
-        work._id
+        work.slug
       ]"
     >
       {{ work.title }}

@@ -6,7 +6,7 @@ const options = {
     info: {
       title: "Portfolio Photographique API",
       version: "2.0.0",
-      description: "API REST pour la gestion des Works et Photos",
+      description: "REST API for managing Works and Photos",
       contact: {
         name: "Alexandre Maurice",
       },
@@ -27,7 +27,7 @@ const options = {
           type: "http",
           scheme: "bearer",
           bearerFormat: "JWT",
-          description: "JWT token obtenu via POST /login",
+          description: "JWT token obtained via POST /login",
         },
       },
       schemas: {
@@ -37,6 +37,7 @@ const options = {
           properties: {
             _id: { type: "string", example: "665a1b2c3d4e5f6789012345" },
             title: { type: "string", example: "Yosemite" },
+            slug: { type: "string", example: "yosemite" },
             createdAt: { type: "string", format: "date-time" },
             updatedAt: { type: "string", format: "date-time" },
           },
@@ -68,6 +69,7 @@ const options = {
             },
             originalFilename: { type: "string", example: "morning-light.jpg" },
             mimeType: { type: "string", example: "image/jpeg" },
+            position: { type: "number", example: 0 },
             createdAt: { type: "string", format: "date-time" },
             updatedAt: { type: "string", format: "date-time" },
           },
@@ -86,7 +88,47 @@ const options = {
           properties: {
             title: { type: "string", example: "Granite Wall" },
             photoDate: { type: "string", example: "03/11/2024" },
-            photo: { type: "string", format: "binary", description: "Optionnel" },
+            photo: { type: "string", format: "binary", description: "Optional" },
+          },
+        },
+        PhotoReorder: {
+          type: "object",
+          required: ["photoIds"],
+          properties: {
+            photoIds: {
+              type: "array",
+              items: { type: "string" },
+              example: ["665a1b2c3d4e5f6789012346", "665a1b2c3d4e5f6789012347"],
+            },
+          },
+        },
+        WorkListItem: {
+          type: "object",
+          properties: {
+            _id: { type: "string", example: "665a1b2c3d4e5f6789012345" },
+            title: { type: "string", example: "Yosemite" },
+            slug: { type: "string", example: "yosemite" },
+            yearRange: { type: "string", example: "2022-2024" },
+          },
+        },
+        WorkPage: {
+          type: "object",
+          properties: {
+            _id: { type: "string", example: "665a1b2c3d4e5f6789012345" },
+            title: { type: "string", example: "Yosemite" },
+            slug: { type: "string", example: "yosemite" },
+            photos: {
+              type: "array",
+              items: {
+                type: "object",
+                properties: {
+                  _id: { type: "string", example: "665a1b2c3d4e5f6789012346" },
+                  title: { type: "string", example: "Morning Light" },
+                  photoDate: { type: "string", example: "14/08/2023" },
+                  filename: { type: "string", example: "morning-light.jpg" },
+                },
+              },
+            },
           },
         },
         LoginRequest: {
@@ -100,7 +142,7 @@ const options = {
         LoginResponse: {
           type: "object",
           properties: {
-            message: { type: "string", example: "Connexion réussie." },
+            message: { type: "string", example: "Login successful." },
             token: { type: "string" },
           },
         },
@@ -123,7 +165,7 @@ const options = {
       "/login": {
         post: {
           tags: ["Authentication"],
-          summary: "Connexion admin",
+          summary: "Admin login",
           requestBody: {
             required: true,
             content: {
@@ -134,24 +176,24 @@ const options = {
           },
           responses: {
             200: {
-              description: "Connexion réussie",
+              description: "Login successful",
               content: {
                 "application/json": {
                   schema: { $ref: "#/components/schemas/LoginResponse" },
                 },
               },
             },
-            401: { description: "Identifiants invalides" },
+            401: { description: "Invalid credentials" },
           },
         },
       },
       "/api/works": {
         get: {
           tags: ["Works"],
-          summary: "Liste tous les Works",
+          summary: "List all Works",
           responses: {
             200: {
-              description: "Liste des Works",
+              description: "List of Works",
               content: {
                 "application/json": {
                   schema: {
@@ -165,7 +207,7 @@ const options = {
         },
         post: {
           tags: ["Works"],
-          summary: "Créer un Work",
+          summary: "Create a Work",
           security: [{ bearerAuth: [] }],
           requestBody: {
             required: true,
@@ -177,21 +219,21 @@ const options = {
           },
           responses: {
             201: {
-              description: "Work créé",
+              description: "Work created",
               content: {
                 "application/json": {
                   schema: { $ref: "#/components/schemas/Work" },
                 },
               },
             },
-            409: { description: "Titre déjà utilisé" },
+            409: { description: "Title already in use" },
           },
         },
       },
       "/api/works/{id}": {
         get: {
           tags: ["Works"],
-          summary: "Obtenir un Work",
+          summary: "Get a Work",
           parameters: [
             { name: "id", in: "path", required: true, schema: { type: "string" } },
           ],
@@ -203,12 +245,12 @@ const options = {
                 },
               },
             },
-            404: { description: "Work introuvable" },
+            404: { description: "Work not found" },
           },
         },
         put: {
           tags: ["Works"],
-          summary: "Modifier un Work",
+          summary: "Update a Work",
           security: [{ bearerAuth: [] }],
           parameters: [
             { name: "id", in: "path", required: true, schema: { type: "string" } },
@@ -229,13 +271,13 @@ const options = {
                 },
               },
             },
-            404: { description: "Work introuvable" },
-            409: { description: "Titre déjà utilisé" },
+            404: { description: "Work not found" },
+            409: { description: "Title already in use" },
           },
         },
         delete: {
           tags: ["Works"],
-          summary: "Supprimer un Work et ses Photos",
+          summary: "Delete a Work and its Photos",
           security: [{ bearerAuth: [] }],
           parameters: [
             { name: "id", in: "path", required: true, schema: { type: "string" } },
@@ -248,14 +290,14 @@ const options = {
                 },
               },
             },
-            404: { description: "Work introuvable" },
+            404: { description: "Work not found" },
           },
         },
       },
       "/api/works/{workId}/photos": {
         get: {
           tags: ["Photos"],
-          summary: "Photos d'un Work",
+          summary: "List a Work's Photos",
           parameters: [
             { name: "workId", in: "path", required: true, schema: { type: "string" } },
           ],
@@ -270,12 +312,12 @@ const options = {
                 },
               },
             },
-            404: { description: "Work introuvable" },
+            404: { description: "Work not found" },
           },
         },
         post: {
           tags: ["Photos"],
-          summary: "Ajouter une Photo à un Work",
+          summary: "Add a Photo to a Work",
           security: [{ bearerAuth: [] }],
           parameters: [
             { name: "workId", in: "path", required: true, schema: { type: "string" } },
@@ -296,15 +338,47 @@ const options = {
                 },
               },
             },
-            400: { description: "Validation ou format fichier invalide" },
-            404: { description: "Work introuvable" },
+            400: { description: "Validation error or invalid file format" },
+            404: { description: "Work not found" },
+          },
+        },
+      },
+      "/api/works/{workId}/photos/reorder": {
+        put: {
+          tags: ["Photos"],
+          summary: "Reorder a Work's Photos",
+          security: [{ bearerAuth: [] }],
+          parameters: [
+            { name: "workId", in: "path", required: true, schema: { type: "string" } },
+          ],
+          requestBody: {
+            required: true,
+            content: {
+              "application/json": {
+                schema: { $ref: "#/components/schemas/PhotoReorder" },
+              },
+            },
+          },
+          responses: {
+            200: {
+              content: {
+                "application/json": {
+                  schema: {
+                    type: "array",
+                    items: { $ref: "#/components/schemas/Photo" },
+                  },
+                },
+              },
+            },
+            400: { description: "The photo list does not match this work" },
+            404: { description: "Work not found" },
           },
         },
       },
       "/api/photos/{id}": {
         get: {
           tags: ["Photos"],
-          summary: "Obtenir une Photo",
+          summary: "Get a Photo",
           parameters: [
             { name: "id", in: "path", required: true, schema: { type: "string" } },
           ],
@@ -316,12 +390,12 @@ const options = {
                 },
               },
             },
-            404: { description: "Photo introuvable" },
+            404: { description: "Photo not found" },
           },
         },
         put: {
           tags: ["Photos"],
-          summary: "Modifier une Photo",
+          summary: "Update a Photo",
           security: [{ bearerAuth: [] }],
           parameters: [
             { name: "id", in: "path", required: true, schema: { type: "string" } },
@@ -341,12 +415,12 @@ const options = {
                 },
               },
             },
-            404: { description: "Photo introuvable" },
+            404: { description: "Photo not found" },
           },
         },
         delete: {
           tags: ["Photos"],
-          summary: "Supprimer une Photo",
+          summary: "Delete a Photo",
           security: [{ bearerAuth: [] }],
           parameters: [
             { name: "id", in: "path", required: true, schema: { type: "string" } },
@@ -359,7 +433,46 @@ const options = {
                 },
               },
             },
-            404: { description: "Photo introuvable" },
+            404: { description: "Photo not found" },
+          },
+        },
+      },
+      "/api/pages/works": {
+        get: {
+          tags: ["Pages"],
+          summary: "Get the Works list page data",
+          responses: {
+            200: {
+              description: "List of Works for the listing page",
+              content: {
+                "application/json": {
+                  schema: {
+                    type: "array",
+                    items: { $ref: "#/components/schemas/WorkListItem" },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+      "/api/pages/work/{id}": {
+        get: {
+          tags: ["Pages"],
+          summary: "Get a Work detail page data",
+          parameters: [
+            { name: "id", in: "path", required: true, schema: { type: "string" } },
+          ],
+          responses: {
+            200: {
+              description: "Work detail with its ordered Photos",
+              content: {
+                "application/json": {
+                  schema: { $ref: "#/components/schemas/WorkPage" },
+                },
+              },
+            },
+            404: { description: "Work not found" },
           },
         },
       },

@@ -1,7 +1,7 @@
 const Work = require("../models/Work");
 const Photo = require("../models/Photo");
 const { deleteFile } = require("../config/upload");
-const { reorderWorkPhotos } = require("../services/photo-order");
+const { findWorkByIdOrSlug } = require("../services/work-lookup");
 const { slugify } = require("../utils/slug");
 
 exports.getAll = async (req, res) => {
@@ -84,7 +84,7 @@ exports.getAll = async (req, res) => {
     );
   } catch (error) {
     console.error("Error fetching works:", error);
-    res.status(500).json({ message: "Erreur serveur.", error: error.message });
+    res.status(500).json({ message: "Server error.", error: error.message });
   }
 };
 
@@ -92,12 +92,12 @@ exports.get = async (req, res) => {
   try {
     const work = await findWorkByIdOrSlug(req.params.id);
     if (!work) {
-      return res.status(404).json({ message: "Work introuvable." });
+      return res.status(404).json({ message: "Work not found." });
     }
     res.status(200).json(work);
   } catch (error) {
     console.error("Error fetching work:", error);
-    res.status(500).json({ message: "Erreur serveur.", error: error.message });
+    res.status(500).json({ message: "Server error.", error: error.message });
   }
 };
 
@@ -107,7 +107,7 @@ exports.create = async (req, res) => {
     const existingWork = await findWorkByIdOrSlug(slug);
 
     if (existingWork) {
-      return res.status(409).json({ message: "Ce slug existe deja." });
+      return res.status(409).json({ message: "This slug already exists." });
     }
 
     const work = new Work({
@@ -118,10 +118,10 @@ exports.create = async (req, res) => {
     res.status(201).json(work);
   } catch (error) {
     if (error.code === 11000) {
-      return res.status(409).json({ message: "Ce titre existe déjà." });
+      return res.status(409).json({ message: "This title already exists." });
     }
     console.error("Error creating work:", error);
-    res.status(500).json({ message: "Erreur serveur.", error: error.message });
+    res.status(500).json({ message: "Server error.", error: error.message });
   }
 };
 
@@ -135,7 +135,7 @@ exports.update = async (req, res) => {
       const existingWork = await findWorkByIdOrSlug(nextBody.slug);
 
       if (existingWork && String(existingWork._id) !== req.params.id) {
-        return res.status(409).json({ message: "Ce slug existe deja." });
+        return res.status(409).json({ message: "This slug already exists." });
       }
     }
 
@@ -144,15 +144,15 @@ exports.update = async (req, res) => {
       runValidators: true,
     });
     if (!work) {
-      return res.status(404).json({ message: "Work introuvable." });
+      return res.status(404).json({ message: "Work not found." });
     }
     res.status(200).json(work);
   } catch (error) {
     if (error.code === 11000) {
-      return res.status(409).json({ message: "Ce titre existe déjà." });
+      return res.status(409).json({ message: "This title already exists." });
     }
     console.error("Error updating work:", error);
-    res.status(500).json({ message: "Erreur serveur.", error: error.message });
+    res.status(500).json({ message: "Server error.", error: error.message });
   }
 };
 
@@ -160,7 +160,7 @@ exports.delete = async (req, res) => {
   try {
     const work = await Work.findById(req.params.id);
     if (!work) {
-      return res.status(404).json({ message: "Work introuvable." });
+      return res.status(404).json({ message: "Work not found." });
     }
 
     const photos = await Photo.find({ workId: work._id });
@@ -170,51 +170,9 @@ exports.delete = async (req, res) => {
     await Photo.deleteMany({ workId: work._id });
     await Work.findByIdAndDelete(work._id);
 
-    res.status(200).json({ message: "Work supprimé." });
+    res.status(200).json({ message: "Work deleted." });
   } catch (error) {
     console.error("Error deleting work:", error);
-    res.status(500).json({ message: "Erreur serveur.", error: error.message });
+    res.status(500).json({ message: "Server error.", error: error.message });
   }
-};
-
-exports.reorderPhotos = async (req, res) => {
-  try {
-    const work = await Work.findById(req.params.workId);
-    if (!work) {
-      return res.status(404).json({ message: "Work introuvable." });
-    }
-
-    const photos = await reorderWorkPhotos(work._id, req.body.photoIds);
-
-    if (!photos) {
-      return res.status(400).json({
-        message: "La liste des photos ne correspond pas a ce work.",
-      });
-    }
-
-    res.status(200).json(photos);
-  } catch (error) {
-    console.error("Error reordering photos:", error);
-    res.status(500).json({ message: "Erreur serveur.", error: error.message });
-  }
-};
-
-const findWorkByIdOrSlug = async (idOrSlug) => {
-  if (/^[0-9a-fA-F]{24}$/.test(idOrSlug)) {
-    const work = await Work.findById(idOrSlug);
-
-    if (work) {
-      return work;
-    }
-  }
-
-  const work = await Work.findOne({ slug: idOrSlug });
-
-  if (work) {
-    return work;
-  }
-
-  const works = await Work.find();
-
-  return works.find((item) => slugify(item.title) === idOrSlug) || null;
 };

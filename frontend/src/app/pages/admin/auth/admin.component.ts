@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { AuthService } from '../../../core/auth.service';
+import { AuthService } from '../../../services/api/auth.service';
 import { ToastService } from '../../../core/toast.service';
 import { AdminNavigationService } from '../../../core/admin-navigation.service';
 import { MessageService } from 'primeng/api';
@@ -49,7 +49,7 @@ export class AdminComponent {
             'Bienvenue dans le dashboard'
           );
         } else {
-          this.errorMessage = 'Identifiants incorrects';
+          this.errorMessage = 'Incorrect username or password.';
           this.toastService.showError(
             'Erreur',
             "Nom d'utilisateur ou mot de passe incorrect"
@@ -57,6 +57,12 @@ export class AdminComponent {
         }
       },
       (error) => {
+        if (error?.status === 401) {
+          this.errorMessage = 'Incorrect username or password.';
+        } else {
+          this.errorMessage = 'An error occurred. Please try again.';
+        }
+
         this.toastService.showError(
           'Erreur',
           'Une erreur est survenue. Veuillez réessayer.'

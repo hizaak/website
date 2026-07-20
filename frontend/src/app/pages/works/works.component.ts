@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 
-import { WorksPageService } from '../../services/pages/works-page.service';
+import { WorksPageService } from '../../services/pages/works.service';
 import { WorkListItem } from '../../interfaces/pages/WorksPage';
 
 import { LanguageService } from '../../core/language.service';

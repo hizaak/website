@@ -44,4 +44,12 @@ export class PhotoService extends AbstractRequestService {
   getPhotoUrl(filename: string): string {
     return `${environment.apiUrl}/uploads/${filename}`;
   }
+
+  getPhotoThumbnailUrl(photo: Photo): string {
+    if (photo.thumbnailFilename) {
+      return `${environment.apiUrl}/uploads/thumbnails/${photo.thumbnailFilename}`;
+    }
+
+    return this.getPhotoUrl(photo.filename);
+  }
 }

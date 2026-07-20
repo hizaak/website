@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterModule } from '@angular/router';
@@ -16,7 +16,7 @@ import { TranslatePipe } from '@ngx-translate/core';
   templateUrl: './work-detail-admin.component.html',
   styleUrl: './work-detail-admin.component.scss',
 })
-export class WorkDetailAdminComponent implements OnInit {
+export class WorkDetailAdminComponent implements OnInit, OnDestroy {
   work: Work | null = null;
   photos: Photo[] = [];
   editTitle = '';
@@ -25,13 +25,14 @@ export class WorkDetailAdminComponent implements OnInit {
   newPhotoTitle = '';
   newPhotoDate = '';
   newPhotoFile: File | null = null;
+  newPhotoPreviewUrl: string | null = null;
   selectedPhoto: Photo | null = null;
   replacePhotoFile: File | null = null;
 
   constructor(
     private route: ActivatedRoute,
     private workService: WorkService,
-    private photoService: PhotoService,
+    public photoService: PhotoService,
     private adminNavigation: AdminNavigationService
   ) { }
 
@@ -44,6 +45,10 @@ export class WorkDetailAdminComponent implements OnInit {
 
     this.loadWork(workId);
     this.loadPhotos(workId);
+  }
+
+  ngOnDestroy(): void {
+    this.revokeNewPhotoPreview();
   }
 
   loadWork(workId: string): void {
@@ -107,11 +112,21 @@ export class WorkDetailAdminComponent implements OnInit {
       this.error = 'Format non autorisé. Seuls PNG et JPEG sont acceptés.';
       input.value = '';
       this.newPhotoFile = null;
+      this.revokeNewPhotoPreview();
       return;
     }
 
     this.error = null;
     this.newPhotoFile = file;
+    this.revokeNewPhotoPreview();
+    this.newPhotoPreviewUrl = URL.createObjectURL(file);
+  }
+
+  private revokeNewPhotoPreview(): void {
+    if (this.newPhotoPreviewUrl) {
+      URL.revokeObjectURL(this.newPhotoPreviewUrl);
+      this.newPhotoPreviewUrl = null;
+    }
   }
 
   createPhoto(): void {
@@ -130,6 +145,7 @@ export class WorkDetailAdminComponent implements OnInit {
         this.newPhotoTitle = '';
         this.newPhotoDate = '';
         this.newPhotoFile = null;
+        this.revokeNewPhotoPreview();
         this.error = null;
         this.loadPhotos(this.work!._id);
       },

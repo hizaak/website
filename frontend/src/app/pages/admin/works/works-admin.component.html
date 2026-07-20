@@ -6,16 +6,26 @@
 
 <p *ngIf="error" style="color: red;">{{ error }}</p>
 
-<div class="works-list">
-  <div class="work-row" *ngFor="let work of works">
-    <span>{{ work.yearRange }}</span>&nbsp;
-    <span>{{ work.title }}</span>
-    &nbsp;
-    <button type="button" (click)="openWork(work)">{{ 'admin.edit' | translate }}</button>
-    &nbsp;
-    <button type="button" (click)="deleteWork(work)">{{ 'admin.delete' | translate }}</button>
-  </div>
-</div>
+<table class="admin-table">
+  <thead>
+    <tr>
+      <th>{{ 'admin.yearRange' | translate }}</th>
+      <th>{{ 'admin.title' | translate }}</th>
+      <th>{{ 'admin.actions' | translate }}</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let work of works">
+      <td>{{ work.yearRange }}</td>
+      <td>{{ work.title }}</td>
+      <td>
+        <button type="button" (click)="openWork(work)">{{ 'admin.edit' | translate }}</button>
+        &nbsp;
+        <button type="button" (click)="deleteWork(work)">{{ 'admin.delete' | translate }}</button>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
 <hr>
 

@@ -4,6 +4,7 @@ export interface Photo {
   title: string;
   photoDate: string;
   filename: string;
+  thumbnailFilename?: string;
   originalFilename: string;
   mimeType: string;
   position: number;

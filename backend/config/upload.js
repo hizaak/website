@@ -5,9 +5,14 @@ const fs = require("fs");
 const { randomUUID } = require("crypto");
 
 const UPLOAD_DIR = path.join(__dirname, "..", "uploads");
+const THUMBNAIL_DIR = path.join(UPLOAD_DIR, "thumbnails");
 
 if (!fs.existsSync(UPLOAD_DIR)) {
   fs.mkdirSync(UPLOAD_DIR, { recursive: true });
+}
+
+if (!fs.existsSync(THUMBNAIL_DIR)) {
+  fs.mkdirSync(THUMBNAIL_DIR, { recursive: true });
 }
 
 const ALLOWED_MIMES = ["image/png", "image/jpeg"];
@@ -22,6 +27,12 @@ const DIMENSION_STEPS = [3840, 3200, 2600, 2000];
 const JPEG_QUALITY_STEPS = [92, 84, 76, 66, 50];
 const PNG_QUALITY_STEPS = [100, 90, 80, 65, 50];
 const MAX_OUTPUT_BYTES = 3 * 1024 * 1024;
+
+// Small preview used by the admin photo lists, so the browser doesn't have
+// to decode dozens of full-resolution originals at once.
+const THUMBNAIL_MAX_DIMENSION = 300;
+const THUMBNAIL_JPEG_QUALITY = 80;
+const THUMBNAIL_PNG_QUALITY = 90;
 
 const fileFilter = (req, file, cb) => {
   const ext = path.extname(file.originalname).toLowerCase();
@@ -78,6 +89,27 @@ const encodeWithinBudget = async (buffer, mimeType) => {
   return smallest;
 };
 
+// Downscales an already-processed (oriented, sRGB) image buffer to a small
+// preview. Takes the processed buffer rather than the raw upload so it never
+// has to redo the EXIF/colorspace work.
+const encodeThumbnail = async (buffer, mimeType) => {
+  const base = sharp(buffer)
+    .resize(THUMBNAIL_MAX_DIMENSION, THUMBNAIL_MAX_DIMENSION, {
+      fit: "inside",
+      withoutEnlargement: true,
+    })
+    .toColorspace("srgb");
+
+  return mimeType === "image/png"
+    ? base.png({ quality: THUMBNAIL_PNG_QUALITY, palette: true, compressionLevel: 9 }).toBuffer()
+    : base.jpeg({ quality: THUMBNAIL_JPEG_QUALITY, mozjpeg: true }).toBuffer();
+};
+
+const writeThumbnail = async (buffer, mimeType, filename) => {
+  const thumbnailBuffer = await encodeThumbnail(buffer, mimeType);
+  fs.writeFileSync(path.join(THUMBNAIL_DIR, filename), thumbnailBuffer);
+};
+
 // Runs after multer has buffered the file in memory.
 const processUploadedImage = async (req, res, next) => {
   if (!req.file) {
@@ -91,8 +123,10 @@ const processUploadedImage = async (req, res, next) => {
     const buffer = await encodeWithinBudget(req.file.buffer, req.file.mimetype);
 
     fs.writeFileSync(path.join(UPLOAD_DIR, filename), buffer);
+    await writeThumbnail(buffer, req.file.mimetype, filename);
 
     req.file.filename = filename;
+    req.file.thumbnailFilename = filename;
     req.file.size = buffer.length;
 
     next();
@@ -123,11 +157,26 @@ const deleteFile = (filename) => {
   }
 };
 
+const deleteThumbnail = (filename) => {
+  if (!filename) {
+    return;
+  }
+
+  const filePath = path.join(THUMBNAIL_DIR, filename);
+
+  if (fs.existsSync(filePath)) {
+    fs.unlinkSync(filePath);
+  }
+};
+
 module.exports = {
   upload,
   uploadSingleImage,
   UPLOAD_DIR,
+  THUMBNAIL_DIR,
   deleteFile,
+  deleteThumbnail,
+  writeThumbnail,
   ALLOWED_MIMES,
   ALLOWED_EXTENSIONS,
 };

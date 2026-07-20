@@ -22,12 +22,13 @@
 
   <p><b>{{ 'admin.existingPhotos' | translate }}</b></p>
 
-  <table>
+  <table class="admin-table">
     <thead>
       <tr>
         <th>{{ 'admin.order' | translate }}</th>
         <th>{{ 'admin.date' | translate }}</th>
         <th>{{ 'admin.title' | translate }}</th>
+        <th>{{ 'admin.thumbnail' | translate }}</th>
         <th>{{ 'admin.actions' | translate }}</th>
       </tr>
     </thead>
@@ -40,6 +41,9 @@
         </td>
         <td>{{ photo.photoDate }}</td>
         <td>{{ photo.title }}</td>
+        <td>
+          <img [src]="photoService.getPhotoThumbnailUrl(photo)" [alt]="photo.title" class="thumbnail">
+        </td>
         <td>
           <button type="button" (click)="editPhoto(photo)">{{ 'admin.edit' | translate }}</button>
           &nbsp;
@@ -81,9 +85,9 @@
 
       <button type="submit">{{ 'admin.save' | translate }}</button>
     </form>
-  </div>
 
-  <hr>
+    <hr>
+  </div>
 
   <p><b>{{ 'admin.addPhoto' | translate }}</b></p>
 
@@ -110,6 +114,10 @@
         <br>
         <input type="file" accept="image/png,image/jpeg,.png,.jpg,.jpeg" (change)="onNewPhotoFileSelected($event)" />
       </label>
+    </p>
+
+    <p *ngIf="newPhotoPreviewUrl">
+      <img [src]="newPhotoPreviewUrl" alt="" class="thumbnail">
     </p>
 
     <button type="submit">{{ 'admin.addPhoto' | translate }}</button>

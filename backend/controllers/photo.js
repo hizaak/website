@@ -1,6 +1,6 @@
 const Photo = require("../models/Photo");
 const Work = require("../models/Work");
-const { deleteFile } = require("../config/upload");
+const { deleteFile, deleteThumbnail } = require("../config/upload");
 const {
   getNextPhotoPosition,
   getOrderedPhotosForWork,
@@ -31,6 +31,7 @@ exports.create = async (req, res) => {
     const work = await Work.findById(req.params.workId);
     if (!work) {
       deleteFile(req.file.filename);
+      deleteThumbnail(req.file.thumbnailFilename);
       return res.status(404).json({ message: "Work not found." });
     }
 
@@ -39,6 +40,7 @@ exports.create = async (req, res) => {
       title: req.body.title,
       photoDate: req.body.photoDate,
       filename: req.file.filename,
+      thumbnailFilename: req.file.thumbnailFilename,
       originalFilename: req.file.originalname,
       mimeType: req.file.mimetype,
       position: await getNextPhotoPosition(work._id),
@@ -49,6 +51,7 @@ exports.create = async (req, res) => {
   } catch (error) {
     if (req.file) {
       deleteFile(req.file.filename);
+      deleteThumbnail(req.file.thumbnailFilename);
     }
     console.error("Error creating photo:", error);
     res.status(500).json({ message: "Server error.", error: error.message });
@@ -76,6 +79,7 @@ exports.update = async (req, res) => {
     }
 
     const previousFilename = photo.filename;
+    const previousThumbnailFilename = photo.thumbnailFilename;
 
     if (req.body.title !== undefined) {
       photo.title = req.body.title;
@@ -86,6 +90,7 @@ exports.update = async (req, res) => {
 
     if (req.file) {
       photo.filename = req.file.filename;
+      photo.thumbnailFilename = req.file.thumbnailFilename;
       photo.originalFilename = req.file.originalname;
       photo.mimeType = req.file.mimetype;
     }
@@ -94,12 +99,14 @@ exports.update = async (req, res) => {
 
     if (req.file && previousFilename !== photo.filename) {
       deleteFile(previousFilename);
+      deleteThumbnail(previousThumbnailFilename);
     }
 
     res.status(200).json(photo);
   } catch (error) {
     if (req.file) {
       deleteFile(req.file.filename);
+      deleteThumbnail(req.file.thumbnailFilename);
     }
     console.error("Error updating photo:", error);
     res.status(500).json({ message: "Server error.", error: error.message });
@@ -114,6 +121,7 @@ exports.delete = async (req, res) => {
     }
 
     deleteFile(photo.filename);
+    deleteThumbnail(photo.thumbnailFilename);
     await Photo.findByIdAndDelete(photo._id);
 
     res.status(200).json({ message: "Photo deleted." });

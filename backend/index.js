@@ -4,7 +4,7 @@ const connectDB = require("./config/db");
 const cors = require("cors");
 const swaggerUi = require("swagger-ui-express");
 const specs = require("./config/swagger");
-const { initializeAdminAccount } = require("./models/User");
+const { initializeAdminAccount } = require("./services/admin-account");
 const path = require("path");
 
 require("dotenv").config();
@@ -33,12 +33,17 @@ app.use(
 );
 
 const authRoutes = require("./routes/auth");
-const getWorksRoutes = require("./routes/pages/getWorks");
-const getWorkPhotosRoutes = require("./routes/pages/getWork");
+const worksPageRoutes = require("./routes/pages/works");
+const workPageRoutes = require("./routes/pages/work");
 const workRoutes = require("./routes/works");
 const photoRoutes = require("./routes/photos");
 
 app.use(authRoutes);
+
+app.use(
+  "/api/works/:workId/photos",
+  photoRoutes.nested
+);
 
 app.use(
   "/api/works",
@@ -46,18 +51,18 @@ app.use(
 );
 
 app.use(
+  "/api/photos",
+  photoRoutes.collection
+);
+
+app.use(
   "/api/pages/works",
-  getWorksRoutes
+  worksPageRoutes
 );
 
 app.use(
   "/api/pages/work",
-  getWorkPhotosRoutes
-);
-
-app.use(
-  "/api/photos",
-  photoRoutes
+  workPageRoutes
 );
 
 app.use(
@@ -70,13 +75,13 @@ app.use(
 app.get("/", (req, res) => {
   res.json({
     message:
-      "Portfolio API - Consultez /api-docs pour la documentation",
+      "Portfolio API - See /api-docs for documentation",
   });
 });
 
 app.use((req, res) => {
   res.status(404).json({
-    message: "Endpoint introuvable",
+    message: "Endpoint not found",
   });
 });
 

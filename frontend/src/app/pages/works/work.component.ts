@@ -10,7 +10,7 @@ import {
   RouterModule,
 } from '@angular/router';
 
-import { WorkPageService } from '../../services/pages/work-page.service';
+import { WorkPageService } from '../../services/pages/work.service';
 
 import {
   WorkPage,

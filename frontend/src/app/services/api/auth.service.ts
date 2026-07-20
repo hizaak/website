@@ -2,9 +2,9 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { environment } from '../../environments/environment';
-import { AbstractRequestService } from '../services/api/abstract-request.service';
-import { API_ENDPOINTS } from './api-endpoints';
+import { environment } from '../../../environments/environment';
+import { AbstractRequestService } from './abstract-request.service';
+import { API_ENDPOINTS } from '../../core/api-endpoints';
 
 @Injectable({
   providedIn: 'root',

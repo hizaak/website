@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { AuthService } from '../../../core/auth.service';
+import { AuthService } from '../../../services/api/auth.service';
 import { ToastService } from '../../../core/toast.service';
 import { AdminNavigationService } from '../../../core/admin-navigation.service';
 import { MessageService } from 'primeng/api';

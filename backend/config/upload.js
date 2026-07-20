@@ -16,7 +16,7 @@ const fileFilter = (req, file, cb) => {
   const ext = path.extname(file.originalname).toLowerCase();
 
   if (!ALLOWED_EXTENSIONS.includes(ext) || !ALLOWED_MIMES.includes(file.mimetype)) {
-    return cb(new Error("Format non autorisé. Seuls PNG et JPEG sont acceptés."));
+    return cb(new Error("Unsupported format. Only PNG and JPEG are accepted."));
   }
 
   cb(null, true);

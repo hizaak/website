@@ -38,7 +38,7 @@ services:
     ports:
       - "3000:3000"
     volumes:
-      - ./backend/public/uploads:/app/public/uploads
+      - ./backend/uploads:/app/uploads
     networks:
       - site-perso-network
       - npm-network

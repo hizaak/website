@@ -5,6 +5,7 @@ const cors = require("cors");
 const swaggerUi = require("swagger-ui-express");
 const specs = require("./config/swagger");
 const { initializeAdminAccount } = require("./services/admin-account");
+const { backfillMissingThumbnails } = require("./services/photo-thumbnails");
 const path = require("path");
 
 require("dotenv").config();
@@ -25,6 +26,7 @@ app.use(cors(corsOptions));
 app.use(bodyParser.json());
 
 initializeAdminAccount();
+backfillMissingThumbnails();
 
 app.use(
   "/api-docs",

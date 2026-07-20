@@ -22,6 +22,9 @@ const photoSchema = new Schema(
       type: String,
       required: true,
     },
+    thumbnailFilename: {
+      type: String,
+    },
     originalFilename: {
       type: String,
       required: true,

@@ -4,7 +4,7 @@ import {
   ActivatedRouteSnapshot,
   RouterStateSnapshot,
 } from '@angular/router';
-import { AuthService } from '../core/auth.service';
+import { AuthService } from '../services/api/auth.service';
 import { AdminNavigationService } from '../core/admin-navigation.service';
 
 @Injectable({

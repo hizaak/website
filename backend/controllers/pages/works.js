@@ -1,7 +1,7 @@
 const Work = require("../../models/Work");
 const { slugify } = require("../../utils/slug");
 
-exports.getWorksPage = async (req, res) => {
+exports.getAll = async (req, res) => {
   try {
     const works = await Work.aggregate([
       {
@@ -56,10 +56,10 @@ exports.getWorksPage = async (req, res) => {
       yearRange: getYearRange(work.minYear, work.maxYear),
     }));
 
-    res.json(result);
+    res.status(200).json(result);
   } catch (error) {
     res.status(500).json({
-      message: "Erreur serveur",
+      message: "Server error.",
       error: error.message,
     });
   }

@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { WorkService } from '../../../services/api/work.service';
-import { AuthService } from '../../../core/auth.service';
+import { AuthService } from '../../../services/api/auth.service';
 import { AdminNavigationService } from '../../../core/admin-navigation.service';
 import { Work } from '../../../interfaces/Work';
 import { TranslatePipe } from '@ngx-translate/core';

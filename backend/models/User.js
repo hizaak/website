@@ -38,30 +38,6 @@ userSchema.pre("save", async function (next) {
   next();
 });
 
-const initializeAdminAccount = async () => {
-  try {
-    const adminUsername = "admin";
-    const adminPassword = "admin";
-
-    const admin = new User({
-      username: adminUsername,
-      password: adminPassword,
-    });
-
-    const existingAdmin = await User.findOne({
-      username: adminUsername,
-    });
-    if (!existingAdmin) {
-      await admin.save();
-      console.log("Admin account created.");
-    } else {
-      console.log("Admin account already exists.");
-    }
-  } catch (error) {
-    console.error("Error while initializing admin account:", error);
-  }
-};
-
 const User = mongoose.model("User", userSchema);
 
-module.exports = { User, initializeAdminAccount };
+module.exports = User;

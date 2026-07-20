@@ -8,7 +8,7 @@ import {
 
 import { TranslatePipe } from '@ngx-translate/core';
 import { LanguageService } from '../../../core/language.service';
-import { AuthService } from '../../../core/auth.service';
+import { AuthService } from '../../../services/api/auth.service';
 
 @Component({
   selector: 'app-header',

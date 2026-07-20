@@ -53,17 +53,22 @@ export class WorkComponent implements OnInit {
         return;
       }
 
-      const photoIndex = Number(
-        params.get('photoIndex') ?? 0
-      );
+      const rawPhotoIndex = params.get('photoIndex');
+      const hasPhotoIndexParam = rawPhotoIndex !== null;
 
-      this.loadWork(workId, photoIndex);
+      // URL exposes a 1-based photo number; convert to a 0-based array index internally.
+      const photoIndex = hasPhotoIndexParam
+        ? Number(rawPhotoIndex) - 1
+        : 0;
+
+      this.loadWork(workId, photoIndex, hasPhotoIndexParam);
     });
   }
 
   private loadWork(
     workId: string,
-    photoIndex: number
+    photoIndex: number,
+    hasPhotoIndexParam: boolean
   ): void {
     this.workPageService.getWork(workId).subscribe({
       next: (work) => {
@@ -75,11 +80,12 @@ export class WorkComponent implements OnInit {
         }
 
         if (
+          !hasPhotoIndexParam ||
           Number.isNaN(photoIndex) ||
           photoIndex < 0 ||
           photoIndex >= work.photos.length
         ) {
-          this.navigateToPhoto(0);
+          this.navigateToPhoto(0, true);
           return;
         }
 
@@ -125,19 +131,21 @@ export class WorkComponent implements OnInit {
   }
 
   private navigateToPhoto(
-    photoIndex: number
+    photoIndex: number,
+    replaceUrl = false
   ): void {
     if (!this.work) {
       return;
     }
 
+    // Photo index is 0-based internally but 1-based in the URL.
     this.router.navigate([
       '/',
       this.languageService.currentLang,
       'works',
       this.work.slug,
-      photoIndex,
-    ]);
+      photoIndex + 1,
+    ], { replaceUrl });
   }
 
   get hasPreviousPhoto(): boolean {

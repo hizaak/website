@@ -32,8 +32,6 @@ pnpm-lock.yaml
 # ========================================
 uploads/*
 !uploads/.gitkeep
-public/uploads/*
-!public/uploads/.gitkeep
 
 # ========================================
 # Logs

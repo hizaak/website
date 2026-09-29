@@ -1,19 +1,32 @@
 {
   "nav": {
     "works": "travaux",
-    "about": "biographie",
+    "about": "à propos",
     "contact": "contact",
     "admin": "admin"
   },
-
+  "works": {
+    "disclaimer": "Cette page sert pour l'instant à tester l'affichage : le vrai travail sur les photos reste à faire...",
+    "quote": "De toutes les ressources, il n’en est qu’une qui viendra toujours à manquer."
+  },
   "about": {
-    "title": "biographie"
+    "title": "à propos",
+    "author": {
+      "title": "à propos de moi",
+      "p1": "Je m'appelle Alexandre Maurice. Je suis informaticien de métier et je pratique la photographie.",
+      "p2": "Je m'intéresse à la photographie, à l'informatique et, plus largement, à tout ce qui gagne à être simple : des outils compréhensibles, des objets durables, des choses faites avec soin."
+    },
+    "site": {
+      "title": "à propos du site",
+      "p1": "Je suis informaticien, pas designer. J'ai toujours aimé l'extrême sobriété, une forme d'austérité visuelle où rien ne s'interpose entre la personne qui regarde et ce qu'elle est venue voir.",
+      "p2": "Aujourd'hui, trop de sites sont surchargés : lourds, lents, encombrés d'effets et de fonctionnalités dont personne n'a besoin. On les conçoit pour impressionner ou pour retenir l'attention, rarement pour la personne qui les utilise.",
+      "p3": "Ce site prend le parti inverse : du texte, des photos, et rien de plus. Pas d'animation, pas de fioriture, seulement ce qui est nécessaire pour voir les images."
+    }
   },
-
   "contact": {
-    "title": "contact"
+    "title": "contact",
+    "intro": "Pour toute demande concernant mon travail de photographe ou pour me contacter à titre professionnel, vous pouvez m'écrire à :"
   },
-
   "admin": {
     "login": "connexion admin",
     "username": "nom d'utilisateur",
@@ -22,7 +35,7 @@
     "logout": "déconnexion",
     "back": "retour",
     "works": "travaux",
-    "addWork": "ajouter un work",
+    "addWork": "ajouter un traivail",
     "title": "titre",
     "yearRange": "années",
     "create": "créer",
@@ -30,7 +43,7 @@
     "delete": "supprimer",
     "save": "enregistrer",
     "confirmChanges": "confirmer les modifications",
-    "deleteWork": "supprimer le work",
+    "deleteWork": "supprimer le travail",
     "existingPhotos": "photos existantes",
     "order": "ordre",
     "date": "date",

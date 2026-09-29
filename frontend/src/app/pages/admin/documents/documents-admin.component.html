@@ -1,0 +1,78 @@
+<app-admin-nav></app-admin-nav>
+
+<p *ngIf="error" style="color: red;">{{ error | translate }}</p>
+
+<table class="admin-table">
+  <thead>
+    <tr>
+      <th>{{ 'admin.filename' | translate }}</th>
+      <th>{{ 'admin.url' | translate }}</th>
+      <th>{{ 'admin.size' | translate }}</th>
+      <th>{{ 'admin.updatedAt' | translate }}</th>
+      <th>{{ 'admin.actions' | translate }}</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let document of documents">
+      <td>
+        <ng-container *ngIf="editingFilename === document.filename; else filenameText">
+          <form (ngSubmit)="renameDocument(document)">
+            <input type="text" [(ngModel)]="editName" name="editName" required />
+            <button type="submit">{{ 'admin.save' | translate }}</button>
+            <button type="button" (click)="cancelRename()">{{ 'admin.cancel' | translate }}</button>
+          </form>
+        </ng-container>
+        <ng-template #filenameText>{{ document.filename }}</ng-template>
+      </td>
+      <td>
+        <a [href]="documentService.getDocumentUrl(document)" target="_blank" rel="noopener">
+          {{ documentService.getDocumentUrl(document) }}
+        </a>
+      </td>
+      <td>
+        <ng-container *ngIf="formatSize(document.size) as size">
+          {{ size.value }} {{ 'admin.sizeUnits.' + size.unit | translate }}
+        </ng-container>
+      </td>
+      <td>{{ document.updatedAt | date: 'dd/MM/yyyy HH:mm' }}</td>
+      <td>
+        <button type="button" (click)="startRename(document)">{{ 'admin.rename' | translate }}</button>
+        &nbsp;
+        <button type="button" (click)="deleteDocument(document)">{{ 'admin.delete' | translate }}</button>
+      </td>
+    </tr>
+    <tr *ngIf="!documents.length">
+      <td colspan="5">{{ 'admin.noDocuments' | translate }}</td>
+    </tr>
+  </tbody>
+</table>
+
+<hr>
+
+<p><b>{{ 'admin.addDocument' | translate }}</b></p>
+
+<form (ngSubmit)="createDocument()">
+  <p>
+    <label>
+      {{ 'admin.file' | translate }}
+      <br>
+      <input #newFileInput type="file" (change)="onNewFileSelected($event)" />
+    </label>
+  </p>
+
+  <p>
+    <label>
+      {{ 'admin.filename' | translate }}
+      <br>
+      <input type="text" [(ngModel)]="newName" name="newName" />
+    </label>
+    <br>
+    <small>{{ 'admin.documentNameHint' | translate }}</small>
+  </p>
+
+  <p *ngIf="newDocumentUrl">{{ 'admin.url' | translate }} : {{ newDocumentUrl }}</p>
+
+  <button type="submit" [disabled]="uploading">
+    {{ (uploading ? 'admin.uploading' : 'admin.upload') | translate }}
+  </button>
+</form>

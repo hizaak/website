@@ -146,6 +146,40 @@ const options = {
             token: { type: "string" },
           },
         },
+        Document: {
+          type: "object",
+          properties: {
+            filename: { type: "string", example: "mon-cv.pdf" },
+            slug: { type: "string", example: "mon-cv" },
+            extension: { type: "string", example: ".pdf" },
+            size: { type: "number", example: 104857 },
+            updatedAt: { type: "string", format: "date-time" },
+          },
+        },
+        DocumentCreate: {
+          type: "object",
+          required: ["document"],
+          properties: {
+            document: { type: "string", format: "binary" },
+            name: {
+              type: "string",
+              example: "mon-cv.pdf",
+              description:
+                "Stored filename (extension optional, cannot differ from the file's). Defaults to the slugified original name.",
+            },
+            replace: {
+              type: "boolean",
+              description: "Replace the document already published under the same slug.",
+            },
+          },
+        },
+        DocumentRename: {
+          type: "object",
+          required: ["name"],
+          properties: {
+            name: { type: "string", example: "cv-2026.pdf" },
+          },
+        },
         Message: {
           type: "object",
           properties: {
@@ -434,6 +468,111 @@ const options = {
               },
             },
             404: { description: "Photo not found" },
+          },
+        },
+      },
+      "/api/documents": {
+        get: {
+          tags: ["Documents"],
+          summary: "List Documents",
+          security: [{ bearerAuth: [] }],
+          responses: {
+            200: {
+              content: {
+                "application/json": {
+                  schema: {
+                    type: "array",
+                    items: { $ref: "#/components/schemas/Document" },
+                  },
+                },
+              },
+            },
+          },
+        },
+        post: {
+          tags: ["Documents"],
+          summary: "Upload a Document",
+          security: [{ bearerAuth: [] }],
+          requestBody: {
+            required: true,
+            content: {
+              "multipart/form-data": {
+                schema: { $ref: "#/components/schemas/DocumentCreate" },
+              },
+            },
+          },
+          responses: {
+            201: {
+              content: {
+                "application/json": {
+                  schema: { $ref: "#/components/schemas/Document" },
+                },
+              },
+            },
+            400: { description: "Missing file or invalid name" },
+            409: { description: "A Document is already published under this slug" },
+            413: { description: "File too large" },
+          },
+        },
+      },
+      "/api/documents/{filename}": {
+        put: {
+          tags: ["Documents"],
+          summary: "Rename a Document",
+          security: [{ bearerAuth: [] }],
+          parameters: [
+            { name: "filename", in: "path", required: true, schema: { type: "string" } },
+          ],
+          requestBody: {
+            required: true,
+            content: {
+              "application/json": {
+                schema: { $ref: "#/components/schemas/DocumentRename" },
+              },
+            },
+          },
+          responses: {
+            200: {
+              content: {
+                "application/json": {
+                  schema: { $ref: "#/components/schemas/Document" },
+                },
+              },
+            },
+            400: { description: "Invalid name" },
+            404: { description: "Document not found" },
+            409: { description: "A Document is already published under this slug" },
+          },
+        },
+        delete: {
+          tags: ["Documents"],
+          summary: "Delete a Document",
+          security: [{ bearerAuth: [] }],
+          parameters: [
+            { name: "filename", in: "path", required: true, schema: { type: "string" } },
+          ],
+          responses: {
+            200: {
+              content: {
+                "application/json": {
+                  schema: { $ref: "#/components/schemas/Message" },
+                },
+              },
+            },
+            404: { description: "Document not found" },
+          },
+        },
+      },
+      "/documents/{name}": {
+        get: {
+          tags: ["Documents"],
+          summary: "Serve a Document's raw file (by slug or full filename)",
+          parameters: [
+            { name: "name", in: "path", required: true, schema: { type: "string" } },
+          ],
+          responses: {
+            200: { description: "The raw file" },
+            404: { description: "Document not found" },
           },
         },
       },

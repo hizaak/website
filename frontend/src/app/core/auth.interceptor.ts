@@ -9,7 +9,9 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const token = localStorage.getItem('jwt');
   const isApiRequest = req.url.startsWith(environment.apiUrl);
 
-  if (token && isApiRequest && isProtectedMethod(req.method)) {
+  // Sent on every API request, reads included: some admin reads (the
+  // documents list) are protected, and public routes simply ignore it.
+  if (token && isApiRequest) {
     const cloned = req.clone({
       setHeaders: { Authorization: `Bearer ${token}` },
     });
@@ -18,7 +20,3 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
   return next(req);
 };
-
-function isProtectedMethod(method: string): boolean {
-  return ['POST', 'PUT', 'DELETE', 'PATCH'].includes(method.toUpperCase());
-}

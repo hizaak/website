@@ -3,15 +3,15 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { WorkService } from '../../../services/api/work.service';
-import { AuthService } from '../../../services/api/auth.service';
 import { AdminNavigationService } from '../../../core/admin-navigation.service';
 import { Work } from '../../../interfaces/Work';
 import { TranslatePipe } from '@ngx-translate/core';
+import { AdminNavComponent } from '../../../shared/components/admin-nav/admin-nav.component';
 
 @Component({
   selector: 'app-admin-works',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, TranslatePipe],
+  imports: [CommonModule, FormsModule, RouterModule, TranslatePipe, AdminNavComponent],
   templateUrl: './works-admin.component.html',
   styleUrl: './works-admin.component.scss',
 })
@@ -22,7 +22,6 @@ export class WorksAdminComponent implements OnInit {
 
   constructor(
     private workService: WorkService,
-    private authService: AuthService,
     private adminNavigation: AdminNavigationService
   ) { }
 
@@ -66,10 +65,5 @@ export class WorksAdminComponent implements OnInit {
 
   openWork(work: Work): void {
     this.adminNavigation.toWork(work._id);
-  }
-
-  logout(): void {
-    this.authService.logout();
-    this.adminNavigation.toAuth();
   }
 }

@@ -39,6 +39,7 @@ const worksPageRoutes = require("./routes/pages/works");
 const workPageRoutes = require("./routes/pages/work");
 const workRoutes = require("./routes/works");
 const photoRoutes = require("./routes/photos");
+const documentRoutes = require("./routes/documents");
 
 app.use(authRoutes);
 
@@ -55,6 +56,16 @@ app.use(
 app.use(
   "/api/photos",
   photoRoutes.collection
+);
+
+app.use(
+  "/api/documents",
+  documentRoutes.api
+);
+
+app.use(
+  "/documents",
+  documentRoutes.files
 );
 
 app.use(

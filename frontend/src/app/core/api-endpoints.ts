@@ -15,4 +15,8 @@ export const API_ENDPOINTS = {
   photos: {
     byId: (id: string) => `api/photos/${id}`,
   },
+  documents: {
+    base: 'api/documents',
+    byFilename: (filename: string) => `api/documents/${encodeURIComponent(filename)}`,
+  },
 } as const;

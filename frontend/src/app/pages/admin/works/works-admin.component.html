@@ -1,8 +1,4 @@
-<p>
-  <b>{{ 'admin.works' | translate }}</b>
-  &nbsp;
-  <button type="button" (click)="logout()">{{ 'admin.logout' | translate }}</button>
-</p>
+<app-admin-nav></app-admin-nav>
 
 <p *ngIf="error" style="color: red;">{{ error }}</p>
 

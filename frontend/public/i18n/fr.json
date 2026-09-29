@@ -13,14 +13,14 @@
     "title": "à propos",
     "author": {
       "title": "à propos de moi",
-      "p1": "Je m'appelle Alexandre Maurice. Je suis informaticien de métier et je pratique la photographie.",
-      "p2": "Je m'intéresse à la photographie, à l'informatique et, plus largement, à tout ce qui gagne à être simple : des outils compréhensibles, des objets durables, des choses faites avec soin."
+      "p1": "Je m'appelle Alexandre Maurice. Je photographie des paysages, pour l'instant ceux des Pyrénées, d'autres régions suivront.",
+      "p2": "J'aime d'abord le beau, <i>das sinnliche Scheinen der Idee</i>, tel qu'il s'accomplit dans l'art. Bien que la nature ne soit pas de l'art, elle m'impressionne tout autant : devant les grands paysages, c'est le sublime que je vois. J'essaie de rester fidèle au lieu tout en y mettant ce que j'y ai vu.",
+      "p3": "À côté, j'ai étudié l'informatique, d'abord côté ingénierie logicielle, puis côté théorie. Je termine un master à Bordeaux. Mon CV est <a href=\"{{cvUrl}}\">ici</a>."
     },
     "site": {
       "title": "à propos du site",
-      "p1": "Je suis informaticien, pas designer. J'ai toujours aimé l'extrême sobriété, une forme d'austérité visuelle où rien ne s'interpose entre la personne qui regarde et ce qu'elle est venue voir.",
-      "p2": "Aujourd'hui, trop de sites sont surchargés : lourds, lents, encombrés d'effets et de fonctionnalités dont personne n'a besoin. On les conçoit pour impressionner ou pour retenir l'attention, rarement pour la personne qui les utilise.",
-      "p3": "Ce site prend le parti inverse : du texte, des photos, et rien de plus. Pas d'animation, pas de fioriture, seulement ce qui est nécessaire pour voir les images."
+      "p1": "Je voulais un endroit pour montrer mes photos, où je choisis comment elles sont vues. Leur offrir une place pérenne : les paysages changent, et chaque photo garde l'état d'un lieu à un instant donné. C'est un devoir de mémoire, à mon échelle.",
+      "p2": "Pour ce qui est de l'aspect, j'aime les pages sobres, presque austères, qui se chargent vite et se parcourent sans effort. Les meilleures choses que j'ai trouvées en ligne étaient sur des sites considérés comme laids, tenus par des passionnés qui avaient simplement quelque chose à partager. Que le site soit un outil au service du contenu et non l'inverse."
     }
   },
   "contact": {

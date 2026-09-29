@@ -1,10 +1,10 @@
 <h2>{{ 'about.author.title' | translate }}</h2>
 
 <p>{{ 'about.author.p1' | translate }}</p>
-<p>{{ 'about.author.p2' | translate }}</p>
+<p [innerHTML]="'about.author.p2' | translate"></p>
+<p [innerHTML]="'about.author.p3' | translate: { cvUrl }"></p>
 
 <h2>{{ 'about.site.title' | translate }}</h2>
 
 <p>{{ 'about.site.p1' | translate }}</p>
 <p>{{ 'about.site.p2' | translate }}</p>
-<p>{{ 'about.site.p3' | translate }}</p>

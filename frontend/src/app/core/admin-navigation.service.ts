@@ -19,6 +19,14 @@ export class AdminNavigationService {
     this.router.navigate(this.commands('works', workId));
   }
 
+  linkForWorks(): string[] {
+    return this.commands('works');
+  }
+
+  linkForDocuments(): string[] {
+    return this.commands('documents');
+  }
+
   urlForAuth(sourceUrl?: string): string {
     return this.url(sourceUrl, 'auth');
   }

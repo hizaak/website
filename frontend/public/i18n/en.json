@@ -53,6 +53,39 @@
     "replaceImage": "replace image",
     "addPhoto": "add photo",
     "image": "image",
-    "loading": "loading..."
+    "loading": "loading...",
+    "documents": "documents",
+    "addDocument": "add document",
+    "file": "file",
+    "filename": "file name",
+    "url": "url",
+    "size": "size",
+    "updatedAt": "updated",
+    "rename": "rename",
+    "cancel": "cancel",
+    "upload": "upload",
+    "uploading": "uploading...",
+    "noDocuments": "no documents.",
+    "documentNameHint": "lowercase letters, digits, - and _ only. the extension can be omitted but not changed. the url is the name without its extension.",
+    "confirmDeleteDocument": "Delete the document \"{{filename}}\"?",
+    "confirmReplaceDocument": "A document is already published at {{url}}. Replace it?",
+    "sizeUnits": {
+      "B": "B",
+      "KB": "KB",
+      "MB": "MB"
+    },
+    "documentErrors": {
+      "DOCUMENT_NAME_INVALID": "Invalid name: only lowercase letters, digits, - and _ are allowed.",
+      "DOCUMENT_EXTENSION_MISMATCH": "The extension cannot be changed.",
+      "DOCUMENT_EXTENSION_INVALID": "Unsupported file extension.",
+      "DOCUMENT_NAME_TAKEN": "A document is already published at this url.",
+      "DOCUMENT_NOT_FOUND": "Document not found.",
+      "DOCUMENT_FILE_MISSING": "No file selected.",
+      "DOCUMENT_TOO_LARGE": "File too large (50 MB max).",
+      "load": "Error while loading documents.",
+      "upload": "Error while uploading the document.",
+      "rename": "Error while renaming the document.",
+      "delete": "Error while deleting the document."
+    }
   }
 }

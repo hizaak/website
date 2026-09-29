@@ -35,7 +35,7 @@
     "logout": "déconnexion",
     "back": "retour",
     "works": "travaux",
-    "addWork": "ajouter un traivail",
+    "addWork": "ajouter un travail",
     "title": "titre",
     "yearRange": "années",
     "create": "créer",
@@ -53,6 +53,39 @@
     "replaceImage": "remplacer image",
     "addPhoto": "ajouter une photo",
     "image": "image",
-    "loading": "chargement..."
+    "loading": "chargement...",
+    "documents": "documents",
+    "addDocument": "ajouter un document",
+    "file": "fichier",
+    "filename": "nom du fichier",
+    "url": "adresse",
+    "size": "taille",
+    "updatedAt": "modifié le",
+    "rename": "renommer",
+    "cancel": "annuler",
+    "upload": "envoyer",
+    "uploading": "envoi en cours...",
+    "noDocuments": "aucun document.",
+    "documentNameHint": "lettres minuscules, chiffres, - et _ uniquement. l'extension peut être omise mais pas modifiée. l'adresse est le nom sans l'extension.",
+    "confirmDeleteDocument": "Supprimer le document \"{{filename}}\" ?",
+    "confirmReplaceDocument": "Un document est déjà publié à l'adresse {{url}}. Le remplacer ?",
+    "sizeUnits": {
+      "B": "o",
+      "KB": "Ko",
+      "MB": "Mo"
+    },
+    "documentErrors": {
+      "DOCUMENT_NAME_INVALID": "Nom invalide : seuls les lettres minuscules, les chiffres, - et _ sont autorisés.",
+      "DOCUMENT_EXTENSION_MISMATCH": "L'extension ne peut pas être modifiée.",
+      "DOCUMENT_EXTENSION_INVALID": "Extension de fichier non prise en charge.",
+      "DOCUMENT_NAME_TAKEN": "Un document est déjà publié à cette adresse.",
+      "DOCUMENT_NOT_FOUND": "Document introuvable.",
+      "DOCUMENT_FILE_MISSING": "Aucun fichier sélectionné.",
+      "DOCUMENT_TOO_LARGE": "Fichier trop volumineux (50 Mo maximum).",
+      "load": "Erreur lors du chargement des documents.",
+      "upload": "Erreur lors de l'envoi du document.",
+      "rename": "Erreur lors du renommage du document.",
+      "delete": "Erreur lors de la suppression du document."
+    }
   }
 }

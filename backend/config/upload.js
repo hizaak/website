@@ -6,13 +6,12 @@ const { randomUUID } = require("crypto");
 
 const UPLOAD_DIR = path.join(__dirname, "..", "uploads");
 const THUMBNAIL_DIR = path.join(UPLOAD_DIR, "thumbnails");
+const DOCUMENTS_DIR = path.join(UPLOAD_DIR, "documents");
 
-if (!fs.existsSync(UPLOAD_DIR)) {
-  fs.mkdirSync(UPLOAD_DIR, { recursive: true });
-}
-
-if (!fs.existsSync(THUMBNAIL_DIR)) {
-  fs.mkdirSync(THUMBNAIL_DIR, { recursive: true });
+for (const dir of [UPLOAD_DIR, THUMBNAIL_DIR, DOCUMENTS_DIR]) {
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
+  }
 }
 
 const ALLOWED_MIMES = ["image/png", "image/jpeg"];
@@ -145,6 +144,34 @@ const uploadSingleImage = (fieldName) => (req, res, next) => {
   });
 };
 
+// Raw documents are stored as-is (no processing), so they only stay in
+// memory until the controller has picked their final name and written them.
+const MAX_DOCUMENT_BYTES = 50 * 1024 * 1024;
+
+const documentUpload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: MAX_DOCUMENT_BYTES },
+});
+
+const uploadSingleDocument = (fieldName) => (req, res, next) => {
+  documentUpload.single(fieldName)(req, res, (err) => {
+    if (err?.code === "LIMIT_FILE_SIZE") {
+      return res.status(413).json({ message: "File too large.", code: "DOCUMENT_TOO_LARGE" });
+    }
+
+    if (err) {
+      return res.status(400).json({ message: err.message });
+    }
+
+    // Multer decodes multipart filenames as latin1; browsers send UTF-8.
+    if (req.file) {
+      req.file.originalname = Buffer.from(req.file.originalname, "latin1").toString("utf8");
+    }
+
+    next();
+  });
+};
+
 const deleteFile = (filename) => {
   if (!filename) {
     return;
@@ -172,8 +199,10 @@ const deleteThumbnail = (filename) => {
 module.exports = {
   upload,
   uploadSingleImage,
+  uploadSingleDocument,
   UPLOAD_DIR,
   THUMBNAIL_DIR,
+  DOCUMENTS_DIR,
   deleteFile,
   deleteThumbnail,
   writeThumbnail,

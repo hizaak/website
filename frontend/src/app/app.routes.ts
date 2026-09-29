@@ -44,6 +44,14 @@ const localizedRoutes: Routes = [
       import('./pages/admin/works/work-detail-admin.component')
         .then(m => m.WorkDetailAdminComponent),
   },
+
+  {
+    path: 'admin/documents',
+    canActivate: [AuthGuard],
+    loadComponent: () =>
+      import('./pages/admin/documents/documents-admin.component')
+        .then(m => m.DocumentsAdminComponent),
+  },
   {
     path: 'works',
     loadComponent: () =>

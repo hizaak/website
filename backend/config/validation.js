@@ -38,6 +38,15 @@ const photoReorderSchema = Joi.object({
     .required(),
 });
 
+const documentSchema = Joi.object({
+  name: Joi.string().trim().allow("").max(120),
+  replace: Joi.boolean().default(false),
+});
+
+const documentRenameSchema = Joi.object({
+  name: Joi.string().trim().min(1).max(120).required(),
+});
+
 const validateRequest = (schema) => {
   return (req, res, next) => {
     const { error, value } = schema.validate(req.body, {
@@ -62,5 +71,7 @@ module.exports = {
   photoSchema,
   photoUpdateSchema,
   photoReorderSchema,
+  documentSchema,
+  documentRenameSchema,
   validateRequest,
 };

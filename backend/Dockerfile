@@ -20,7 +20,7 @@ RUN npm install -g pm2
 COPY --from=builder /app/node_modules ./node_modules
 COPY . .
 
-RUN mkdir -p uploads/thumbnails && \
+RUN mkdir -p uploads/thumbnails uploads/documents && \
     chown -R node:node /app
 
 USER node

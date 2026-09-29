@@ -13,14 +13,14 @@
     "title": "about",
     "author": {
       "title": "about me",
-      "p1": "My name is Alexandre Maurice. I work in computer science, and I practice photography.",
-      "p2": "I'm interested in photography, computing and, more broadly, anything that benefits from being simple: tools you can understand, things that last, work done with care."
+      "p1": "My name is Alexandre Maurice. I photograph landscapes, for now those of the Pyrenees; other regions will follow.",
+      "p2": "Above all I love beauty, <i>das sinnliche Scheinen der Idee</i>, as it is fulfilled in art. Although nature is not art, it moves me just as much: before great landscapes, what I see is the sublime. I try to stay faithful to the place while putting into it what I saw there.",
+      "p3": "Alongside this, I studied computer science, first software engineering, then theory. I'm finishing a master's degree in Bordeaux. My CV is <a href=\"{{cvUrl}}\">here</a>."
     },
     "site": {
       "title": "about this site",
-      "p1": "I'm a computer scientist, not a designer. I have always liked extreme restraint, a kind of visual austerity where nothing stands between the viewer and what they came to see.",
-      "p2": "Today, too many websites are bloated: heavy, slow, cluttered with effects and features nobody needs. They are built to impress or to hold attention, rarely for the person actually using them.",
-      "p3": "This site takes the opposite approach: text, photos, and nothing more. No animations, no ornaments, only what is needed to look at the pictures."
+      "p1": "I wanted a place to show my photos, where I choose how they are seen. To give them a lasting home: landscapes change, and each photo keeps the state of a place at a given moment. It is a duty of remembrance, on my own scale.",
+      "p2": "As for the look, I like sober, almost austere pages that load quickly and can be browsed effortlessly. The best things I have found online were on sites considered ugly, run by enthusiasts who simply had something to share. The site should be a tool serving the content, not the other way around."
     }
   },
   "contact": {

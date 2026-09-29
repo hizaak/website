@@ -2,6 +2,9 @@ import { Routes } from '@angular/router';
 import { AuthGuard } from './guards/auth.guard';
 import { NoAuthGuard } from './guards/no-auth.guard';
 import { AdminRedirectGuard } from './guards/admin-redirect.guard';
+import { detectBrowserLanguage } from './core/language.service';
+
+const redirectToDefaultLanguage = () => `${detectBrowserLanguage()}/works`;
 
 const localizedRoutes: Routes = [
   {
@@ -96,7 +99,7 @@ const localizedRoutes: Routes = [
 export const routes: Routes = [
   {
     path: '',
-    redirectTo: 'en/works',
+    redirectTo: redirectToDefaultLanguage,
     pathMatch: 'full',
   },
 
@@ -112,6 +115,6 @@ export const routes: Routes = [
 
   {
     path: '**',
-    redirectTo: 'en/works',
+    redirectTo: redirectToDefaultLanguage,
   },
 ];

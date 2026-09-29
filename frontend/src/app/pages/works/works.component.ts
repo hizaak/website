@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { TranslatePipe } from '@ngx-translate/core';
 
 import { WorksPageService } from '../../services/pages/works.service';
 import { WorkListItem } from '../../interfaces/pages/WorksPage';
@@ -10,7 +11,7 @@ import { LanguageService } from '../../core/language.service';
 @Component({
   selector: 'app-works',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, TranslatePipe],
   templateUrl: './works.component.html',
   styleUrl: './works.component.scss',
 })

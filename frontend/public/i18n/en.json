@@ -5,15 +5,28 @@
     "contact": "contact",
     "admin": "admin"
   },
-
+  "works": {
+    "disclaimer": "For now, this page is only a display test: the real work on the photos is still to be done...",
+    "quote": "Of all resources, there is but one that shall forever elude our grasp."
+  },
   "about": {
-    "title": "about"
+    "title": "about",
+    "author": {
+      "title": "about me",
+      "p1": "My name is Alexandre Maurice. I work in computer science, and I practice photography.",
+      "p2": "I'm interested in photography, computing and, more broadly, anything that benefits from being simple: tools you can understand, things that last, work done with care."
+    },
+    "site": {
+      "title": "about this site",
+      "p1": "I'm a computer scientist, not a designer. I have always liked extreme restraint, a kind of visual austerity where nothing stands between the viewer and what they came to see.",
+      "p2": "Today, too many websites are bloated: heavy, slow, cluttered with effects and features nobody needs. They are built to impress or to hold attention, rarely for the person actually using them.",
+      "p3": "This site takes the opposite approach: text, photos, and nothing more. No animations, no ornaments, only what is needed to look at the pictures."
+    }
   },
-
   "contact": {
-    "title": "contact"
+    "title": "contact",
+    "intro": "For inquiries about my photography work or any professional matter, you can reach me at:"
   },
-
   "admin": {
     "login": "admin login",
     "username": "username",

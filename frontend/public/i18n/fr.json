@@ -20,7 +20,8 @@
     "site": {
       "title": "à propos du site",
       "p1": "Je voulais un endroit pour montrer mes photos, où je choisis comment elles sont vues. Leur offrir une place pérenne : les paysages changent, et chaque photo garde l'état d'un lieu à un instant donné. C'est un devoir de mémoire, à mon échelle.",
-      "p2": "Pour ce qui est de l'aspect, j'aime les pages sobres, presque austères, qui se chargent vite et se parcourent sans effort. Les meilleures choses que j'ai trouvées en ligne étaient sur des sites considérés comme laids, tenus par des passionnés qui avaient simplement quelque chose à partager. Que le site soit un outil au service du contenu et non l'inverse."
+      "p2": "Pour ce qui est de l'aspect, j'aime les pages sobres, presque austères, qui se chargent vite et se parcourent sans effort. Les meilleures choses que j'ai trouvées en ligne étaient sur des sites considérés comme laids, tenus par des passionnés qui avaient simplement quelque chose à partager. Que le site soit un outil au service du contenu et non l'inverse.",
+      "p3": "Je l'ai développé moi-même, avec MongoDB, Angular, Node.js et Express, et il est hébergé sur un VPS que je gère entièrement. Pas de publicité, pas de cookies, et aucun outil qui suit les visiteurs. La documentation de son API est <a href=\"{{apiDocsUrl}}\">ici</a>."
     }
   },
   "contact": {

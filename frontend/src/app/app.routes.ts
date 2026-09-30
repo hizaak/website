@@ -15,6 +15,7 @@ const localizedRoutes: Routes = [
 
   {
     path: 'admin/auth',
+    data: { seo: { title: 'seo.admin.title', noindex: true } },
     canActivate: [NoAuthGuard],
     loadComponent: () =>
       import('./pages/admin/auth/admin.component').then(
@@ -24,6 +25,7 @@ const localizedRoutes: Routes = [
 
   {
     path: 'admin',
+    data: { seo: { title: 'seo.admin.title', noindex: true } },
     pathMatch: 'full',
     canActivate: [AdminRedirectGuard],
     loadComponent: () =>
@@ -34,6 +36,7 @@ const localizedRoutes: Routes = [
 
   {
     path: 'admin/works',
+    data: { seo: { title: 'seo.admin.title', noindex: true } },
     canActivate: [AuthGuard],
     loadComponent: () =>
       import('./pages/admin/works/works-admin.component')
@@ -42,6 +45,7 @@ const localizedRoutes: Routes = [
 
   {
     path: 'admin/works/:workId',
+    data: { seo: { title: 'seo.admin.title', noindex: true } },
     canActivate: [AuthGuard],
     loadComponent: () =>
       import('./pages/admin/works/work-detail-admin.component')
@@ -50,6 +54,7 @@ const localizedRoutes: Routes = [
 
   {
     path: 'admin/documents',
+    data: { seo: { title: 'seo.admin.title', noindex: true } },
     canActivate: [AuthGuard],
     loadComponent: () =>
       import('./pages/admin/documents/documents-admin.component')
@@ -57,6 +62,7 @@ const localizedRoutes: Routes = [
   },
   {
     path: 'works',
+    data: { seo: { title: 'seo.works.title', description: 'seo.works.description' } },
     loadComponent: () =>
       import('./pages/works/works.component').then(
         m => m.WorksComponent
@@ -81,6 +87,7 @@ const localizedRoutes: Routes = [
 
   {
     path: 'about',
+    data: { seo: { title: 'seo.about.title', description: 'seo.about.description' } },
     loadComponent: () =>
       import('./pages/about/about.component').then(
         m => m.AboutComponent
@@ -89,6 +96,7 @@ const localizedRoutes: Routes = [
 
   {
     path: 'contact',
+    data: { seo: { title: 'seo.contact.title', description: 'seo.contact.description' } },
     loadComponent: () =>
       import('./pages/contact/contact.component').then(
         m => m.ContactComponent

@@ -18,6 +18,7 @@ import {
 } from '../../interfaces/pages/WorkPage';
 
 import { LanguageService } from '../../core/language.service';
+import { SeoService } from '../../core/seo.service';
 
 import { environment } from '../../../environments/environment';
 
@@ -41,7 +42,8 @@ export class WorkComponent implements OnInit {
     private router: Router,
     private workPageService: WorkPageService,
     private photoService: PhotoService,
-    public languageService: LanguageService
+    public languageService: LanguageService,
+    private seoService: SeoService
   ) { }
 
   ngOnInit(): void {
@@ -113,6 +115,14 @@ export class WorkComponent implements OnInit {
       .subscribe({
         next: (photo) => {
           this.selectedPhoto = photo;
+
+          if (this.work) {
+            this.seoService.setWorkPage(
+              this.languageService.currentLang as 'fr' | 'en',
+              this.work.title,
+              this.photoService.getPhotoUrl(photo.filename)
+            );
+          }
         },
         error: () => {
           this.error =

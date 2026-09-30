@@ -16,6 +16,10 @@ const {
 // except PDFs (whose viewer refuses to run sandboxed) is sandboxed.
 const UNSANDBOXED_EXTENSIONS = [".pdf"];
 
+// Documents kept out of search results, except the CV linked from the
+// about page.
+const INDEXED_SLUGS = ["cv"];
+
 const sendNameError = (res, error) =>
   res.status(400).json({ message: error.message, code: error.code });
 
@@ -136,7 +140,13 @@ exports.serve = (req, res) => {
     "Cache-Control": "no-cache",
   };
 
-  if (!UNSANDBOXED_EXTENSIONS.includes(splitFilename(filename).extension)) {
+  const { slug, extension } = splitFilename(filename);
+
+  if (!INDEXED_SLUGS.includes(slug)) {
+    headers["X-Robots-Tag"] = "noindex";
+  }
+
+  if (!UNSANDBOXED_EXTENSIONS.includes(extension)) {
     headers["Content-Security-Policy"] = "sandbox";
   }
 

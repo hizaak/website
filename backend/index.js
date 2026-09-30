@@ -40,6 +40,8 @@ const workPageRoutes = require("./routes/pages/work");
 const workRoutes = require("./routes/works");
 const photoRoutes = require("./routes/photos");
 const documentRoutes = require("./routes/documents");
+const sitemapController = require("./controllers/sitemap");
+const previewController = require("./controllers/preview");
 
 app.use(authRoutes);
 
@@ -67,6 +69,9 @@ app.use(
   "/documents",
   documentRoutes.files
 );
+
+app.get("/sitemap.xml", sitemapController.get);
+app.use("/__preview", previewController.get);
 
 app.use(
   "/api/pages/works",

@@ -86,6 +86,25 @@
       "upload": "Erreur lors de l'envoi du document.",
       "rename": "Erreur lors du renommage du document.",
       "delete": "Erreur lors de la suppression du document."
+    },
+    "account": "compte",
+    "usernameHint": "lettres et chiffres uniquement, de 3 à 30 caractères.",
+    "newPassword": "nouveau mot de passe",
+    "passwordHint": "laisser vide pour le garder. au moins {{min}} caractères : quelques mots faciles à retenir font très bien l'affaire, par ex. « trois-mots-ensemble ».",
+    "confirmPassword": "confirmer le nouveau mot de passe",
+    "currentPassword": "mot de passe actuel",
+    "currentPasswordHint": "nécessaire pour enregistrer toute modification.",
+    "accountSaved": "Modifications enregistrées.",
+    "accountErrors": {
+      "nothingToChange": "Rien à modifier.",
+      "usernameInvalid": "Identifiant invalide : lettres et chiffres uniquement, de 3 à 30 caractères.",
+      "usernameTaken": "Cet identifiant est déjà pris.",
+      "tooShort": "Le nouveau mot de passe doit faire au moins {{min}} caractères.",
+      "mismatch": "Les deux nouveaux mots de passe ne correspondent pas.",
+      "wrongCurrent": "Le mot de passe actuel est incorrect.",
+      "sessionExpired": "Session expirée, reconnectez-vous.",
+      "tooManyAttempts": "Trop de tentatives, réessayez dans 15 minutes.",
+      "generic": "Erreur lors de l'enregistrement du compte."
     }
   },
   "seo": {

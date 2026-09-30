@@ -2,6 +2,8 @@
   <a [routerLink]="adminNavigation.linkForWorks()" routerLinkActive="active">{{ 'admin.works' | translate }}</a>
   |
   <a [routerLink]="adminNavigation.linkForDocuments()" routerLinkActive="active">{{ 'admin.documents' | translate }}</a>
+  |
+  <a [routerLink]="adminNavigation.linkForAccount()" routerLinkActive="active">{{ 'admin.account' | translate }}</a>
   &nbsp;
   <button type="button" (click)="logout()">{{ 'admin.logout' | translate }}</button>
 </p>

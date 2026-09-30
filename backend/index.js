@@ -11,6 +11,10 @@ const path = require("path");
 require("dotenv").config();
 
 const app = express();
+
+// Behind Nginx Proxy Manager: take the client IP from X-Forwarded-For
+// (used by the login rate limit).
+app.set("trust proxy", 1);
 const port = process.env.PORT || 3000;
 
 connectDB();

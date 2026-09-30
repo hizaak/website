@@ -27,6 +27,10 @@ export class AdminNavigationService {
     return this.commands('documents');
   }
 
+  linkForAccount(): string[] {
+    return this.commands('account');
+  }
+
   urlForAuth(sourceUrl?: string): string {
     return this.url(sourceUrl, 'auth');
   }

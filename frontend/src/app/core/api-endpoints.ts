@@ -1,6 +1,7 @@
 export const API_ENDPOINTS = {
   auth: {
     login: 'login',
+    account: 'account',
   },
   pages: {
     works: 'api/pages/works',

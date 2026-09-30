@@ -19,13 +19,14 @@ import {
 
 import { LanguageService } from '../../core/language.service';
 import { SeoService } from '../../core/seo.service';
+import { NotFoundComponent } from '../not-found/not-found.component';
 
 import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-work',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, NotFoundComponent],
   templateUrl: './work.component.html',
   styleUrl: './work.component.scss',
 })
@@ -34,6 +35,7 @@ export class WorkComponent implements OnInit {
   selectedPhoto: Photo | null = null;
 
   error: string | null = null;
+  notFound = false;
 
   currentPhotoIndex = 0;
 
@@ -101,8 +103,15 @@ export class WorkComponent implements OnInit {
         this.error = null;
 
       },
-      error: () => {
+      error: (err) => {
         this.error = 'Work introuvable.';
+
+        if (err?.status === 404) {
+          this.notFound = true;
+          this.seoService.setNotFound(
+            this.languageService.currentLang as 'fr' | 'en'
+          );
+        }
       },
     });
   }

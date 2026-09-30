@@ -1,10 +1,15 @@
-import { Routes } from '@angular/router';
+import { RedirectFunction, Routes } from '@angular/router';
 import { AuthGuard } from './guards/auth.guard';
 import { NoAuthGuard } from './guards/no-auth.guard';
 import { AdminRedirectGuard } from './guards/admin-redirect.guard';
 import { detectBrowserLanguage } from './core/language.service';
 
 const redirectToDefaultLanguage = () => `${detectBrowserLanguage()}/works`;
+
+// Addresses without a language (/works, /about...) keep their path, so that
+// an unknown one ends on the "page not found" page rather than the home page.
+const redirectWithLanguage: RedirectFunction = ({ url }) =>
+  `/${detectBrowserLanguage()}/${url.map(segment => segment.path).join('/')}`;
 
 const localizedRoutes: Routes = [
   {
@@ -110,6 +115,15 @@ const localizedRoutes: Routes = [
         m => m.ContactComponent
       ),
   },
+
+  {
+    path: '**',
+    data: { seo: { title: 'seo.notFound.title', noindex: true } },
+    loadComponent: () =>
+      import('./pages/not-found/not-found.component').then(
+        m => m.NotFoundComponent
+      ),
+  },
 ];
 
 export const routes: Routes = [
@@ -131,6 +145,6 @@ export const routes: Routes = [
 
   {
     path: '**',
-    redirectTo: redirectToDefaultLanguage,
+    redirectTo: redirectWithLanguage,
   },
 ];

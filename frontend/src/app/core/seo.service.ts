@@ -71,6 +71,16 @@ export class SeoService {
       });
   }
 
+  // For content that turns out not to exist once loaded (an unknown work).
+  setNotFound(lang: Lang): void {
+    this.pending?.unsubscribe();
+
+    this.meta.updateTag({ name: 'robots', content: 'noindex, nofollow' });
+    this.pending = this.translate
+      .get('seo.notFound.title', undefined, lang)
+      .subscribe((title: string) => this.setPage(title));
+  }
+
   private setPage(title: string, description?: string): void {
     this.title.setTitle(title);
     this.meta.updateTag({ property: 'og:title', content: title });

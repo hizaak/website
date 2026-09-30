@@ -27,6 +27,10 @@
     "title": "contact",
     "intro": "Pour toute demande concernant mon travail de photographe ou pour me contacter à titre professionnel, vous pouvez m'écrire à :"
   },
+  "notFound": {
+    "text": "Cette page n'existe pas.",
+    "back": "retour aux travaux"
+  },
   "admin": {
     "login": "connexion admin",
     "username": "nom d'utilisateur",
@@ -126,6 +130,9 @@
     },
     "admin": {
       "title": "alexandre maurice | admin"
+    },
+    "notFound": {
+      "title": "alexandre maurice | page introuvable"
     }
   }
 }

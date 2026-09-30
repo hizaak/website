@@ -27,6 +27,10 @@
     "title": "contact",
     "intro": "For inquiries about my photography work or any professional matter, you can reach me at:"
   },
+  "notFound": {
+    "text": "This page does not exist.",
+    "back": "back to works"
+  },
   "admin": {
     "login": "admin login",
     "username": "username",
@@ -126,6 +130,9 @@
     },
     "admin": {
       "title": "alexandre maurice | admin"
+    },
+    "notFound": {
+      "title": "alexandre maurice | page not found"
     }
   }
 }

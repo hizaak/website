@@ -1,0 +1,44 @@
+<app-admin-nav></app-admin-nav>
+
+<p><b>{{ 'admin.account' | translate }}</b></p>
+
+<form (ngSubmit)="save()">
+  <p>
+    <label for="newUsername">{{ 'admin.username' | translate }}</label>
+    <br>
+    <input id="newUsername" type="text" name="newUsername" autocomplete="username" [(ngModel)]="newUsername" required />
+    <br>
+    <small>{{ 'admin.usernameHint' | translate }}</small>
+  </p>
+
+  <p>
+    <label for="newPassword">{{ 'admin.newPassword' | translate }}</label>
+    <br>
+    <input id="newPassword" type="password" name="newPassword" autocomplete="new-password" [(ngModel)]="newPassword" />
+    <br>
+    <small>{{ 'admin.passwordHint' | translate: { min: minLength } }}</small>
+  </p>
+
+  <p>
+    <label for="confirmPassword">{{ 'admin.confirmPassword' | translate }}</label>
+    <br>
+    <input id="confirmPassword" type="password" name="confirmPassword" autocomplete="new-password" [(ngModel)]="confirmPassword" />
+  </p>
+
+  <hr>
+
+  <p>
+    <label for="currentPassword">{{ 'admin.currentPassword' | translate }}</label>
+    <br>
+    <input id="currentPassword" type="password" name="currentPassword" autocomplete="current-password" [(ngModel)]="currentPassword" required />
+    <br>
+    <small>{{ 'admin.currentPasswordHint' | translate }}</small>
+  </p>
+
+  <p *ngIf="error" style="color: red;">{{ error | translate: { min: minLength } }}</p>
+  <p *ngIf="success">{{ 'admin.accountSaved' | translate }}</p>
+
+  <button type="submit" [disabled]="saving || !currentPassword">
+    {{ 'admin.save' | translate }}
+  </button>
+</form>

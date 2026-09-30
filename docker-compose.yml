@@ -34,6 +34,7 @@ services:
       PORT: ${BACKEND_PORT:-3000}
       MONGO_URI: mongodb://${MONGO_ROOT_USER:-admin}:${MONGO_ROOT_PASSWORD:-changeme}@mongodb:27017/${MONGO_DB_NAME:-site-perso}?authSource=admin
       JWT_SECRET: ${JWT_SECRET}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-}
       CORS_ORIGIN: ${CORS_ORIGIN}
     ports:
       - "3000:3000"

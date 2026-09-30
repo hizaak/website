@@ -24,6 +24,18 @@ export class AuthService extends AbstractRequestService {
     );
   }
 
+  getAccount(): Observable<{ username: string }> {
+    return this.get<{ username: string }>(API_ENDPOINTS.auth.account);
+  }
+
+  updateAccount(changes: {
+    currentPassword: string;
+    newUsername?: string;
+    newPassword?: string;
+  }): Observable<{ username: string }> {
+    return this.put<{ username: string }>(API_ENDPOINTS.auth.account, changes);
+  }
+
   isAuthenticated(): boolean {
     const token = localStorage.getItem('jwt');
 

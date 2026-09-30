@@ -61,6 +61,14 @@ const localizedRoutes: Routes = [
         .then(m => m.DocumentsAdminComponent),
   },
   {
+    path: 'admin/account',
+    data: { seo: { title: 'seo.admin.title', noindex: true } },
+    canActivate: [AuthGuard],
+    loadComponent: () =>
+      import('./pages/admin/account/account-admin.component')
+        .then(m => m.AccountAdminComponent),
+  },
+  {
     path: 'works',
     data: { seo: { title: 'seo.works.title', description: 'seo.works.description' } },
     loadComponent: () =>

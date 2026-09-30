@@ -1,9 +1,22 @@
 const Joi = require("joi");
 
+const usernameRule = Joi.string().alphanum().min(3).max(30);
+
 const loginSchema = Joi.object({
-  username: Joi.string().alphanum().min(3).max(30).required(),
+  username: usernameRule.required(),
   password: Joi.string().min(3).required(),
 });
+
+// A few words are easier to remember than a short random password, and as
+// hard to guess.
+const ADMIN_PASSWORD_MIN_LENGTH = 10;
+
+// Either field can be left out to keep the current value.
+const accountUpdateSchema = Joi.object({
+  currentPassword: Joi.string().required(),
+  newUsername: usernameRule,
+  newPassword: Joi.string().min(ADMIN_PASSWORD_MIN_LENGTH).max(200),
+}).or("newUsername", "newPassword");
 
 const photoDatePattern = /^\d{2}\/\d{2}\/\d{4}$/;
 
@@ -65,7 +78,9 @@ const validateRequest = (schema) => {
 };
 
 module.exports = {
+  ADMIN_PASSWORD_MIN_LENGTH,
   loginSchema,
+  accountUpdateSchema,
   workSchema,
   workUpdateSchema,
   photoSchema,

@@ -3,7 +3,7 @@ const bodyParser = require("body-parser");
 const connectDB = require("./config/db");
 const cors = require("cors");
 const swaggerUi = require("swagger-ui-express");
-const specs = require("./config/swagger");
+const { specs, uiOptions } = require("./config/swagger");
 const { initializeAdminAccount } = require("./services/admin-account");
 const { backfillMissingThumbnails } = require("./services/photo-thumbnails");
 const path = require("path");
@@ -35,7 +35,7 @@ backfillMissingThumbnails();
 app.use(
   "/api-docs",
   swaggerUi.serve,
-  swaggerUi.setup(specs)
+  swaggerUi.setup(specs, uiOptions)
 );
 
 const authRoutes = require("./routes/auth");

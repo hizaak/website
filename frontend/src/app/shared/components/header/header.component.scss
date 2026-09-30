@@ -2,6 +2,14 @@
     display: none;
 }
 
+// Main heading for search engines, rendered like the bold text it replaces.
+.site-name {
+    display: inline;
+    font-size: inherit;
+    font-weight: bold;
+    margin: 0;
+}
+
 a,
 a:visited {
     color: blue;

@@ -10,6 +10,7 @@ import { filter } from 'rxjs';
 import { HeaderComponent } from './shared/components/header/header.component';
 
 import { LanguageService } from './core/language.service';
+import { SeoService } from './core/seo.service';
 
 @Component({
   selector: 'app-root',
@@ -25,7 +26,8 @@ export class AppComponent {
 
   constructor(
     private router: Router,
-    private languageService: LanguageService
+    private languageService: LanguageService,
+    private seoService: SeoService
   ) {
     this.router.events
       .pipe(
@@ -39,6 +41,11 @@ export class AppComponent {
 
         if (lang === 'fr' || lang === 'en') {
           this.languageService.setLanguage(lang);
+          this.seoService.updateForRoute(
+            lang,
+            this.router.url,
+            this.router.routerState.snapshot.root
+          );
         }
       });
   }

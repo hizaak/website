@@ -87,5 +87,26 @@
       "rename": "Erreur lors du renommage du document.",
       "delete": "Erreur lors de la suppression du document."
     }
+  },
+  "seo": {
+    "works": {
+      "title": "alexandre maurice | travaux",
+      "description": "Photographies de paysages des Pyrénées par Alexandre Maurice."
+    },
+    "work": {
+      "title": "alexandre maurice | travaux - {{work}}",
+      "description": "{{work}} : photographies de paysage d'Alexandre Maurice."
+    },
+    "about": {
+      "title": "alexandre maurice | à propos",
+      "description": "Alexandre Maurice photographie les paysages des Pyrénées. Qui je suis et pourquoi ce site existe."
+    },
+    "contact": {
+      "title": "alexandre maurice | contact",
+      "description": "Contacter Alexandre Maurice au sujet de son travail de photographe ou à titre professionnel."
+    },
+    "admin": {
+      "title": "alexandre maurice | admin"
+    }
   }
 }

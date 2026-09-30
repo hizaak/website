@@ -87,5 +87,26 @@
       "rename": "Error while renaming the document.",
       "delete": "Error while deleting the document."
     }
+  },
+  "seo": {
+    "works": {
+      "title": "alexandre maurice | works",
+      "description": "Landscape photographs of the Pyrenees by Alexandre Maurice."
+    },
+    "work": {
+      "title": "alexandre maurice | works - {{work}}",
+      "description": "{{work}}: landscape photographs by Alexandre Maurice."
+    },
+    "about": {
+      "title": "alexandre maurice | about",
+      "description": "Alexandre Maurice photographs the landscapes of the Pyrenees. Who I am and why this site exists."
+    },
+    "contact": {
+      "title": "alexandre maurice | contact",
+      "description": "Contact Alexandre Maurice about his landscape photography or any professional matter."
+    },
+    "admin": {
+      "title": "alexandre maurice | admin"
+    }
   }
 }

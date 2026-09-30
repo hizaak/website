@@ -1,0 +1,5 @@
+User-agent: *
+Disallow: /fr/admin
+Disallow: /en/admin
+
+Sitemap: https://alexandremaurice.fr/sitemap.xml

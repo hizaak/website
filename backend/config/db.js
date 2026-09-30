@@ -12,8 +12,13 @@ const connectDB = async () => {
     } else {
       var host = process.env.MONGO_HOST;
     }
-    const mongoURI = `mongodb://${process.env.MONGO_USER}:${process.env.MONGO_PASS}@${host}:${process.env.MONGO_PORT}/${process.env.MONGO_DB}`;
-    console.log("Connecting to MongoDB:", mongoURI);
+    // Encoded so that the password may contain any character (@, :, /...).
+    const user = encodeURIComponent(process.env.MONGO_USER);
+    const password = encodeURIComponent(process.env.MONGO_PASS);
+    const address = `${host}:${process.env.MONGO_PORT}/${process.env.MONGO_DB}`;
+    const mongoURI = `mongodb://${user}:${password}@${address}`;
+    // Never log the password.
+    console.log(`Connecting to MongoDB: ${address} as ${process.env.MONGO_USER}`);
     // Se connecter à MongoDB
     await mongoose.connect(mongoURI);
     console.log("MongoDB connected");

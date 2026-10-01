@@ -2,6 +2,7 @@ const {
   ref,
   response,
   json,
+  message,
   jsonBody,
   multipartBody,
   pathParam,
@@ -13,8 +14,31 @@ const tag = { name: "Documents", description: "Raw files published under /docume
 
 const nameTaken = json(
   ref("DocumentError"),
-  "A document is already published under this slug (code DOCUMENT_NAME_TAKEN)"
+  "A document is already published under this slug (code DOCUMENT_NAME_TAKEN)",
+  { message: "A document is already published at /documents/cv.", code: "DOCUMENT_NAME_TAKEN" }
 );
+
+const documentError = (code, text) => ({ value: { message: text, code } });
+
+const nameErrors = {
+  invalid: documentError(
+    "DOCUMENT_NAME_INVALID",
+    "Only lowercase letters, digits, - and _ are allowed in the name."
+  ),
+  mismatch: documentError("DOCUMENT_EXTENSION_MISMATCH", "The extension must stay \".pdf\"."),
+};
+
+// 400 of the document routes: a DocumentError, Joi fields, or a plain
+// message from the upload (e.g. wrong field name).
+const invalidDocument = (description, examples) => ({
+  description,
+  content: {
+    "application/json": {
+      schema: { oneOf: [ref("DocumentError"), ref("ValidationError"), ref("Message")] },
+      examples,
+    },
+  },
+});
 
 const schemas = {
   Document: {
@@ -60,7 +84,7 @@ const schemas = {
     type: "object",
     description: "Error of the document routes, with a code the admin translates.",
     properties: {
-      message: { type: "string" },
+      message: { type: "string", example: "Document not found." },
       code: {
         type: "string",
         enum: [
@@ -96,10 +120,18 @@ const paths = {
       requestBody: multipartBody(ref("DocumentCreate")),
       responses: {
         201: json(ref("Document"), "Document published"),
-        400: json(ref("DocumentError"), "File missing or invalid name"),
+        400: invalidDocument("File missing, invalid name or invalid fields", {
+          missing: documentError("DOCUMENT_FILE_MISSING", "File is missing."),
+          ...nameErrors,
+          extension: documentError("DOCUMENT_EXTENSION_INVALID", "Unsupported file extension \".tar-gz\"."),
+          field: { value: { message: "Unexpected field" } },
+        }),
         401: response("Unauthorized"),
         409: nameTaken,
-        413: json(ref("DocumentError"), "File larger than 50 MB (code DOCUMENT_TOO_LARGE)"),
+        413: json(ref("DocumentError"), "File larger than 50 MB (code DOCUMENT_TOO_LARGE)", {
+          message: "File too large.",
+          code: "DOCUMENT_TOO_LARGE",
+        }),
         500: response("ServerError"),
       },
     },
@@ -113,7 +145,10 @@ const paths = {
       requestBody: jsonBody(ref("DocumentRename")),
       responses: {
         200: json(ref("Document"), "Document renamed"),
-        400: json(ref("DocumentError"), "Invalid name"),
+        400: invalidDocument("Invalid or missing name", {
+          ...nameErrors,
+          fields: { value: { message: "Validation failed.", errors: ['"name" is required'] } },
+        }),
         401: response("Unauthorized"),
         404: response("DocumentNotFound"),
         409: nameTaken,
@@ -126,7 +161,7 @@ const paths = {
       security: secured,
       parameters: [pathParam("filename", "File name, e.g. cv.pdf")],
       responses: {
-        200: json(ref("Message"), "Document deleted"),
+        200: message("Document deleted", "Document deleted."),
         401: response("Unauthorized"),
         404: response("DocumentNotFound"),
         500: response("ServerError"),
@@ -144,7 +179,10 @@ const paths = {
       ].join(" "),
       parameters: [pathParam("name", "Slug (cv) or full file name (cv.pdf)")],
       responses: {
-        200: { description: "The file", content: binary("application/octet-stream") },
+        200: {
+          description: "The file, with the Content-Type of its extension",
+          content: binary("*/*"),
+        },
         404: {
           description: "Document not found",
           content: { "text/plain": { schema: { type: "string", example: "Document not found." } } },

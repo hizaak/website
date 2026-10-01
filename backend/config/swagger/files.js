@@ -1,4 +1,4 @@
-const { ref, json, pathParam, binary } = require("./helpers");
+const { message, pathParam, binary } = require("./helpers");
 
 const tag = { name: "Files", description: "Uploaded images" };
 
@@ -11,7 +11,7 @@ const paths = {
       parameters: [pathParam("filename", "Photo.filename")],
       responses: {
         200: { description: "The image", content: binary("image/jpeg", "image/png") },
-        404: json(ref("Message"), "No such file"),
+        404: message("No such file", "Endpoint not found"),
       },
     },
   },
@@ -22,7 +22,7 @@ const paths = {
       parameters: [pathParam("filename", "Photo.thumbnailFilename")],
       responses: {
         200: { description: "The thumbnail", content: binary("image/jpeg", "image/png") },
-        404: json(ref("Message"), "No such file"),
+        404: message("No such file", "Endpoint not found"),
       },
     },
   },

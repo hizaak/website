@@ -2,7 +2,7 @@
 // the schemas and routes of one tag; the order below is the order in the UI.
 const swaggerJsdoc = require("swagger-jsdoc");
 const common = require("./common");
-const { ref, json } = require("./helpers");
+const { message } = require("./helpers");
 
 const misc = {
   tag: { name: "Misc" },
@@ -13,7 +13,7 @@ const misc = {
         tags: ["Misc"],
         summary: "Check that the API is up",
         responses: {
-          200: json(ref("Message")),
+          200: message("OK", "Portfolio API - See /api-docs for documentation"),
         },
       },
     },

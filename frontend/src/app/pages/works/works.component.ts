@@ -13,6 +13,7 @@ import { LanguageService } from '../../core/language.service';
   selector: 'app-works',
   imports: [RouterLink, TranslatePipe],
   templateUrl: './works.component.html',
+  styleUrl: './works.component.scss',
 })
 export class WorksComponent implements OnInit {
   // null until loaded.

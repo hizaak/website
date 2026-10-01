@@ -1,4 +1,14 @@
-const { ref, response, json, jsonBody, pathParam, secured, objectId } = require("./helpers");
+const {
+  ref,
+  response,
+  json,
+  message,
+  validationError,
+  jsonBody,
+  pathParam,
+  secured,
+  objectId,
+} = require("./helpers");
 
 const tag = { name: "Works", description: "Series of photos" };
 
@@ -21,6 +31,18 @@ const schemas = {
       {
         type: "object",
         properties: {
+          minYear: {
+            type: "integer",
+            nullable: true,
+            example: 2021,
+            description: "Year of its oldest photo; null when it has none.",
+          },
+          maxYear: {
+            type: "integer",
+            nullable: true,
+            example: 2023,
+            description: "Year of its latest photo; null when it has none.",
+          },
           yearRange: {
             type: "string",
             example: "2021-2023",
@@ -53,6 +75,19 @@ const schemas = {
   },
 };
 
+const titleTaken = {
+  description: "Another work already has this title or slug",
+  content: {
+    "application/json": {
+      schema: ref("Message"),
+      examples: {
+        slug: { summary: "Slug taken", value: { message: "This slug already exists." } },
+        title: { summary: "Title taken", value: { message: "This title already exists." } },
+      },
+    },
+  },
+};
+
 const paths = {
   "/api/works": {
     get: {
@@ -71,9 +106,9 @@ const paths = {
       requestBody: jsonBody(ref("WorkCreate")),
       responses: {
         201: json(ref("Work"), "Work created"),
-        400: response("ValidationError"),
+        400: validationError('"title" is required'),
         401: response("Unauthorized"),
-        409: json(ref("Message"), "Title or slug already used"),
+        409: titleTaken,
         500: response("ServerError"),
       },
     },
@@ -98,10 +133,10 @@ const paths = {
       requestBody: jsonBody(ref("WorkUpdate")),
       responses: {
         200: json(ref("Work"), "Work updated"),
-        400: response("ValidationError"),
+        400: validationError('"title" is not allowed to be empty'),
         401: response("Unauthorized"),
         404: response("WorkNotFound"),
-        409: json(ref("Message"), "Title or slug already used"),
+        409: titleTaken,
         500: response("ServerError"),
       },
     },
@@ -111,7 +146,7 @@ const paths = {
       security: secured,
       parameters: [pathParam("id", "Id of the work")],
       responses: {
-        200: json(ref("Message"), "Work deleted"),
+        200: message("Work deleted", "Work deleted."),
         401: response("Unauthorized"),
         404: response("WorkNotFound"),
         500: response("ServerError"),

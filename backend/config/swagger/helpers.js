@@ -4,10 +4,21 @@ const ref = (name) => ({ $ref: `#/components/schemas/${name}` });
 
 const response = (name) => ({ $ref: `#/components/responses/${name}` });
 
-const json = (schema, description = "OK") => ({
+const json = (schema, description = "OK", example) => ({
   description,
-  content: { "application/json": { schema } },
+  content: { "application/json": { schema, ...(example && { example }) } },
 });
+
+// Response with a plain { message } body, showing the message actually sent.
+const message = (description, text) =>
+  json(ref("Message"), description, { message: text });
+
+// 400 from validateRequest, with the Joi messages this route can produce.
+const validationError = (...errors) =>
+  json(ref("ValidationError"), "Invalid request body", {
+    message: "Validation failed.",
+    errors,
+  });
 
 const jsonBody = (schema) => ({
   required: true,
@@ -40,6 +51,8 @@ module.exports = {
   ref,
   response,
   json,
+  message,
+  validationError,
   jsonBody,
   multipartBody,
   pathParam,

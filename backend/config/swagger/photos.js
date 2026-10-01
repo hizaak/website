@@ -2,6 +2,7 @@ const {
   ref,
   response,
   json,
+  message,
   jsonBody,
   multipartBody,
   pathParam,
@@ -18,9 +19,32 @@ const photoDate = {
 };
 
 // 400 of the routes taking an image: Joi fields, or a plain message from the
-// upload (image missing, unsupported format, unreadable image).
-const invalidPhoto = (description) =>
-  json({ oneOf: [ref("ValidationError"), ref("Message")] }, description);
+// upload (image missing, too large, unsupported format, unreadable image).
+const uploadErrors = {
+  fields: {
+    summary: "Invalid fields",
+    value: {
+      message: "Validation failed.",
+      errors: ["photoDate must be in DD/MM/YYYY format."],
+    },
+  },
+  tooLarge: { summary: "Image over 10 MB", value: { message: "File too large" } },
+  format: {
+    summary: "Not a PNG or JPEG",
+    value: { message: "Unsupported format. Only PNG and JPEG are accepted." },
+  },
+  unreadable: { summary: "Unreadable image", value: { message: "Unable to process image." } },
+};
+
+const invalidPhoto = (description, examples) => ({
+  description,
+  content: {
+    "application/json": {
+      schema: { oneOf: [ref("ValidationError"), ref("Message")] },
+      examples,
+    },
+  },
+});
 
 const schemas = {
   Photo: {
@@ -67,7 +91,7 @@ const schemas = {
     type: "object",
     description: "Body of PUT /api/photos/{id}. Every field is optional.",
     properties: {
-      title: { type: "string", minLength: 1, maxLength: 255 },
+      title: { type: "string", minLength: 1, maxLength: 255, example: "Cirque au soir" },
       photoDate: { ...photoDate, example: "03/11/2024" },
       photo: {
         type: "string",
@@ -83,8 +107,9 @@ const schemas = {
     properties: {
       photoIds: {
         type: "array",
-        description: "Every photo id of the work, once each, in the new order.",
-        items: { type: "string", pattern: "^[0-9a-f]{24}$" },
+        description:
+          "Ids of photos of this work, once each, in the new order. Send all of them: photos left out keep their old position.",
+        items: { type: "string", pattern: "^[0-9a-fA-F]{24}$" },
         uniqueItems: true,
         minItems: 1,
         example: ["665a1b2c3d4e5f6789012346", "665a1b2c3d4e5f6789012347"],
@@ -115,7 +140,10 @@ const paths = {
       requestBody: multipartBody(ref("PhotoCreate")),
       responses: {
         201: json(ref("Photo"), "Photo created"),
-        400: invalidPhoto("Invalid fields, image missing, unsupported format or unreadable image"),
+        400: invalidPhoto("Invalid fields, image missing, too large, unsupported or unreadable", {
+          missing: { summary: "No image", value: { message: "Image file is missing." } },
+          ...uploadErrors,
+        }),
         401: response("Unauthorized"),
         404: response("WorkNotFound"),
         500: response("ServerError"),
@@ -131,7 +159,16 @@ const paths = {
       requestBody: jsonBody(ref("PhotoReorder")),
       responses: {
         200: json({ type: "array", items: ref("Photo") }, "Photos in their new order"),
-        400: invalidPhoto("Invalid body, or the list does not match the photos of this work"),
+        400: invalidPhoto("Invalid body, or an id is not a photo of this work", {
+          fields: {
+            summary: "Invalid body",
+            value: { message: "Validation failed.", errors: ['"photoIds" is required'] },
+          },
+          mismatch: {
+            summary: "Id from another work",
+            value: { message: "The photo list does not match this work." },
+          },
+        }),
         401: response("Unauthorized"),
         404: response("WorkNotFound"),
         500: response("ServerError"),
@@ -157,7 +194,7 @@ const paths = {
       requestBody: multipartBody(ref("PhotoUpdate"), false),
       responses: {
         200: json(ref("Photo"), "Photo updated"),
-        400: invalidPhoto("Invalid fields, unsupported format or unreadable image"),
+        400: invalidPhoto("Invalid fields, image too large, unsupported or unreadable", uploadErrors),
         401: response("Unauthorized"),
         404: response("PhotoNotFound"),
         500: response("ServerError"),
@@ -170,7 +207,7 @@ const paths = {
       security: secured,
       parameters: [pathParam("id", "Id of the photo")],
       responses: {
-        200: json(ref("Message"), "Photo deleted"),
+        200: message("Photo deleted", "Photo deleted."),
         401: response("Unauthorized"),
         404: response("PhotoNotFound"),
         500: response("ServerError"),

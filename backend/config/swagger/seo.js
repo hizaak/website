@@ -1,6 +1,34 @@
-const { response } = require("./helpers");
+const { response, pathParam } = require("./helpers");
 
 const tag = { name: "SEO", description: "Sitemap and link previews" };
+
+const lang = {
+  name: "lang",
+  in: "path",
+  required: true,
+  description: "Language of the page; anything but fr gives English.",
+  schema: { type: "string", enum: ["fr", "en"] },
+};
+
+const preview = (summary, parameters) => ({
+  get: {
+    tags: [tag.name],
+    summary,
+    description: [
+      "Minimal HTML page with the title, description and image of a site page.",
+      "The site's nginx sends WhatsApp, Discord, Facebook... to `/__preview/<path of the page>`",
+      "instead of the Angular app. An unknown page or work gives the works page.",
+    ].join(" "),
+    parameters,
+    responses: {
+      200: {
+        description: "HTML with meta tags",
+        content: { "text/html": { schema: { type: "string" } } },
+      },
+      500: response("ServerError"),
+    },
+  },
+});
 
 const paths = {
   "/sitemap.xml": {
@@ -18,34 +46,26 @@ const paths = {
       },
     },
   },
-  "/__preview/{path}": {
-    get: {
-      tags: [tag.name],
-      summary: "Page for link-preview bots",
-      description: [
-        "Minimal HTML page with the title, description and image of a site page.",
-        "The site's nginx sends WhatsApp, Discord, Facebook... here instead of the Angular app.",
-        "`path` is the page's path, e.g. `fr/works/gavarnie/3`, `en/about` (empty for the home page).",
-      ].join(" "),
-      parameters: [
-        {
-          name: "path",
-          in: "path",
-          required: true,
-          description: "Path of the site page, e.g. fr/works/gavarnie/3",
-          schema: { type: "string" },
-          allowReserved: true,
-        },
-      ],
-      responses: {
-        200: {
-          description: "HTML with meta tags",
-          content: { "text/html": { schema: { type: "string" } } },
-        },
-        500: response("ServerError"),
-      },
+  "/__preview/{lang}/{page}": preview("Link preview of a page", [
+    lang,
+    {
+      name: "page",
+      in: "path",
+      required: true,
+      schema: { type: "string", enum: ["works", "about", "contact"] },
     },
-  },
+  ]),
+  "/__preview/{lang}/works/{slug}/{number}": preview("Link preview of a photo", [
+    lang,
+    pathParam("slug", "Slug of the work, e.g. gavarnie"),
+    {
+      name: "number",
+      in: "path",
+      required: true,
+      description: "Number of the photo in the work, from 1; out of range gives the first photo.",
+      schema: { type: "integer", minimum: 1, example: 1 },
+    },
+  ]),
 };
 
 module.exports = { tag, schemas: {}, paths };

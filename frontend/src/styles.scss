@@ -2,6 +2,11 @@ html {
   font-family: monospace;
 }
 
+// Long lines are hard to follow on wide screens.
+p {
+  max-width: 120ch;
+}
+
 .error {
   color: red;
 }

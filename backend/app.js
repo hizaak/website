@@ -1,9 +1,11 @@
+const path = require("path");
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
+const compression = require("compression");
 const swaggerUi = require("swagger-ui-express");
 const { specs, uiOptions } = require("./config/swagger");
-const { UPLOAD_DIR } = require("./config/upload");
+const { UPLOAD_DIR, ORIGINALS_DIR } = require("./config/upload");
 
 const authRoutes = require("./routes/auth");
 const worksPageRoutes = require("./routes/pages/works");
@@ -21,14 +23,19 @@ const app = express();
 app.set("trust proxy", 1);
 app.disable("x-powered-by");
 
+// Only the site may call the API from a browser. The admin authenticates
+// with a bearer token, not cookies: no credentials needed. CORS_ORIGIN is
+// required at startup (config/env.js); without it, no origin is allowed.
 app.use(
   cors({
-    origin: process.env.CORS_ORIGIN || "*",
+    origin: process.env.CORS_ORIGIN || false,
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
-    credentials: true,
   })
 );
+
+// JSON, the sitemap and the link previews. Images are already compressed.
+app.use(compression());
 
 app.use((req, res, next) => {
   res.set({
@@ -57,8 +64,29 @@ app.use("/api/documents", documentRoutes.api);
 app.use("/documents", documentRoutes.files);
 app.get("/sitemap.xml", sitemapController.get);
 app.use("/__preview", previewController.get);
+app.use("/__exists", previewController.exists);
 app.use("/api/pages/works", worksPageRoutes);
 app.use("/api/pages/work", workPageRoutes);
+
+// Originals are private: downloaded from the admin only, through
+// GET /api/photos/:id/original.
+// Normalized like express.static does (decoded, "//" and "./" collapsed),
+// and case-insensitive for case-insensitive file systems.
+const originalsPrefix = `/${path.relative(UPLOAD_DIR, ORIGINALS_DIR)}/`.toLowerCase();
+const isOriginalsPath = (urlPath) => {
+  try {
+    return path.posix
+      .normalize(decodeURIComponent(urlPath))
+      .toLowerCase()
+      .startsWith(originalsPrefix);
+  } catch {
+    return true;
+  }
+};
+
+app.use("/uploads", (req, res, next) =>
+  isOriginalsPath(req.path) ? res.status(404).json({ message: "Endpoint not found" }) : next()
+);
 
 app.use(
   "/uploads",

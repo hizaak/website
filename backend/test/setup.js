@@ -9,6 +9,7 @@ const { MongoMemoryServer } = require("mongodb-memory-server");
 const sharp = require("sharp");
 
 process.env.JWT_SECRET = "test-secret";
+process.env.CORS_ORIGIN = "https://site.test";
 process.env.UPLOAD_DIR = fs.mkdtempSync(path.join(os.tmpdir(), "site-perso-uploads-"));
 
 const request = require("supertest");
@@ -47,12 +48,20 @@ const signIn = async () => {
   return `Bearer ${response.body.token}`;
 };
 
-// A real JPEG, so that uploads go through the whole sharp pipeline.
+// Real images, so that uploads go through the whole sharp pipeline.
 const makeJpeg = (width, height) =>
   sharp({
     create: { width, height, channels: 3, background: { r: 90, g: 120, b: 160 } },
   })
     .jpeg()
+    .toBuffer();
+
+// With transparency, which a JPEG can't keep.
+const makePng = (width, height) =>
+  sharp({
+    create: { width, height, channels: 4, background: { r: 90, g: 120, b: 160, alpha: 0.5 } },
+  })
+    .png()
     .toBuffer();
 
 // Every file currently stored under the upload folder, relative to it.
@@ -65,4 +74,26 @@ const listUploads = () =>
     )
     .sort();
 
-module.exports = { app, request, ADMIN, signIn, makeJpeg, listUploads, UPLOAD_DIR };
+const createWork = async (auth, title = "Gavarnie") =>
+  (await request(app).post("/api/works").set("Authorization", auth).send({ title }).expect(201))
+    .body;
+
+const uploadPhoto = (auth, workId, fields, image, name = "photo.jpg") =>
+  request(app)
+    .post(`/api/works/${workId}/photos`)
+    .set("Authorization", auth)
+    .field(fields)
+    .attach("photo", image, name);
+
+module.exports = {
+  app,
+  request,
+  ADMIN,
+  signIn,
+  makeJpeg,
+  makePng,
+  createWork,
+  uploadPhoto,
+  listUploads,
+  UPLOAD_DIR,
+};

@@ -37,6 +37,11 @@ export class PhotoService extends AbstractRequestService {
     );
   }
 
+  // Admin only: the file exactly as it was uploaded.
+  downloadOriginal(id: string): Observable<Blob> {
+    return this.http.get(`${this.apiUrl}/${API_ENDPOINTS.photos.original(id)}`, { responseType: 'blob' });
+  }
+
   getPhotoUrl(filename: string): string {
     return `${environment.apiUrl}/uploads/${filename}`;
   }

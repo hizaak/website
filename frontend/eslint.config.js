@@ -14,6 +14,12 @@ module.exports = tseslint.config(
     ],
     processor: angular.processInlineTemplates,
     rules: {
+      // The code injects through constructors throughout; inject() is not
+      // better, only newer.
+      "@angular-eslint/prefer-inject": "off",
+      // The components update plain fields, not signals: OnPush would not
+      // redraw them, so they are explicitly checked eagerly.
+      "@angular-eslint/prefer-on-push-component-change-detection": "off",
       "@angular-eslint/directive-selector": [
         "error",
         {

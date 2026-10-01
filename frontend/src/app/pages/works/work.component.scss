@@ -1,3 +1,13 @@
+// Each number is a box at least 24 px wide and tall, so that a finger can
+// tap it; the padding also keeps "10" and "11" apart.
+.photo-number {
+    display: inline-block;
+    box-sizing: border-box;
+    min-width: 1.5em;
+    padding: 4px 0.25em;
+    text-align: center;
+}
+
 .photo {
     display: block;
 
@@ -5,7 +15,9 @@
     height: auto;
 
     max-width: calc(100vw - 100px);
-    max-height: calc(100vh - 200px);
+    // svh: the height left when the mobile browser bars are shown, so the
+    // photo is never cut by them.
+    max-height: calc(100svh - 200px);
 }
 
 @media (max-width: 768px) {

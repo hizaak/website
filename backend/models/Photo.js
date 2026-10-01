@@ -36,10 +36,18 @@ const photoSchema = new Schema(
     thumbnailFilename: {
       type: String,
     },
+    // Name of the file as uploaded, given back when the original is downloaded.
     originalFilename: {
       type: String,
       required: true,
     },
+    // The uploaded file itself, kept in ORIGINALS_DIR (see config/upload.js).
+    // Missing for photos uploaded before originals were kept.
+    originalFile: {
+      type: String,
+    },
+    // Type of the published image: always JPEG, except legacy PNGs not yet
+    // converted at startup.
     mimeType: {
       type: String,
       required: true,

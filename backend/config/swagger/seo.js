@@ -52,7 +52,7 @@ const paths = {
       name: "page",
       in: "path",
       required: true,
-      schema: { type: "string", enum: ["works", "about", "contact"] },
+      schema: { type: "string", enum: ["works", "about", "contact", "legal"] },
     },
   ]),
   "/__preview/{lang}/works/{slug}/{number}": preview("Link preview of a photo", [
@@ -66,6 +66,23 @@ const paths = {
       schema: { type: "integer", minimum: 1, example: 1 },
     },
   ]),
+  "/__exists/{lang}/works/{slug}": {
+    get: {
+      tags: [tag.name],
+      summary: "Whether the page of a work exists",
+      description: [
+        "Asked by the site's nginx (auth_request) before serving the page of a work, so that",
+        "an unknown work gets a 404 status. auth_request only understands 2xx and 401/403,",
+        "hence 403 for a missing work, which nginx turns into a 404.",
+      ].join(" "),
+      parameters: [lang, pathParam("slug", "Slug of the work, e.g. gavarnie")],
+      responses: {
+        204: { description: "The work exists" },
+        403: { description: "No such work" },
+        500: response("ServerError"),
+      },
+    },
+  },
 };
 
 module.exports = { tag, schemas: {}, paths };

@@ -6,6 +6,14 @@ import { environment } from '../../../environments/environment';
 import { AbstractRequestService } from './abstract-request.service';
 import { API_ENDPOINTS } from '../../core/api-endpoints';
 
+// Where the admin session token is kept. Only in the browser: pages are
+// also rendered at build time, where there is no storage and no session.
+const TOKEN_KEY = 'jwt';
+
+export function getStoredToken(): string | null {
+  return typeof localStorage === 'undefined' ? null : localStorage.getItem(TOKEN_KEY);
+}
+
 interface LoginResponse {
   message: string;
   token: string;
@@ -21,7 +29,7 @@ export class AuthService extends AbstractRequestService {
 
   login(username: string, password: string): Observable<LoginResponse> {
     return this.post<LoginResponse>(API_ENDPOINTS.auth.login, { username, password }).pipe(
-      tap((response) => localStorage.setItem('jwt', response.token))
+      tap((response) => localStorage.setItem(TOKEN_KEY, response.token))
     );
   }
 
@@ -38,7 +46,7 @@ export class AuthService extends AbstractRequestService {
   }
 
   isAuthenticated(): boolean {
-    const token = localStorage.getItem('jwt');
+    const token = getStoredToken();
 
     if (!token) {
       return false;
@@ -54,7 +62,9 @@ export class AuthService extends AbstractRequestService {
   }
 
   logout(): void {
-    localStorage.removeItem('jwt');
+    if (typeof localStorage !== 'undefined') {
+      localStorage.removeItem(TOKEN_KEY);
+    }
   }
 
   private decodeTokenPayload(token: string): { exp?: number } | null {

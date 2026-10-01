@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { WorkService } from '../../../services/api/work.service';
@@ -7,6 +7,8 @@ import { Work } from '../../../interfaces/Work';
 import { AdminNavComponent } from '../../../shared/components/admin-nav/admin-nav.component';
 
 @Component({
+  // Updates plain fields, not signals: OnPush (the default) would miss them.
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'app-admin-works',
   imports: [FormsModule, TranslatePipe, AdminNavComponent],
   templateUrl: './works-admin.component.html',

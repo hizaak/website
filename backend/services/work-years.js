@@ -1,5 +1,4 @@
 const Work = require("../models/Work");
-const { slugify } = require("../utils/slug");
 
 // "2019", "2019-2023", or "" for a work without photos.
 const formatYearRange = (minYear, maxYear) => {
@@ -36,7 +35,6 @@ const listWorksWithYearRange = async () => {
 
   return works.map(({ minYear, maxYear, ...work }) => ({
     ...work,
-    slug: work.slug || slugify(work.title),
     yearRange: formatYearRange(minYear, maxYear),
   }));
 };

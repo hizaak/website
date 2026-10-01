@@ -2,3 +2,9 @@
   max-width: 300px;
   max-height: 300px;
 }
+
+// Same gap as the &nbsp; between the other buttons, which a lone &nbsp;
+// inside an @if block would not give: the template compiler drops it.
+.after-button {
+  margin-left: 1ch;
+}

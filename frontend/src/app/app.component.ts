@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import {
   NavigationEnd,
   Router,
@@ -13,6 +13,8 @@ import { LanguageService } from './core/language.service';
 import { SeoService } from './core/seo.service';
 
 @Component({
+  // Updates plain fields, not signals: OnPush (the default) would miss them.
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'app-root',
   imports: [
     RouterOutlet,

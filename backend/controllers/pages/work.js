@@ -1,6 +1,5 @@
 const { getOrderedPhotosForWork } = require("../../services/photo-order");
 const { findWorkByIdOrSlug } = require("../../services/work-lookup");
-const { slugify } = require("../../utils/slug");
 
 exports.get = async (req, res, next) => {
   try {
@@ -17,7 +16,7 @@ exports.get = async (req, res, next) => {
     res.status(200).json({
       _id: work._id,
       title: work.title,
-      slug: work.slug || slugify(work.title),
+      slug: work.slug,
       photos: photos.map((photo) => ({
         _id: photo._id,
         title: photo.title,

@@ -1,27 +1,43 @@
 <!-- Shared by the desktop and mobile layouts below. -->
 <ng-template #nav>
-  <a [routerLink]="['/', languageService.currentLang, 'works']" routerLinkActive="active">{{ 'nav.works' | translate }}</a>
-  |
-  <a [routerLink]="['/', languageService.currentLang, 'contact']" routerLinkActive="active">{{ 'nav.contact' | translate }}</a>
-  |
-  <a [routerLink]="['/', languageService.currentLang, 'about']" routerLinkActive="active">{{ 'nav.about' | translate }}</a>
-  @if (authService.isAuthenticated()) {
-    |
-    <a [routerLink]="['/', languageService.currentLang, 'admin']" routerLinkActive="active">{{ 'nav.admin' | translate }}</a>
-  }
+  <nav [attr.aria-label]="'nav.label' | translate">
+    <a [routerLink]="['/', languageService.currentLang, 'works']" routerLinkActive="active" ariaCurrentWhenActive="page">{{ 'nav.works' | translate }}</a>
+    <span aria-hidden="true"> | </span>
+    <a [routerLink]="['/', languageService.currentLang, 'contact']" routerLinkActive="active" ariaCurrentWhenActive="page">{{ 'nav.contact' | translate }}</a>
+    <span aria-hidden="true"> | </span>
+    <a [routerLink]="['/', languageService.currentLang, 'about']" routerLinkActive="active" ariaCurrentWhenActive="page">{{ 'nav.about' | translate }}</a>
+    @if (isAdmin()) {
+      <span aria-hidden="true"> | </span>
+      <a [routerLink]="['/', languageService.currentLang, 'admin']" routerLinkActive="active" ariaCurrentWhenActive="page">{{ 'nav.admin' | translate }}</a>
+    }
+  </nav>
 </ng-template>
 
 <ng-template #languages>
-  <a [routerLink]="languageLink('fr')">fr</a>
-  /
-  <a [routerLink]="languageLink('en')">en</a>
+  <a
+    [routerLink]="languageLink('fr')"
+    lang="fr"
+    hreflang="fr"
+    aria-label="Français"
+    [class.active]="languageService.currentLang === 'fr'"
+    [attr.aria-current]="languageService.currentLang === 'fr' ? 'true' : null"
+  >fr</a>
+  <span aria-hidden="true"> / </span>
+  <a
+    [routerLink]="languageLink('en')"
+    lang="en"
+    hreflang="en"
+    aria-label="English"
+    [class.active]="languageService.currentLang === 'en'"
+    [attr.aria-current]="languageService.currentLang === 'en' ? 'true' : null"
+  >en</a>
 </ng-template>
 
 <header>
 
   <div class="mobile-header">
     <div class="mobile-top">
-      <h1 class="site-name">alexandre maurice</h1>
+      <h1 class="site-name"><a [routerLink]="['/', languageService.currentLang, 'works']">alexandre maurice</a></h1>
 
       <div class="mobile-language">
         <ng-container [ngTemplateOutlet]="languages"></ng-container>
@@ -33,18 +49,22 @@
     </div>
   </div>
 
-  <table width="100%" class="desktop-header">
-    <tr>
-      <td align="left">
-        <h1 class="site-name">alexandre maurice</h1>
-        &nbsp;
-        <ng-container [ngTemplateOutlet]="nav"></ng-container>
-      </td>
+  <!-- <tbody> written out: browsers add it anyway when reading the
+       pre-rendered page, and Angular must find the same elements. -->
+  <table width="100%" class="desktop-header" role="presentation">
+    <tbody>
+      <tr>
+        <td align="left">
+          <h1 class="site-name"><a [routerLink]="['/', languageService.currentLang, 'works']">alexandre maurice</a></h1>
+          &nbsp;
+          <ng-container [ngTemplateOutlet]="nav"></ng-container>
+        </td>
 
-      <td align="right">
-        <ng-container [ngTemplateOutlet]="languages"></ng-container>
-      </td>
-    </tr>
+        <td align="right">
+          <ng-container [ngTemplateOutlet]="languages"></ng-container>
+        </td>
+      </tr>
+    </tbody>
   </table>
 
   <hr>

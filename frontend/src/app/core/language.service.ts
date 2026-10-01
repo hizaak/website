@@ -2,8 +2,12 @@ import { Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 
 // First of the visitor's preferred browser languages that the site supports
-// ("fr-CA" counts as fr), English otherwise.
+// ("fr-CA" counts as fr), English otherwise (and when pre-rendering).
 export function detectBrowserLanguage(): 'fr' | 'en' {
+  if (typeof navigator === 'undefined') {
+    return 'en';
+  }
+
   const preferred = navigator.languages?.length ? navigator.languages : [navigator.language];
 
   for (const language of preferred) {

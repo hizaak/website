@@ -13,7 +13,11 @@ export interface Photo {
   photoDate: string;
   filename: string;
   thumbnailFilename?: string;
+  // Name of the uploaded file.
   originalFilename: string;
+  // Set when the uploaded file is kept: it can then be downloaded from the
+  // admin (photos uploaded before originals were kept have none).
+  originalFile?: string;
   mimeType: string;
   width?: number;
   height?: number;

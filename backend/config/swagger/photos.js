@@ -6,6 +6,7 @@ const {
   jsonBody,
   multipartBody,
   pathParam,
+  binary,
   secured,
   objectId,
 } = require("./helpers");
@@ -42,7 +43,7 @@ const uploadErrors = {
 };
 
 const tooLarge = {
-  description: "Image over 10 MB",
+  description: "Image over 50 MB",
   content: {
     "application/json": {
       schema: ref("Message"),
@@ -88,15 +89,24 @@ const schemas = {
         example: "550e8400-e29b-41d4-a716-446655440000.jpg",
         description: "Served at /uploads/thumbnails/{filename}.",
       },
-      originalFilename: { type: "string", example: "IMG_1234.jpg" },
-      width: { type: "integer", example: 3840, description: "Of the stored original, in pixels." },
+      originalFilename: {
+        type: "string",
+        example: "IMG_1234.png",
+        description: "Name of the uploaded file, given back by GET /api/photos/{id}/original.",
+      },
+      originalFile: {
+        type: "string",
+        example: "7c9e6679-7425-40de-944b-e07fc1f90ae7.png",
+        description: "The uploaded file as stored. Private: never served under /uploads. Missing for photos uploaded before originals were kept.",
+      },
+      width: { type: "integer", example: 3840, description: "Of the published image, in pixels." },
       height: { type: "integer", example: 2560 },
       sizes: {
         type: "array",
         description: "Smaller versions, served at /uploads/sizes/{size}/{filename}. Only those under the original's long edge exist.",
         items: { $ref: "#/components/schemas/PhotoSize" },
       },
-      mimeType: { type: "string", enum: ["image/jpeg", "image/png"] },
+      mimeType: { type: "string", enum: ["image/jpeg"], description: "Of the published image: always JPEG." },
       position: { type: "integer", example: 0, description: "Order in the work, from 0." },
       createdAt: { type: "string", format: "date-time" },
       updatedAt: { type: "string", format: "date-time" },
@@ -113,7 +123,7 @@ const schemas = {
         type: "string",
         format: "binary",
         description:
-          "PNG or JPEG, 10 MB max. Re-encoded (metadata and GPS removed, 3840 px and 3 MB max) with a 300 px thumbnail.",
+          "PNG or JPEG, 50 MB max. Kept as is as the original, and published as a JPEG (metadata and GPS removed, author and copyright added, 3840 px and 3 MB max) with a 300 px thumbnail.",
       },
     },
   },
@@ -236,13 +246,28 @@ const paths = {
     delete: {
       tags: [tag.name],
       summary: "Delete a photo",
-      description: "Its image and thumbnail are deleted too.",
+      description: "Its images, thumbnail and original are deleted too.",
       security: secured,
       parameters: [pathParam("id", "Id of the photo")],
       responses: {
         200: message("Photo deleted", "Photo deleted."),
         401: response("Unauthorized"),
         404: response("PhotoNotFound"),
+        500: response("ServerError"),
+      },
+    },
+  },
+  "/api/photos/{id}/original": {
+    get: {
+      tags: [tag.name],
+      summary: "Download the original of a photo",
+      description: "The file exactly as it was uploaded, under its uploaded name.",
+      security: secured,
+      parameters: [pathParam("id", "Id of the photo")],
+      responses: {
+        200: { description: "The original file", content: binary("image/png", "image/jpeg") },
+        401: response("Unauthorized"),
+        404: message("Unknown photo, or no original kept for it", "No original kept for this photo."),
         500: response("ServerError"),
       },
     },

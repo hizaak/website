@@ -1,5 +1,8 @@
 const Photo = require("../models/Photo");
+const Work = require("../models/Work");
 
+// Positions are kept contiguous (0, 1, 2...) by every write, so reads only
+// sort. The other keys only break ties in data written before that.
 const orderedPhotoSort = {
   position: 1,
   photoDate: 1,
@@ -7,6 +10,9 @@ const orderedPhotoSort = {
   title: 1,
 };
 
+// Renumbers the photos of a work 0, 1, 2... in their current order. Called
+// after a photo is deleted, and at startup for data written before positions
+// were maintained.
 const normalizePhotoOrder = async (workId) => {
   const photos = await Photo.find({ workId }).sort(orderedPhotoSort);
 
@@ -25,25 +31,24 @@ const normalizePhotoOrder = async (workId) => {
   }
 };
 
-const getOrderedPhotosForWork = async (workId) => {
-  await normalizePhotoOrder(workId);
-
-  return Photo.find({ workId }).sort(orderedPhotoSort);
+const normalizeAllPhotoOrders = async () => {
+  for (const work of await Work.find({}, { _id: 1 })) {
+    await normalizePhotoOrder(work._id);
+  }
 };
 
-const getNextPhotoPosition = async (workId) => {
-  await normalizePhotoOrder(workId);
+const getOrderedPhotosForWork = (workId) => Photo.find({ workId }).sort(orderedPhotoSort);
 
-  return Photo.countDocuments({ workId });
-};
+const getNextPhotoPosition = (workId) => Photo.countDocuments({ workId });
 
+// photoIds must list every photo of the work, in their new order.
 const reorderWorkPhotos = async (workId, photoIds) => {
-  const photos = await Photo.find({
-    workId,
-    _id: { $in: photoIds },
-  });
+  const [matching, total] = await Promise.all([
+    Photo.countDocuments({ workId, _id: { $in: photoIds } }),
+    Photo.countDocuments({ workId }),
+  ]);
 
-  if (photos.length !== photoIds.length) {
+  if (matching !== photoIds.length || total !== photoIds.length) {
     return null;
   }
 
@@ -62,5 +67,7 @@ const reorderWorkPhotos = async (workId, photoIds) => {
 module.exports = {
   getOrderedPhotosForWork,
   getNextPhotoPosition,
+  normalizePhotoOrder,
+  normalizeAllPhotoOrders,
   reorderWorkPhotos,
 };

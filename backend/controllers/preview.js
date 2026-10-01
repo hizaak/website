@@ -6,31 +6,47 @@ const { escapeXml } = require("../utils/escape");
 const SITE_URL = process.env.SITE_URL || "https://alexandremaurice.fr";
 const API_URL = process.env.PROD_URL || "https://api.alexandremaurice.fr";
 
-// Same texts as the "seo" block of frontend/public/i18n/*.json.
+// Same texts as the "seo" block of frontend/src/i18n/*.json.
 const TEXTS = {
   fr: {
     locale: "fr_FR",
-    works: { title: "alexandre maurice | travaux", description: "Photographies de paysages des Pyrénées par Alexandre Maurice." },
+    pages: {
+      works: { title: "alexandre maurice | travaux", description: "Photographies de paysages des Pyrénées par Alexandre Maurice." },
+      about: { title: "alexandre maurice | à propos", description: "Alexandre Maurice photographie les paysages des Pyrénées. Qui je suis et pourquoi ce site existe." },
+      contact: { title: "alexandre maurice | contact", description: "Contacter Alexandre Maurice au sujet de son travail de photographe ou à titre professionnel." },
+      legal: { title: "alexandre maurice | mentions légales", description: "Mentions légales du site alexandremaurice.fr." },
+    },
     work: { title: "alexandre maurice | travaux - {{work}}", description: "{{work}} : photographies de paysage d'Alexandre Maurice." },
-    about: { title: "alexandre maurice | à propos", description: "Alexandre Maurice photographie les paysages des Pyrénées. Qui je suis et pourquoi ce site existe." },
-    contact: { title: "alexandre maurice | contact", description: "Contacter Alexandre Maurice au sujet de son travail de photographe ou à titre professionnel." },
   },
   en: {
     locale: "en_US",
-    works: { title: "alexandre maurice | works", description: "Landscape photographs of the Pyrenees by Alexandre Maurice." },
+    pages: {
+      works: { title: "alexandre maurice | works", description: "Landscape photographs of the Pyrenees by Alexandre Maurice." },
+      about: { title: "alexandre maurice | about", description: "Alexandre Maurice photographs the landscapes of the Pyrenees. Who I am and why this site exists." },
+      contact: { title: "alexandre maurice | contact", description: "Contact Alexandre Maurice about his landscape photography or any professional matter." },
+      legal: { title: "alexandre maurice | legal notice", description: "Legal notice of alexandremaurice.fr." },
+    },
     work: { title: "alexandre maurice | works - {{work}}", description: "{{work}}: landscape photographs by Alexandre Maurice." },
-    about: { title: "alexandre maurice | about", description: "Alexandre Maurice photographs the landscapes of the Pyrenees. Who I am and why this site exists." },
-    contact: { title: "alexandre maurice | contact", description: "Contact Alexandre Maurice about his landscape photography or any professional matter." },
   },
 };
 
 // Link previews are small: the smallest intermediate size is plenty, and
-// much lighter than the original.
-const photoUrl = (photo) => {
+// much lighter than the full image.
+const previewImage = (photo) => {
   const [smallest] = photo.sizes || [];
   return smallest
-    ? `${API_URL}/uploads/sizes/${smallest.size}/${photo.filename}`
-    : `${API_URL}/uploads/${photo.filename}`;
+    ? {
+        url: `${API_URL}/uploads/sizes/${smallest.size}/${photo.filename}`,
+        width: smallest.width,
+        height: smallest.height,
+        alt: photo.title,
+      }
+    : {
+        url: `${API_URL}/uploads/${photo.filename}`,
+        width: photo.width,
+        height: photo.height,
+        alt: photo.title,
+      };
 };
 
 // Pages without their own photo show the first photo of the first work.
@@ -41,7 +57,7 @@ const defaultImage = async () => {
   }
 
   const [photo] = await getOrderedPhotosForWork(work._id);
-  return photo ? photoUrl(photo) : null;
+  return photo ? previewImage(photo) : null;
 };
 
 // Page metadata for a site URL such as /fr/works/pyrenees/3.
@@ -63,12 +79,13 @@ const describe = async (path) => {
         locale: texts.locale,
         title: texts.work.title.replace("{{work}}", work.title),
         description: texts.work.description.replace("{{work}}", work.title),
-        image: photo ? photoUrl(photo) : await defaultImage(),
+        image: photo ? previewImage(photo) : await defaultImage(),
       };
     }
   }
 
-  const page = texts[section] && section !== "work" ? texts[section] : texts.works;
+  // Any other address gets the description of the works page.
+  const page = Object.hasOwn(texts.pages, section) ? texts.pages[section] : texts.pages.works;
 
   return {
     lang,
@@ -85,6 +102,7 @@ exports.get = async (req, res, next) => {
   try {
     const page = await describe(req.path);
     const url = `${SITE_URL}${req.path}`;
+    const image = page.image;
 
     const meta = [
       ["name", "description", page.description],
@@ -94,8 +112,15 @@ exports.get = async (req, res, next) => {
       ["property", "og:url", url],
       ["property", "og:title", page.title],
       ["property", "og:description", page.description],
-      ["name", "twitter:card", page.image ? "summary_large_image" : "summary"],
-      ...(page.image ? [["property", "og:image", page.image]] : []),
+      ["name", "twitter:card", image ? "summary_large_image" : "summary"],
+      ...(image
+        ? [
+            ["property", "og:image", image.url],
+            ...(image.width ? [["property", "og:image:width", image.width]] : []),
+            ...(image.height ? [["property", "og:image:height", image.height]] : []),
+            ["property", "og:image:alt", image.alt],
+          ]
+        : []),
     ]
       .map(([attribute, key, value]) => `<meta ${attribute}="${key}" content="${escapeXml(value)}">`)
       .join("\n    ");
@@ -111,6 +136,21 @@ exports.get = async (req, res, next) => {
   <body></body>
 </html>
 `);
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Asked by nginx (auth_request) before serving the page of a work, so that
+// an unknown work gets a real 404 status rather than a 200 page saying "not
+// found". auth_request only understands 2xx and 401/403: 403 means "no such
+// work", and nginx turns it into a 404.
+exports.exists = async (req, res, next) => {
+  try {
+    const [, section, slug] = req.path.split("/").filter(Boolean);
+    const exists = section === "works" && slug && (await findWorkByIdOrSlug(slug));
+
+    res.status(exists ? 204 : 403).end();
   } catch (error) {
     next(error);
   }

@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -21,6 +21,8 @@ const KNOWN_ERROR_CODES = [
 ];
 
 @Component({
+  // Updates plain fields, not signals: OnPush (the default) would miss them.
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'app-admin-documents',
   imports: [DatePipe, FormsModule, TranslatePipe, AdminNavComponent],
   templateUrl: './documents-admin.component.html',

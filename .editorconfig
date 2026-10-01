@@ -43,3 +43,7 @@ indent_size = 2
 [*.sh]
 indent_style = space
 indent_size = 2
+
+# TypeScript (frontend): single quotes
+[*.ts]
+quote_type = single

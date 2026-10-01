@@ -39,4 +39,4 @@ const listWorksWithYearRange = async () => {
   }));
 };
 
-module.exports = { listWorksWithYearRange, formatYearRange };
+module.exports = { listWorksWithYearRange };

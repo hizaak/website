@@ -1,152 +1,35 @@
-# ========================================
-# Environment Variables
-# ========================================
+# Secrets
 .env
-.env.local
-.env.*.local
-.env.production.local
+.env.*
+!.env.example
 
-# ========================================
-# IDE & Editor
-# ========================================
+# Dependencies (package-lock.json files are versioned: the Dockerfiles use npm ci)
+node_modules/
+
+# Build outputs and caches
+dist/
+.angular/
+coverage/
+*.map
+
+# Uploaded content, kept out of git: only the empty folders are versioned
+backend/uploads/**
+!backend/uploads/.gitkeep
+!backend/uploads/documents/
+!backend/uploads/documents/.gitkeep
+
+# Logs
+*.log
+logs/
+
+# Editors and OS
 .vscode/*
 !.vscode/settings.json
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
 .idea/
-.project
-.classpath
-.c9/
-*.launch
-.settings/
-*.sublime-workspace
 *.swp
-*.swo
 *~
 .DS_Store
 Thumbs.db
-
-# ========================================
-# Dependencies
-# ========================================
-node_modules/
-npm-debug.log
-npm-debug.log*
-yarn-debug.log
-yarn-debug.log*
-yarn-error.log
-yarn-error.log*
-package-lock.json
-yarn.lock
-pnpm-lock.yaml
-lerna-debug.log
-
-# ========================================
-# Build Outputs
-# ========================================
-/dist
-/build
-/tmp
-/out-tsc
-/bazel-out
-*.js.map
-*.d.ts.map
-
-# ========================================
-# Angular
-# ========================================
-.angular/cache
-.angular/
-/src/app/**/*.module.ts
-/src/tsconfig.app.json.bak
-
-# ========================================
-# Sass/CSS
-# ========================================
-.sass-cache/
-*.css.map
-*.scss.map
-
-# ========================================
-# Testing
-# ========================================
-/coverage
-/test-results
-testem.log
-.nyc_output
-/karma.conf.js
-
-# ========================================
-# Debugging
-# ========================================
-.debug.log
-*.log
-logs/
-*.log.*
-
-# ========================================
-# OS Files
-# ========================================
-.DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
-Thumbs.db
-
-# ========================================
-# Docker
-# ========================================
-.docker/
-/mongo-data/
-/postgres-data/
-/redis-data/
-
-# ========================================
-# Backend - Uploads & Media
-# ========================================
-backend/public/uploads/*
-!backend/public/uploads/.gitkeep
-
-# ========================================
-# Backend - Runtime
-# ========================================
-/backend/.env
-/backend/.env.local
-/backend/node_modules/
-/backend/dist/
-/backend/logs/
-/backend/tmp/
-
-# ========================================
-# Frontend - Build
-# ========================================
-/frontend/.angular/cache
-/frontend/dist/
-/frontend/build/
-/frontend/.env
-/frontend/.env.local
-
-# ========================================
-# Environment Config
-# ========================================
-/environment/.env
-/environment/mongo-data/
-
-# ========================================
-# Bruno REST Client
-# ========================================
-/bruno/.git/
-/bruno/.gitignore
-
-# ========================================
-# System & Temporary Files
-# ========================================
-*.tmp
-*.bak
-*.backup
-.lock
-*.lock
-.gitkeep

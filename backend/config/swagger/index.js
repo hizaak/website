@@ -17,6 +17,17 @@ const misc = {
         },
       },
     },
+    "/health": {
+      get: {
+        tags: ["Misc"],
+        summary: "Health check, used by docker-compose",
+        description: "200 while the database is reachable, 503 otherwise.",
+        responses: {
+          200: { description: "Up", content: { "application/json": { example: { status: "ok" } } } },
+          503: { description: "Database unreachable", content: { "application/json": { example: { status: "database unavailable" } } } },
+        },
+      },
+    },
   },
 };
 
@@ -90,8 +101,10 @@ const uiOptions = {
     persistAuthorization: true,
     docExpansion: "list",
     defaultModelsExpandDepth: 0,
+    // Serialized and run in the browser, hence `window`.
     responseInterceptor: function (response) {
       if (response.ok && /\/login$/.test(response.url) && response.body && response.body.token) {
+        // eslint-disable-next-line no-undef
         window.ui.preauthorizeApi("bearerAuth", response.body.token);
       }
       return response;

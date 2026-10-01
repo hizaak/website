@@ -1,22 +1,20 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 
 import { WorksPageService } from '../../services/pages/works.service';
 import { WorkListItem } from '../../interfaces/pages/WorksPage';
-
 import { LanguageService } from '../../core/language.service';
 
 @Component({
   selector: 'app-works',
-  standalone: true,
-  imports: [CommonModule, RouterModule, TranslatePipe],
+  imports: [RouterLink, TranslatePipe],
   templateUrl: './works.component.html',
-  styleUrl: './works.component.scss',
 })
 export class WorksComponent implements OnInit {
-  works: WorkListItem[] = [];
+  // null until loaded.
+  works: WorkListItem[] | null = null;
+  // Translation key.
   error: string | null = null;
 
   constructor(
@@ -26,12 +24,8 @@ export class WorksComponent implements OnInit {
 
   ngOnInit(): void {
     this.worksPageService.getWorks().subscribe({
-      next: (works) => {
-        this.works = works;
-      },
-      error: () => {
-        this.error = 'Erreur lors du chargement des works.';
-      },
+      next: (works) => (this.works = works),
+      error: () => (this.error = 'works.loadError'),
     });
   }
 }

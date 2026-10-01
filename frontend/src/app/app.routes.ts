@@ -1,7 +1,7 @@
 import { RedirectFunction, Routes } from '@angular/router';
-import { AuthGuard } from './guards/auth.guard';
-import { NoAuthGuard } from './guards/no-auth.guard';
-import { AdminRedirectGuard } from './guards/admin-redirect.guard';
+import { authGuard } from './guards/auth.guard';
+import { noAuthGuard } from './guards/no-auth.guard';
+import { adminRedirectGuard } from './guards/admin-redirect.guard';
 import { detectBrowserLanguage } from './core/language.service';
 
 const redirectToDefaultLanguage = () => `${detectBrowserLanguage()}/works`;
@@ -21,7 +21,7 @@ const localizedRoutes: Routes = [
   {
     path: 'admin/auth',
     data: { seo: { title: 'seo.admin.title', noindex: true } },
-    canActivate: [NoAuthGuard],
+    canActivate: [noAuthGuard],
     loadComponent: () =>
       import('./pages/admin/auth/admin.component').then(
         m => m.AdminComponent
@@ -32,7 +32,7 @@ const localizedRoutes: Routes = [
     path: 'admin',
     data: { seo: { title: 'seo.admin.title', noindex: true } },
     pathMatch: 'full',
-    canActivate: [AdminRedirectGuard],
+    canActivate: [adminRedirectGuard],
     loadComponent: () =>
       import('./pages/admin/auth/admin.component').then(
         m => m.AdminComponent
@@ -42,7 +42,7 @@ const localizedRoutes: Routes = [
   {
     path: 'admin/works',
     data: { seo: { title: 'seo.admin.title', noindex: true } },
-    canActivate: [AuthGuard],
+    canActivate: [authGuard],
     loadComponent: () =>
       import('./pages/admin/works/works-admin.component')
         .then(m => m.WorksAdminComponent),
@@ -51,7 +51,7 @@ const localizedRoutes: Routes = [
   {
     path: 'admin/works/:workId',
     data: { seo: { title: 'seo.admin.title', noindex: true } },
-    canActivate: [AuthGuard],
+    canActivate: [authGuard],
     loadComponent: () =>
       import('./pages/admin/works/work-detail-admin.component')
         .then(m => m.WorkDetailAdminComponent),
@@ -60,7 +60,7 @@ const localizedRoutes: Routes = [
   {
     path: 'admin/documents',
     data: { seo: { title: 'seo.admin.title', noindex: true } },
-    canActivate: [AuthGuard],
+    canActivate: [authGuard],
     loadComponent: () =>
       import('./pages/admin/documents/documents-admin.component')
         .then(m => m.DocumentsAdminComponent),
@@ -68,7 +68,7 @@ const localizedRoutes: Routes = [
   {
     path: 'admin/account',
     data: { seo: { title: 'seo.admin.title', noindex: true } },
-    canActivate: [AuthGuard],
+    canActivate: [authGuard],
     loadComponent: () =>
       import('./pages/admin/account/account-admin.component')
         .then(m => m.AccountAdminComponent),

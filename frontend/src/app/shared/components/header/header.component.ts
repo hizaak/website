@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
-import { NgIf } from '@angular/common';
+import { NgTemplateOutlet } from '@angular/common';
+
 import {
   RouterLink,
   RouterLinkActive,
@@ -12,12 +13,11 @@ import { AuthService } from '../../../services/api/auth.service';
 
 @Component({
   selector: 'app-header',
-  standalone: true,
   imports: [
+    NgTemplateOutlet,
     RouterLink,
     RouterLinkActive,
-    NgIf,
-    TranslatePipe
+    TranslatePipe,
   ],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss',

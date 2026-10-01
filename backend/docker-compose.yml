@@ -1,15 +1,7 @@
+# Local development only: the MongoDB that `npm run dev` connects to
+# (MONGO_HOST=localhost in backend/.env). Production uses the
+# docker-compose.yml at the root of the repository.
 services:
-  backend:
-    container_name: backend
-    build:
-      context: .
-    image: backend
-    depends_on:
-      - mongodb
-    restart: unless-stopped
-    networks:
-      - npm-network
-
   mongodb:
     image: mongo:latest
     container_name: mongodb
@@ -22,12 +14,6 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: mongodb
       MONGO_INITDB_ROOT_PASSWORD: mongodb
-    networks:
-      - npm-network
-
-networks:
-  npm-network:
-    external: true
 
 volumes:
   mongodb_data:

@@ -14,26 +14,41 @@ const tag = { name: "Photos", description: "Photos of a work" };
 
 const photoDate = {
   type: "string",
-  pattern: "^\\d{2}/\\d{2}/\\d{4}$",
-  description: "DD/MM/YYYY.",
+  format: "date",
+  description: "Day the photo was taken, YYYY-MM-DD.",
 };
 
-// 400 of the routes taking an image: Joi fields, or a plain message from the
-// upload (image missing, too large, unsupported format, unreadable image).
+// 400 of the routes taking an image: Joi fields, or a message and a code
+// from the upload (unsupported format, unreadable image).
 const uploadErrors = {
   fields: {
     summary: "Invalid fields",
     value: {
       message: "Validation failed.",
-      errors: ["photoDate must be in DD/MM/YYYY format."],
+      errors: ["photoDate must be in YYYY-MM-DD format."],
     },
   },
-  tooLarge: { summary: "Image over 10 MB", value: { message: "File too large" } },
   format: {
     summary: "Not a PNG or JPEG",
-    value: { message: "Unsupported format. Only PNG and JPEG are accepted." },
+    value: {
+      message: "Unsupported format. Only PNG and JPEG are accepted.",
+      code: "IMAGE_FORMAT_UNSUPPORTED",
+    },
   },
-  unreadable: { summary: "Unreadable image", value: { message: "Unable to process image." } },
+  unreadable: {
+    summary: "Unreadable image",
+    value: { message: "Unable to process image.", code: "IMAGE_UNREADABLE" },
+  },
+};
+
+const tooLarge = {
+  description: "Image over 10 MB",
+  content: {
+    "application/json": {
+      schema: ref("Message"),
+      example: { message: "File too large.", code: "IMAGE_TOO_LARGE" },
+    },
+  },
 };
 
 const invalidPhoto = (description, examples) => ({
@@ -47,6 +62,14 @@ const invalidPhoto = (description, examples) => ({
 });
 
 const schemas = {
+  PhotoSize: {
+    type: "object",
+    properties: {
+      size: { type: "integer", example: 1280, description: "Long-edge box the version fits in." },
+      width: { type: "integer", example: 1280 },
+      height: { type: "integer", example: 853 },
+    },
+  },
   Photo: {
     type: "object",
     description: "A photo of a work.",
@@ -54,7 +77,7 @@ const schemas = {
       _id: { type: "string", example: "665a1b2c3d4e5f6789012346" },
       workId: objectId,
       title: { type: "string", example: "Cirque au matin" },
-      photoDate: { type: "string", example: "14/08/2023" },
+      photoDate: { type: "string", format: "date-time", example: "2023-08-14T00:00:00.000Z", description: "Midnight UTC of the day the photo was taken." },
       filename: {
         type: "string",
         example: "550e8400-e29b-41d4-a716-446655440000.jpg",
@@ -66,6 +89,13 @@ const schemas = {
         description: "Served at /uploads/thumbnails/{filename}.",
       },
       originalFilename: { type: "string", example: "IMG_1234.jpg" },
+      width: { type: "integer", example: 3840, description: "Of the stored original, in pixels." },
+      height: { type: "integer", example: 2560 },
+      sizes: {
+        type: "array",
+        description: "Smaller versions, served at /uploads/sizes/{size}/{filename}. Only those under the original's long edge exist.",
+        items: { $ref: "#/components/schemas/PhotoSize" },
+      },
       mimeType: { type: "string", enum: ["image/jpeg", "image/png"] },
       position: { type: "integer", example: 0, description: "Order in the work, from 0." },
       createdAt: { type: "string", format: "date-time" },
@@ -78,7 +108,7 @@ const schemas = {
     required: ["title", "photoDate", "photo"],
     properties: {
       title: { type: "string", minLength: 1, maxLength: 255, example: "Cirque au matin" },
-      photoDate: { ...photoDate, example: "14/08/2023" },
+      photoDate: { ...photoDate, example: "2023-08-14" },
       photo: {
         type: "string",
         format: "binary",
@@ -92,7 +122,7 @@ const schemas = {
     description: "Body of PUT /api/photos/{id}. Every field is optional.",
     properties: {
       title: { type: "string", minLength: 1, maxLength: 255, example: "Cirque au soir" },
-      photoDate: { ...photoDate, example: "03/11/2024" },
+      photoDate: { ...photoDate, example: "2024-11-03" },
       photo: {
         type: "string",
         format: "binary",
@@ -140,12 +170,13 @@ const paths = {
       requestBody: multipartBody(ref("PhotoCreate")),
       responses: {
         201: json(ref("Photo"), "Photo created"),
-        400: invalidPhoto("Invalid fields, image missing, too large, unsupported or unreadable", {
+        400: invalidPhoto("Invalid fields, image missing, unsupported or unreadable", {
           missing: { summary: "No image", value: { message: "Image file is missing." } },
           ...uploadErrors,
         }),
         401: response("Unauthorized"),
         404: response("WorkNotFound"),
+        413: tooLarge,
         500: response("ServerError"),
       },
     },
@@ -171,6 +202,7 @@ const paths = {
         }),
         401: response("Unauthorized"),
         404: response("WorkNotFound"),
+        413: tooLarge,
         500: response("ServerError"),
       },
     },
@@ -194,9 +226,10 @@ const paths = {
       requestBody: multipartBody(ref("PhotoUpdate"), false),
       responses: {
         200: json(ref("Photo"), "Photo updated"),
-        400: invalidPhoto("Invalid fields, image too large, unsupported or unreadable", uploadErrors),
+        400: invalidPhoto("Invalid fields, image unsupported or unreadable", uploadErrors),
         401: response("Unauthorized"),
         404: response("PhotoNotFound"),
+        413: tooLarge,
         500: response("ServerError"),
       },
     },

@@ -1,6 +1,8 @@
 <app-admin-nav></app-admin-nav>
 
-<p *ngIf="error" style="color: red;">{{ error | translate }}</p>
+@if (error) {
+  <p class="error">{{ error | translate }}</p>
+}
 
 <table class="admin-table">
   <thead>
@@ -13,37 +15,40 @@
     </tr>
   </thead>
   <tbody>
-    <tr *ngFor="let document of documents">
-      <td>
-        <ng-container *ngIf="editingFilename === document.filename; else filenameText">
-          <form (ngSubmit)="renameDocument(document)">
-            <input type="text" [(ngModel)]="editName" name="editName" required />
-            <button type="submit">{{ 'admin.save' | translate }}</button>
-            <button type="button" (click)="cancelRename()">{{ 'admin.cancel' | translate }}</button>
-          </form>
-        </ng-container>
-        <ng-template #filenameText>{{ document.filename }}</ng-template>
-      </td>
-      <td>
-        <a [href]="documentService.getDocumentUrl(document)" target="_blank" rel="noopener">
-          {{ documentService.getDocumentUrl(document) }}
-        </a>
-      </td>
-      <td>
-        <ng-container *ngIf="formatSize(document.size) as size">
+    @for (document of documents; track document.filename) {
+      <tr>
+        <td>
+          @if (editingFilename === document.filename) {
+            <form (ngSubmit)="renameDocument(document)">
+              <input type="text" [(ngModel)]="editName" name="editName" required />
+              <button type="submit">{{ 'admin.save' | translate }}</button>
+              <button type="button" (click)="cancelRename()">{{ 'admin.cancel' | translate }}</button>
+            </form>
+          } @else {
+            {{ document.filename }}
+          }
+        </td>
+        <td>
+          <a [href]="documentService.getDocumentUrl(document)" target="_blank" rel="noopener">
+            {{ documentService.getDocumentUrl(document) }}
+          </a>
+        </td>
+        <td>
+          @let size = formatSize(document.size);
           {{ size.value }} {{ 'admin.sizeUnits.' + size.unit | translate }}
-        </ng-container>
-      </td>
-      <td>{{ document.updatedAt | date: 'dd/MM/yyyy HH:mm' }}</td>
-      <td>
-        <button type="button" (click)="startRename(document)">{{ 'admin.rename' | translate }}</button>
-        &nbsp;
-        <button type="button" (click)="deleteDocument(document)">{{ 'admin.delete' | translate }}</button>
-      </td>
-    </tr>
-    <tr *ngIf="!documents.length">
-      <td colspan="5">{{ 'admin.noDocuments' | translate }}</td>
-    </tr>
+        </td>
+        <td>{{ document.updatedAt | date: 'dd/MM/yyyy HH:mm' }}</td>
+        <td>
+          <button type="button" (click)="startRename(document)">{{ 'admin.rename' | translate }}</button>
+          &nbsp;
+          <button type="button" (click)="deleteDocument(document)">{{ 'admin.delete' | translate }}</button>
+        </td>
+      </tr>
+    } @empty {
+      <tr>
+        <td colspan="5">{{ 'admin.noDocuments' | translate }}</td>
+      </tr>
+    }
   </tbody>
 </table>
 
@@ -70,7 +75,9 @@
     <small>{{ 'admin.documentNameHint' | translate }}</small>
   </p>
 
-  <p *ngIf="newDocumentUrl">{{ 'admin.url' | translate }} : {{ newDocumentUrl }}</p>
+  @if (newDocumentUrl) {
+    <p>{{ 'admin.url' | translate }} : {{ newDocumentUrl }}</p>
+  }
 
   <button type="submit" [disabled]="uploading">
     {{ (uploading ? 'admin.uploading' : 'admin.upload') | translate }}

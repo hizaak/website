@@ -6,7 +6,6 @@ import { LanguageService } from '../../core/language.service';
 
 @Component({
   selector: 'app-not-found',
-  standalone: true,
   imports: [RouterLink, TranslatePipe],
   templateUrl: './not-found.component.html',
 })

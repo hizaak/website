@@ -35,8 +35,12 @@
     <small>{{ 'admin.currentPasswordHint' | translate }}</small>
   </p>
 
-  <p *ngIf="error" style="color: red;">{{ error | translate: { min: minLength } }}</p>
-  <p *ngIf="success">{{ 'admin.accountSaved' | translate }}</p>
+  @if (error) {
+    <p class="error">{{ error | translate: { min: minLength } }}</p>
+  }
+  @if (success) {
+    <p>{{ 'admin.accountSaved' | translate }}</p>
+  }
 
   <button type="submit" [disabled]="saving || !currentPassword">
     {{ 'admin.save' | translate }}

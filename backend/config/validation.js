@@ -18,7 +18,21 @@ const accountUpdateSchema = Joi.object({
   newPassword: Joi.string().min(ADMIN_PASSWORD_MIN_LENGTH).max(200),
 }).or("newUsername", "newPassword");
 
-const photoDatePattern = /^\d{2}\/\d{2}\/\d{4}$/;
+// The day a photo was taken, as sent by <input type="date">. Converted to a
+// Date at midnight UTC.
+const photoDateRule = Joi.string()
+  .pattern(/^\d{4}-\d{2}-\d{2}$/)
+  .custom((value, helpers) => {
+    const date = new Date(`${value}T00:00:00.000Z`);
+    // Rejects impossible days such as 2023-02-30, which Date would roll over.
+    return Number.isNaN(date.getTime()) || date.toISOString().slice(0, 10) !== value
+      ? helpers.error("any.invalid")
+      : date;
+  })
+  .messages({
+    "string.pattern.base": "photoDate must be in YYYY-MM-DD format.",
+    "any.invalid": "photoDate is not a valid date.",
+  });
 
 const workSchema = Joi.object({
   title: Joi.string().min(1).max(255).required(),
@@ -30,17 +44,12 @@ const workUpdateSchema = Joi.object({
 
 const photoSchema = Joi.object({
   title: Joi.string().min(1).max(255).required(),
-  photoDate: Joi.string()
-    .pattern(photoDatePattern)
-    .required()
-    .messages({ "string.pattern.base": "photoDate must be in DD/MM/YYYY format." }),
+  photoDate: photoDateRule.required(),
 });
 
 const photoUpdateSchema = Joi.object({
   title: Joi.string().min(1).max(255),
-  photoDate: Joi.string()
-    .pattern(photoDatePattern)
-    .messages({ "string.pattern.base": "photoDate must be in DD/MM/YYYY format." }),
+  photoDate: photoDateRule,
 });
 
 const photoReorderSchema = Joi.object({

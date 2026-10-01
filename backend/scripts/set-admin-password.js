@@ -1,5 +1,7 @@
 // Changes the admin password. Run inside the backend container:
 //   docker exec -it site-perso-backend node scripts/set-admin-password.js
+require("dotenv").config();
+
 const readline = require("readline");
 const mongoose = require("mongoose");
 const connectDB = require("../config/db");

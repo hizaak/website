@@ -1,4 +1,7 @@
 {
+  "common": {
+    "loading": "loading..."
+  },
   "nav": {
     "works": "works",
     "about": "about",
@@ -7,7 +10,8 @@
   },
   "works": {
     "disclaimer": "For now, this page is only a display test: the real work on the photos is still to be done...",
-    "quote": "Of all resources, there is but one that shall forever elude our grasp."
+    "quote": "Of all resources, there is but one that shall forever elude our grasp.",
+    "loadError": "Error while loading the works."
   },
   "about": {
     "title": "about",
@@ -58,7 +62,6 @@
     "replaceImage": "replace image",
     "addPhoto": "add photo",
     "image": "image",
-    "loading": "loading...",
     "documents": "documents",
     "addDocument": "add document",
     "file": "file",
@@ -110,6 +113,33 @@
       "sessionExpired": "Session expired, log in again.",
       "tooManyAttempts": "Too many attempts, try again in 15 minutes.",
       "generic": "Error while saving the account."
+    },
+    "confirmDeleteWork": "Delete the work \"{{title}}\" and all its photos?",
+    "confirmDeletePhoto": "Delete the photo \"{{title}}\"?",
+    "loginErrors": {
+      "invalid": "Incorrect username or password.",
+      "tooManyAttempts": "Too many attempts, try again in 15 minutes.",
+      "generic": "An error occurred. Please try again."
+    },
+    "workErrors": {
+      "load": "Error while loading the works.",
+      "notFound": "Work not found.",
+      "titleTaken": "A work already has this title.",
+      "create": "Error while creating the work.",
+      "update": "Error while updating the work.",
+      "delete": "Error while deleting the work."
+    },
+    "photoErrors": {
+      "load": "Error while loading the photos.",
+      "required": "Title, date and image are required to add a photo.",
+      "titleAndDate": "Title and date are required.",
+      "format": "Unsupported format: only PNG and JPEG are accepted.",
+      "tooLarge": "Image too large (10 MB maximum).",
+      "unreadable": "Unreadable image.",
+      "create": "Error while adding the photo.",
+      "update": "Error while updating the photo.",
+      "reorder": "Error while changing the order.",
+      "delete": "Error while deleting the photo."
     }
   },
   "seo": {
@@ -135,5 +165,9 @@
     "notFound": {
       "title": "alexandre maurice | page not found"
     }
+  },
+  "work": {
+    "loadError": "Error while loading the work.",
+    "noPhotos": "No photos yet."
   }
 }

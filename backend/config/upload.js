@@ -4,11 +4,22 @@ const path = require("path");
 const fs = require("fs");
 const { randomUUID } = require("crypto");
 
-const UPLOAD_DIR = path.join(__dirname, "..", "uploads");
+// Overridable so that the tests write to a temporary folder.
+const UPLOAD_DIR = process.env.UPLOAD_DIR || path.join(__dirname, "..", "uploads");
 const THUMBNAIL_DIR = path.join(UPLOAD_DIR, "thumbnails");
 const DOCUMENTS_DIR = path.join(UPLOAD_DIR, "documents");
+const SIZES_DIR = path.join(UPLOAD_DIR, "sizes");
 
-for (const dir of [UPLOAD_DIR, THUMBNAIL_DIR, DOCUMENTS_DIR]) {
+// Intermediate versions served through srcset, so that a phone doesn't
+// download the full-size original. Each is a long-edge box: a photo smaller
+// than the box doesn't get that version.
+const PHOTO_SIZES = [1280, 2048];
+const SIZE_JPEG_QUALITY = 86;
+const SIZE_PNG_QUALITY = 90;
+
+const sizeDir = (size) => path.join(SIZES_DIR, String(size));
+
+for (const dir of [UPLOAD_DIR, THUMBNAIL_DIR, DOCUMENTS_DIR, ...PHOTO_SIZES.map(sizeDir)]) {
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir, { recursive: true });
   }
@@ -37,7 +48,9 @@ const fileFilter = (req, file, cb) => {
   const ext = path.extname(file.originalname).toLowerCase();
 
   if (!ALLOWED_EXTENSIONS.includes(ext) || !ALLOWED_MIMES.includes(file.mimetype)) {
-    return cb(new Error("Unsupported format. Only PNG and JPEG are accepted."));
+    const error = new Error("Unsupported format. Only PNG and JPEG are accepted.");
+    error.code = "IMAGE_FORMAT_UNSUPPORTED";
+    return cb(error);
   }
 
   cb(null, true);
@@ -109,38 +122,69 @@ const writeThumbnail = async (buffer, mimeType, filename) => {
   fs.writeFileSync(path.join(THUMBNAIL_DIR, filename), thumbnailBuffer);
 };
 
-// Runs after multer has buffered the file in memory.
+// Writes every intermediate size smaller than the processed image, and
+// returns its dimensions along with the sizes written.
+const writeSizes = async (buffer, mimeType, filename) => {
+  const { width, height } = await sharp(buffer).metadata();
+  const sizes = [];
+
+  for (const size of PHOTO_SIZES.filter((size) => size < Math.max(width, height))) {
+    const base = sharp(buffer).resize(size, size, { fit: "inside" });
+    const { data, info } = await (mimeType === "image/png"
+      ? base.png({ quality: SIZE_PNG_QUALITY, palette: true, compressionLevel: 9 })
+      : base.jpeg({ quality: SIZE_JPEG_QUALITY, mozjpeg: true })
+    ).toBuffer({ resolveWithObject: true });
+
+    fs.writeFileSync(path.join(sizeDir(size), filename), data);
+    sizes.push({ size, width: info.width, height: info.height });
+  }
+
+  return { width, height, sizes };
+};
+
+// Runs after multer has buffered the file in memory and after the other
+// fields have been validated, so that an invalid request never leaves files
+// behind nor costs an encode.
 const processUploadedImage = async (req, res, next) => {
   if (!req.file) {
     return next();
   }
 
+  const ext = path.extname(req.file.originalname).toLowerCase();
+  const filename = `${randomUUID()}${ext}`;
+
   try {
-    const ext = path.extname(req.file.originalname).toLowerCase();
-    const filename = `${randomUUID()}${ext}`;
 
     const buffer = await encodeWithinBudget(req.file.buffer, req.file.mimetype);
 
     fs.writeFileSync(path.join(UPLOAD_DIR, filename), buffer);
     await writeThumbnail(buffer, req.file.mimetype, filename);
+    const { width, height, sizes } = await writeSizes(buffer, req.file.mimetype, filename);
 
     req.file.filename = filename;
     req.file.thumbnailFilename = filename;
     req.file.size = buffer.length;
+    req.file.dimensions = { width, height, sizes };
 
     next();
   } catch (error) {
-    res.status(400).json({ message: "Unable to process image." });
+    console.error("Error processing uploaded image:", error);
+    deletePhotoFiles({ filename, thumbnailFilename: filename });
+    res.status(400).json({ message: "Unable to process image.", code: "IMAGE_UNREADABLE" });
   }
 };
 
 const uploadSingleImage = (fieldName) => (req, res, next) => {
   upload.single(fieldName)(req, res, (err) => {
-    if (err) {
-      return res.status(400).json({ message: err.message });
+    if (err?.code === "LIMIT_FILE_SIZE") {
+      return res.status(413).json({ message: "File too large.", code: "IMAGE_TOO_LARGE" });
     }
 
-    processUploadedImage(req, res, next);
+    if (err) {
+      return res.status(400).json({ message: err.message, code: err.code });
+    }
+
+    next();
   });
 };
 
@@ -172,40 +216,41 @@ const uploadSingleDocument = (fieldName) => (req, res, next) => {
   });
 };
 
-const deleteFile = (filename) => {
-  if (!filename) {
-    return;
-  }
-
-  const filePath = path.join(UPLOAD_DIR, filename);
-
+const removeIfExists = (filePath) => {
   if (fs.existsSync(filePath)) {
     fs.unlinkSync(filePath);
   }
 };
 
-const deleteThumbnail = (filename) => {
-  if (!filename) {
-    return;
+// Removes every file of a photo: the original, its thumbnail and its
+// intermediate sizes. Takes a photo record, or the file fields of an upload.
+const deletePhotoFiles = ({ filename, thumbnailFilename }) => {
+  if (filename) {
+    removeIfExists(path.join(UPLOAD_DIR, filename));
+
+    for (const size of PHOTO_SIZES) {
+      removeIfExists(path.join(sizeDir(size), filename));
+    }
   }
 
-  const filePath = path.join(THUMBNAIL_DIR, filename);
-
-  if (fs.existsSync(filePath)) {
-    fs.unlinkSync(filePath);
+  if (thumbnailFilename) {
+    removeIfExists(path.join(THUMBNAIL_DIR, thumbnailFilename));
   }
 };
 
 module.exports = {
   upload,
   uploadSingleImage,
+  processUploadedImage,
   uploadSingleDocument,
   UPLOAD_DIR,
   THUMBNAIL_DIR,
   DOCUMENTS_DIR,
-  deleteFile,
-  deleteThumbnail,
+  PHOTO_SIZES,
+  sizeDir,
+  deletePhotoFiles,
   writeThumbnail,
+  writeSizes,
   ALLOWED_MIMES,
   ALLOWED_EXTENSIONS,
 };

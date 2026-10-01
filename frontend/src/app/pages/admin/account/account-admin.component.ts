@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
 import { AuthService } from '../../../services/api/auth.service';
@@ -19,8 +19,7 @@ const ERROR_KEYS: Record<number, string> = {
 
 @Component({
   selector: 'app-admin-account',
-  standalone: true,
-  imports: [CommonModule, FormsModule, TranslatePipe, AdminNavComponent],
+  imports: [FormsModule, TranslatePipe, AdminNavComponent],
   templateUrl: './account-admin.component.html',
 })
 export class AccountAdminComponent implements OnInit {

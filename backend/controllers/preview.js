@@ -24,7 +24,14 @@ const TEXTS = {
   },
 };
 
-const photoUrl = (photo) => `${API_URL}/uploads/${photo.filename}`;
+// Link previews are small: the smallest intermediate size is plenty, and
+// much lighter than the original.
+const photoUrl = (photo) => {
+  const [smallest] = photo.sizes || [];
+  return smallest
+    ? `${API_URL}/uploads/sizes/${smallest.size}/${photo.filename}`
+    : `${API_URL}/uploads/${photo.filename}`;
+};
 
 // Pages without their own photo show the first photo of the first work.
 const defaultImage = async () => {
@@ -74,7 +81,7 @@ const describe = async (path) => {
 
 // Served by nginx instead of the Angular app to link-preview bots
 // (WhatsApp, Discord...), which read meta tags but don't run JavaScript.
-exports.get = async (req, res) => {
+exports.get = async (req, res, next) => {
   try {
     const page = await describe(req.path);
     const url = `${SITE_URL}${req.path}`;
@@ -105,9 +112,6 @@ exports.get = async (req, res) => {
 </html>
 `);
   } catch (error) {
-    res.status(500).json({
-      message: "Server error.",
-      error: error.message,
-    });
+    next(error);
   }
 };

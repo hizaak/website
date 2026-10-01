@@ -1,8 +1,10 @@
 <button type="button" (click)="backToList()">← {{ 'admin.back' | translate }}</button>
 
-<p *ngIf="error" style="color: red;">{{ error }}</p>
+@if (error) {
+  <p class="error">{{ error | translate }}</p>
+}
 
-<div *ngIf="work">
+@if (work) {
   <p><b>{{ 'admin.edit' | translate }}</b></p>
 
   <form (ngSubmit)="updateWork()">
@@ -33,29 +35,31 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let photo of photos; let i = index">
-        <td>
-          <button type="button" (click)="movePhotoUp(i)" [disabled]="i === 0">↑</button>
-          &nbsp;
-          <button type="button" (click)="movePhotoDown(i)" [disabled]="i === photos.length - 1">↓</button>
-        </td>
-        <td>{{ photo.photoDate }}</td>
-        <td>{{ photo.title }}</td>
-        <td>
-          <img [src]="photoService.getPhotoThumbnailUrl(photo)" [alt]="photo.title" class="thumbnail">
-        </td>
-        <td>
-          <button type="button" (click)="editPhoto(photo)">{{ 'admin.edit' | translate }}</button>
-          &nbsp;
-          <button type="button" (click)="deletePhoto(photo)">{{ 'admin.delete' | translate }}</button>
-        </td>
-      </tr>
+      @for (photo of photos; track photo._id; let i = $index, last = $last) {
+        <tr>
+          <td>
+            <button type="button" (click)="movePhoto(i, i - 1)" [disabled]="i === 0">↑</button>
+            &nbsp;
+            <button type="button" (click)="movePhoto(i, i + 1)" [disabled]="last">↓</button>
+          </td>
+          <td>{{ photo.photoDate | date: 'dd/MM/yyyy' : 'UTC' }}</td>
+          <td>{{ photo.title }}</td>
+          <td>
+            <img [src]="photoService.getPhotoThumbnailUrl(photo)" [alt]="photo.title" class="thumbnail">
+          </td>
+          <td>
+            <button type="button" (click)="editPhoto(photo)">{{ 'admin.edit' | translate }}</button>
+            &nbsp;
+            <button type="button" (click)="deletePhoto(photo)">{{ 'admin.delete' | translate }}</button>
+          </td>
+        </tr>
+      }
     </tbody>
   </table>
 
   <hr>
 
-  <div *ngIf="selectedPhoto">
+  @if (selectedPhoto) {
     <p><b>{{ 'admin.editPhoto' | translate }}</b></p>
 
     <form (ngSubmit)="updateSelectedPhoto()">
@@ -63,7 +67,7 @@
         <label>
           {{ 'admin.title' | translate }}
           <br>
-          <input [(ngModel)]="selectedPhoto.title" name="selectedPhotoTitle" required>
+          <input [(ngModel)]="editPhotoTitle" name="editPhotoTitle" required>
         </label>
       </p>
 
@@ -71,7 +75,7 @@
         <label>
           {{ 'admin.date' | translate }}
           <br>
-          <input [(ngModel)]="selectedPhoto.photoDate" name="selectedPhotoDate" required>
+          <input type="date" [(ngModel)]="editPhotoDate" name="editPhotoDate" required>
         </label>
       </p>
 
@@ -84,10 +88,12 @@
       </p>
 
       <button type="submit">{{ 'admin.save' | translate }}</button>
+      &nbsp;
+      <button type="button" (click)="selectedPhoto = null">{{ 'admin.cancel' | translate }}</button>
     </form>
 
     <hr>
-  </div>
+  }
 
   <p><b>{{ 'admin.addPhoto' | translate }}</b></p>
 
@@ -104,7 +110,7 @@
       <label>
         {{ 'admin.date' | translate }}
         <br>
-        <input type="text" [(ngModel)]="newPhotoDate" name="newPhotoDate" required />
+        <input type="date" [(ngModel)]="newPhotoDate" name="newPhotoDate" required />
       </label>
     </p>
 
@@ -112,16 +118,20 @@
       <label>
         {{ 'admin.image' | translate }}
         <br>
-        <input type="file" accept="image/png,image/jpeg,.png,.jpg,.jpeg" (change)="onNewPhotoFileSelected($event)" />
+        <input #newPhotoInput type="file" accept="image/png,image/jpeg,.png,.jpg,.jpeg" (change)="onNewPhotoFileSelected($event)" />
       </label>
     </p>
 
-    <p *ngIf="newPhotoPreviewUrl">
-      <img [src]="newPhotoPreviewUrl" alt="" class="thumbnail">
-    </p>
+    @if (newPhotoPreviewUrl) {
+      <p>
+        <img [src]="newPhotoPreviewUrl" alt="" class="thumbnail">
+      </p>
+    }
 
-    <button type="submit">{{ 'admin.addPhoto' | translate }}</button>
+    <button type="submit" [disabled]="saving">
+      {{ (saving ? 'admin.uploading' : 'admin.addPhoto') | translate }}
+    </button>
   </form>
-</div>
-
-<p *ngIf="!work && !error">{{ 'admin.loading' | translate }}</p>
+} @else if (!error) {
+  <p>{{ 'common.loading' | translate }}</p>
+}

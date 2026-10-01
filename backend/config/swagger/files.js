@@ -15,6 +15,21 @@ const paths = {
       },
     },
   },
+  "/uploads/sizes/{size}/{filename}": {
+    get: {
+      tags: [tag.name],
+      summary: "Smaller version of a photo",
+      description: "Listed in Photo.sizes. Cached for a year.",
+      parameters: [
+        { name: "size", in: "path", required: true, schema: { type: "integer", enum: [1280, 2048] } },
+        pathParam("filename", "Photo.filename"),
+      ],
+      responses: {
+        200: { description: "The image", content: binary("image/jpeg", "image/png") },
+        404: message("No such file", "Endpoint not found"),
+      },
+    },
+  },
   "/uploads/thumbnails/{filename}": {
     get: {
       tags: [tag.name],

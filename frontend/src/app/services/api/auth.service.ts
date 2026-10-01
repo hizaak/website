@@ -6,6 +6,11 @@ import { environment } from '../../../environments/environment';
 import { AbstractRequestService } from './abstract-request.service';
 import { API_ENDPOINTS } from '../../core/api-endpoints';
 
+interface LoginResponse {
+  message: string;
+  token: string;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -14,13 +19,9 @@ export class AuthService extends AbstractRequestService {
     super(http, environment.apiUrl);
   }
 
-  login(username: string, password: string): Observable<any> {
-    return this.post<any>(API_ENDPOINTS.auth.login, { username, password }).pipe(
-      tap((response: any) => {
-        if (response.token) {
-          localStorage.setItem('jwt', response.token);
-        }
-      })
+  login(username: string, password: string): Observable<LoginResponse> {
+    return this.post<LoginResponse>(API_ENDPOINTS.auth.login, { username, password }).pipe(
+      tap((response) => localStorage.setItem('jwt', response.token))
     );
   }
 

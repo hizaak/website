@@ -33,3 +33,6 @@ logs/
 *~
 .DS_Store
 Thumbs.db
+
+# Local sample photos, never versioned
+sample_photos/

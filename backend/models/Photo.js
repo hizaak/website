@@ -46,8 +46,7 @@ const photoSchema = new Schema(
     originalFile: {
       type: String,
     },
-    // Type of the published image: always JPEG, except legacy PNGs not yet
-    // converted at startup.
+    // Type of the published image: always JPEG.
     mimeType: {
       type: String,
       required: true,

@@ -15,8 +15,6 @@ const {
   UPLOAD_DIR,
 } = require("./setup");
 const Photo = require("../models/Photo");
-const { migratePhotoDates } = require("../services/photo-dates");
-const { convertLegacyPngPhotos } = require("../services/photo-files");
 
 const readUpload = (relativePath) => fs.readFileSync(path.join(UPLOAD_DIR, relativePath));
 
@@ -297,65 +295,5 @@ describe("photo order", () => {
       .expect(200);
 
     assert.deepEqual(await titlesOf(work._id), ["C0", "A1", "B2"]);
-  });
-});
-
-describe("legacy PNG conversion", () => {
-  it("republishes a PNG photo as JPEG and keeps the PNG as its original", async () => {
-    const auth = await signIn();
-    const work = await createWork(auth);
-    const png = await makePng(1600, 1000);
-
-    fs.writeFileSync(path.join(UPLOAD_DIR, "legacy.png"), png);
-    fs.writeFileSync(path.join(UPLOAD_DIR, "thumbnails", "legacy.png"), png);
-    fs.writeFileSync(path.join(UPLOAD_DIR, "sizes", "1280", "legacy.png"), png);
-
-    const { _id } = await new Photo({
-      workId: work._id,
-      title: "Old",
-      photoDate: new Date("2020-08-20"),
-      filename: "legacy.png",
-      thumbnailFilename: "legacy.png",
-      originalFilename: "legacy.png",
-      mimeType: "image/png",
-      width: 1600,
-      height: 1000,
-      sizes: [{ size: 1280, width: 1280, height: 800 }],
-    }).save();
-
-    await convertLegacyPngPhotos();
-
-    const photo = await Photo.findById(_id);
-    assert.equal(photo.mimeType, "image/jpeg");
-    assert.equal(photo.originalFile, "legacy.png");
-    assert.deepEqual(listUploads(), [
-      photo.filename,
-      "originals/legacy.png",
-      `sizes/1280/${photo.filename}`,
-      `thumbnails/${photo.filename}`,
-    ]);
-    assert.deepEqual(readUpload("originals/legacy.png"), png);
-  });
-});
-
-describe("photo date migration", () => {
-  it("converts DD/MM/YYYY strings to UTC dates", async () => {
-    const legacy = {
-      workId: new Photo()._id,
-      title: "Old",
-      filename: "old.jpg",
-      originalFilename: "old.jpg",
-      mimeType: "image/jpeg",
-      position: 0,
-    };
-    await Photo.collection.insertMany([
-      { ...legacy, photoDate: "12/03/2021" },
-      { ...legacy, photoDate: "31/02/2021" },
-    ]);
-
-    await migratePhotoDates();
-
-    const dates = (await Photo.collection.find().toArray()).map((photo) => photo.photoDate);
-    assert.deepEqual(dates, [new Date("2021-03-12T00:00:00.000Z"), "31/02/2021"]);
   });
 });

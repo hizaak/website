@@ -65,7 +65,11 @@ jobs:
             set -e
             cd /home/amaurice/website
 
-            git pull origin main
+            # The server mirrors GitHub: anything committed or edited on it
+            # directly is discarded. .env files and uploads are ignored by
+            # git, so they are kept.
+            git fetch origin main
+            git reset --hard origin/main
 
             # --wait fails the deploy if a container doesn't become healthy.
             docker compose up -d --build --wait

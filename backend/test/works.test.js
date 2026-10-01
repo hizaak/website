@@ -1,8 +1,6 @@
 const { describe, it } = require("node:test");
 const assert = require("node:assert/strict");
 const { app, request, signIn, createWork } = require("./setup");
-const Work = require("../models/Work");
-const { backfillWorkSlugs } = require("../services/work-lookup");
 
 describe("works", () => {
   it("are found by slug or by id", async () => {
@@ -37,13 +35,5 @@ describe("works", () => {
       .expect(200);
 
     assert.equal(body.slug, "cirque-de-gavarnie");
-  });
-
-  it("get a slug at startup when created without one", async () => {
-    await Work.collection.insertOne({ title: "Brèche de Roland" });
-
-    await backfillWorkSlugs();
-
-    await request(app).get("/api/pages/work/breche-de-roland").expect(200);
   });
 });

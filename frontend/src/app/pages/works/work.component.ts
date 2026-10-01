@@ -1,4 +1,4 @@
-import { Component, HostListener, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, HostListener, OnInit } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -14,7 +14,16 @@ import { NotFoundComponent } from '../not-found/not-found.component';
 // browser picks the right version from the srcset.
 export const PHOTO_SIZES_ATTRIBUTE = '(max-width: 768px) 100vw, calc(100vw - 100px)';
 
+// French readers expect 14/08/2023; for anyone else that order is ambiguous
+// (08/14 in the US), so English spells the month out: 14 Aug 2023.
+const DATE_FORMATS: Record<'fr' | 'en', string> = {
+  fr: 'dd/MM/yyyy',
+  en: 'd MMM yyyy',
+};
+
 @Component({
+  // Updates plain fields, not signals: OnPush (the default) would miss them.
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'app-work',
   imports: [DatePipe, RouterLink, TranslatePipe, NotFoundComponent],
   templateUrl: './work.component.html',
@@ -58,6 +67,21 @@ export class WorkComponent implements OnInit {
 
   get photo(): WorkPagePhoto | null {
     return this.work?.photos[this.currentPhotoIndex] ?? null;
+  }
+
+  // The photo shown by clicking the current one: the next, or the first
+  // after the last.
+  get nextPhotoIndex(): number {
+    return this.work ? (this.currentPhotoIndex + 1) % this.work.photos.length : 0;
+  }
+
+  get dateFormat(): string {
+    return DATE_FORMATS[this.lang];
+  }
+
+  photoLink(photoIndex: number): (string | number)[] {
+    // Photo numbers are 1-based in the URL.
+    return ['/', this.languageService.currentLang, 'works', this.work!.slug, photoIndex + 1];
   }
 
   // ← and → move between photos, unless a field has the focus.
@@ -131,10 +155,7 @@ export class WorkComponent implements OnInit {
   }
 
   private navigateToPhoto(photoIndex: number, replaceUrl = false): void {
-    this.router.navigate(
-      ['/', this.languageService.currentLang, 'works', this.work!.slug, photoIndex + 1],
-      { replaceUrl }
-    );
+    this.router.navigate(this.photoLink(photoIndex), { replaceUrl });
   }
 
   // Loads the version of a neighbouring photo the browser would pick, so

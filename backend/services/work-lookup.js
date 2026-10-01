@@ -10,15 +10,22 @@ const findWorkByIdOrSlug = async (idOrSlug) => {
     }
   }
 
-  const work = await Work.findOne({ slug: idOrSlug });
-
-  if (work) {
-    return work;
-  }
-
-  const works = await Work.find();
-
-  return works.find((item) => slugify(item.title) === idOrSlug) || null;
+  return Work.findOne({ slug: idOrSlug });
 };
 
-module.exports = { findWorkByIdOrSlug };
+// One-off migration: works created before slugs were stored get theirs, so
+// that lookups by slug never have to scan every work.
+const backfillWorkSlugs = async () => {
+  const works = await Work.find({ $or: [{ slug: null }, { slug: "" }] });
+
+  for (const work of works) {
+    work.slug = slugify(work.title);
+    await work.save();
+  }
+
+  if (works.length) {
+    console.log(`Slug backfill: ${works.length} work(s) updated.`);
+  }
+};
+
+module.exports = { findWorkByIdOrSlug, backfillWorkSlugs };

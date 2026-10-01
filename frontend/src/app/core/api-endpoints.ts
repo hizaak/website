@@ -15,6 +15,7 @@ export const API_ENDPOINTS = {
   },
   photos: {
     byId: (id: string) => `api/photos/${id}`,
+    original: (id: string) => `api/photos/${id}/original`,
   },
   documents: {
     base: 'api/documents',

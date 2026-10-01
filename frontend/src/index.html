@@ -13,6 +13,10 @@
     <meta property="og:description" content="Landscape photographs of the Pyrenees by Alexandre Maurice." />
     <meta name="twitter:card" content="summary_large_image" />
     <link rel="icon" type="image/x-icon" href="favicon.ico" />
+    <!-- Opens the connections to the API early: one for its data (CORS),
+         one for the photos. -->
+    <link rel="preconnect" href="https://api.alexandremaurice.fr" crossorigin />
+    <link rel="preconnect" href="https://api.alexandremaurice.fr" />
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",

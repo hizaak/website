@@ -1,11 +1,20 @@
+const fs = require("fs");
 const Photo = require("../models/Photo");
 const Work = require("../models/Work");
-const { deletePhotoFiles } = require("../config/upload");
+const { deletePhotoFiles, originalPath } = require("../config/upload");
 const {
   getNextPhotoPosition,
   getOrderedPhotosForWork,
+  normalizePhotoOrder,
   reorderWorkPhotos,
 } = require("../services/photo-order");
+
+// The fields of a photo record that name its files.
+const filesOf = (photo) => ({
+  filename: photo.filename,
+  thumbnailFilename: photo.thumbnailFilename,
+  originalFile: photo.originalFile,
+});
 
 exports.getByWorkId = async (req, res, next) => {
   try {
@@ -29,7 +38,7 @@ exports.create = async (req, res, next) => {
   try {
     const work = await Work.findById(req.params.workId);
     if (!work) {
-      deletePhotoFiles(req.file);
+      deletePhotoFiles(req.file.photo);
       return res.status(404).json({ message: "Work not found." });
     }
 
@@ -37,20 +46,35 @@ exports.create = async (req, res, next) => {
       workId: work._id,
       title: req.body.title,
       photoDate: req.body.photoDate,
-      filename: req.file.filename,
-      thumbnailFilename: req.file.thumbnailFilename,
-      originalFilename: req.file.originalname,
-      mimeType: req.file.mimetype,
-      ...req.file.dimensions,
+      ...req.file.photo,
       position: await getNextPhotoPosition(work._id),
     });
 
     await photo.save();
     res.status(201).json(photo);
   } catch (error) {
-    if (req.file) {
-      deletePhotoFiles(req.file);
+    if (req.file?.photo) {
+      deletePhotoFiles(req.file.photo);
     }
+    next(error);
+  }
+};
+
+// Admin only: the file exactly as it was uploaded.
+exports.downloadOriginal = async (req, res, next) => {
+  try {
+    const photo = await Photo.findById(req.params.id);
+    if (!photo) {
+      return res.status(404).json({ message: "Photo not found." });
+    }
+
+    if (!photo.originalFile || !fs.existsSync(originalPath(photo.originalFile))) {
+      return res.status(404).json({ message: "No original kept for this photo." });
+    }
+
+    res.set("Cache-Control", "private, no-store");
+    res.download(originalPath(photo.originalFile), photo.originalFilename);
+  } catch (error) {
     next(error);
   }
 };
@@ -74,10 +98,7 @@ exports.update = async (req, res, next) => {
       return res.status(404).json({ message: "Photo not found." });
     }
 
-    const previousFiles = {
-      filename: photo.filename,
-      thumbnailFilename: photo.thumbnailFilename,
-    };
+    const previousFiles = filesOf(photo);
 
     if (req.body.title !== undefined) {
       photo.title = req.body.title;
@@ -87,11 +108,7 @@ exports.update = async (req, res, next) => {
     }
 
     if (req.file) {
-      photo.filename = req.file.filename;
-      photo.thumbnailFilename = req.file.thumbnailFilename;
-      photo.originalFilename = req.file.originalname;
-      photo.mimeType = req.file.mimetype;
-      photo.set(req.file.dimensions);
+      photo.set(req.file.photo);
     }
 
     await photo.save();
@@ -102,8 +119,8 @@ exports.update = async (req, res, next) => {
 
     res.status(200).json(photo);
   } catch (error) {
-    if (req.file) {
-      deletePhotoFiles(req.file);
+    if (req.file?.photo) {
+      deletePhotoFiles(req.file.photo);
     }
     next(error);
   }
@@ -119,7 +136,8 @@ exports.delete = async (req, res, next) => {
     // Files go last, so that a failed database write never leaves a record
     // pointing to a deleted image.
     await Photo.findByIdAndDelete(photo._id);
-    deletePhotoFiles(photo);
+    await normalizePhotoOrder(photo.workId);
+    deletePhotoFiles(filesOf(photo));
 
     res.status(200).json({ message: "Photo deleted." });
   } catch (error) {

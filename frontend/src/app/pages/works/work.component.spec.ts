@@ -65,7 +65,36 @@ describe('WorkComponent', () => {
     expect(img.getAttribute('srcset')).toContain('/uploads/sizes/1280/p1.jpg 1280w');
     expect(img.getAttribute('srcset')).toContain('/uploads/p1.jpg 3000w');
     expect(img.getAttribute('width')).toBe('3000');
-    expect(harness.routeNativeElement!.textContent).toContain('14/08/2023');
+    expect(img.getAttribute('fetchpriority')).toBe('high');
+    // In English, the month is spelled out: 08/14 or 14/08 would be ambiguous.
+    expect(harness.routeNativeElement!.textContent).toContain('14 Aug 2023');
+  });
+
+  it('links every photo number but the current one, each in its own box', async () => {
+    await open('/en/works/gavarnie/1');
+
+    const numbers = Array.from(
+      harness.routeNativeElement!.querySelectorAll<HTMLElement>('.photo-number')
+    );
+    expect(numbers.map((number) => number.textContent!.trim())).toEqual(['1', '2']);
+    expect(numbers[0].tagName).toBe('B');
+    expect(numbers[0].getAttribute('aria-current')).toBe('page');
+    expect(numbers[1].getAttribute('href')).toBe('/en/works/gavarnie/2');
+  });
+
+  it('shows the next photo when the photo is clicked, the first after the last', async () => {
+    await open('/en/works/gavarnie/1');
+    const router = TestBed.inject(Router);
+    const photoLink = () =>
+      harness.routeNativeElement!.querySelector<HTMLAnchorElement>('a:has(img.photo)')!;
+
+    expect(photoLink().getAttribute('href')).toBe('/en/works/gavarnie/2');
+
+    photoLink().click();
+    await harness.fixture.whenStable();
+    harness.detectChanges();
+    expect(router.url).toBe('/en/works/gavarnie/2');
+    expect(photoLink().getAttribute('href')).toBe('/en/works/gavarnie/1');
   });
 
   it('opens the first photo when the number is missing or out of range', async () => {

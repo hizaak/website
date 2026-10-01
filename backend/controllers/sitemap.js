@@ -1,22 +1,26 @@
 const Work = require("../models/Work");
 const { getOrderedPhotosForWork } = require("../services/photo-order");
-const { slugify } = require("../utils/slug");
 const { escapeXml } = require("../utils/escape");
 
 const SITE_URL = process.env.SITE_URL || "https://alexandremaurice.fr";
 const API_URL = process.env.PROD_URL || "https://api.alexandremaurice.fr";
 const LANGS = ["fr", "en"];
+// Version shown to visitors whose language is neither French nor English.
+const DEFAULT_LANG = "en";
 
 // One <url> per language, each listing every translation as an alternate.
-const urlEntries = (path, extra = "") =>
-  LANGS.map((lang) => {
-    const alternates = LANGS.map(
-      (alt) =>
-        `<xhtml:link rel="alternate" hreflang="${alt}" href="${SITE_URL}/${alt}${path}"/>`
-    ).join("");
+const urlEntries = (path, extra = "") => {
+  const alternates = [
+    ...LANGS.map(
+      (alt) => `<xhtml:link rel="alternate" hreflang="${alt}" href="${SITE_URL}/${alt}${path}"/>`
+    ),
+    `<xhtml:link rel="alternate" hreflang="x-default" href="${SITE_URL}/${DEFAULT_LANG}${path}"/>`,
+  ].join("");
 
-    return `<url><loc>${SITE_URL}/${lang}${path}</loc>${alternates}${extra}</url>`;
-  });
+  return LANGS.map(
+    (lang) => `<url><loc>${SITE_URL}/${lang}${path}</loc>${alternates}${extra}</url>`
+  );
+};
 
 exports.get = async (req, res, next) => {
   try {
@@ -24,12 +28,12 @@ exports.get = async (req, res, next) => {
       ...urlEntries("/works"),
       ...urlEntries("/about"),
       ...urlEntries("/contact"),
+      ...urlEntries("/legal"),
     ];
 
-    const works = await Work.find();
+    const works = await Work.find().sort({ title: 1 });
 
     for (const work of works) {
-      const slug = work.slug || slugify(work.title);
       const photos = await getOrderedPhotosForWork(work._id);
 
       photos.forEach((photo, index) => {
@@ -37,7 +41,7 @@ exports.get = async (req, res, next) => {
           `<image:image><image:loc>${escapeXml(`${API_URL}/uploads/${photo.filename}`)}</image:loc></image:image>`;
 
         // Photo numbers are 1-based in the URL.
-        entries.push(...urlEntries(`/works/${escapeXml(slug)}/${index + 1}`, image));
+        entries.push(...urlEntries(`/works/${escapeXml(work.slug)}/${index + 1}`, image));
       });
     }
 

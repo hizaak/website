@@ -1,6 +1,6 @@
 // Variables the API cannot run without. Checked at startup so that a
 // missing secret stops the deploy instead of breaking logins later.
-const REQUIRED = ["JWT_SECRET", "MONGO_USER", "MONGO_PASS", "MONGO_PORT", "MONGO_DB"];
+const REQUIRED = ["JWT_SECRET", "CORS_ORIGIN", "MONGO_USER", "MONGO_PASS", "MONGO_PORT", "MONGO_DB"];
 
 const checkEnvironment = () => {
   const required =

@@ -6,7 +6,10 @@ const connectDB = require("./config/db");
 const app = require("./app");
 const { initializeAdminAccount } = require("./services/admin-account");
 const { migratePhotoDates } = require("./services/photo-dates");
+const { backfillWorkSlugs } = require("./services/work-lookup");
+const { normalizeAllPhotoOrders } = require("./services/photo-order");
 const {
+  convertLegacyPngPhotos,
   backfillMissingThumbnails,
   backfillPhotoSizes,
   removeOrphanThumbnails,
@@ -18,8 +21,10 @@ const start = async () => {
   checkEnvironment();
   await connectDB();
 
-  // Must finish before the first request reads a photo.
+  // Must finish before the first request reads a photo or a work.
   await migratePhotoDates();
+  await backfillWorkSlugs();
+  await normalizeAllPhotoOrders();
   await initializeAdminAccount();
 
   const server = app.listen(port, () => {
@@ -28,8 +33,9 @@ const start = async () => {
   });
 
   // Image work runs once the API is up: until it is done, photos are served
-  // from their originals.
-  backfillMissingThumbnails()
+  // as they were.
+  convertLegacyPngPhotos()
+    .then(backfillMissingThumbnails)
     .then(backfillPhotoSizes)
     .then(removeOrphanThumbnails)
     .catch((error) => console.error("Photo file maintenance failed:", error));

@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -18,6 +18,8 @@ const UPLOAD_ERROR_KEYS: Record<string, string> = {
 };
 
 @Component({
+  // Updates plain fields, not signals: OnPush (the default) would miss them.
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'app-admin-work-detail',
   imports: [DatePipe, FormsModule, TranslatePipe],
   templateUrl: './work-detail-admin.component.html',
@@ -257,6 +259,22 @@ export class WorkDetailAdminComponent implements OnInit, OnDestroy {
         this.loadPhotos(this.work!._id);
       },
       error: () => (this.error = 'admin.photoErrors.delete'),
+    });
+  }
+
+  // The original needs the admin token, so it can't be a plain link: it is
+  // fetched, then handed to the browser as a file to save.
+  downloadOriginal(photo: Photo): void {
+    this.photoService.downloadOriginal(photo._id).subscribe({
+      next: (blob) => {
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = photo.originalFilename;
+        link.click();
+        URL.revokeObjectURL(url);
+      },
+      error: () => (this.error = 'admin.photoErrors.download'),
     });
   }
 

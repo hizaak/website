@@ -51,6 +51,9 @@
             <button type="button" (click)="editPhoto(photo)">{{ 'admin.edit' | translate }}</button>
             &nbsp;
             <button type="button" (click)="deletePhoto(photo)">{{ 'admin.delete' | translate }}</button>
+            @if (photo.originalFile) {
+              <button type="button" class="after-button" (click)="downloadOriginal(photo)" [title]="'admin.downloadOriginalTitle' | translate">{{ 'admin.downloadOriginal' | translate }}</button>
+            }
           </td>
         </tr>
       }

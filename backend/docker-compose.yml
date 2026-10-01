@@ -3,11 +3,13 @@
 # docker-compose.yml at the root of the repository.
 services:
   mongodb:
-    image: mongo:latest
+    # Same version as production (docker-compose.yml at the root).
+    image: mongo:8
     container_name: mongodb
     restart: unless-stopped
+    # Reachable from this machine only, not from the local network.
     ports:
-      - "27017:27017"
+      - "127.0.0.1:27017:27017"
     volumes:
       - mongodb_data:/data/db
       - ./init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro

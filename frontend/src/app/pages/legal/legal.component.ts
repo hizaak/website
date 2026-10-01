@@ -4,8 +4,8 @@ import { TranslatePipe } from '@ngx-translate/core';
 @Component({
   // Updates plain fields, not signals: OnPush (the default) would miss them.
   changeDetection: ChangeDetectionStrategy.Eager,
-  selector: 'app-contact',
+  selector: 'app-legal',
   imports: [TranslatePipe],
-  templateUrl: './contact.component.html',
+  templateUrl: './legal.component.html',
 })
-export class ContactComponent {}
+export class LegalComponent {}

@@ -6,7 +6,8 @@
     "works": "travaux",
     "about": "à propos",
     "contact": "contact",
-    "admin": "admin"
+    "admin": "admin",
+    "label": "navigation principale"
   },
   "works": {
     "disclaimer": "Cette page sert pour l'instant à tester l'affichage : le vrai travail sur les photos reste à faire...",
@@ -18,7 +19,7 @@
     "author": {
       "title": "à propos de moi",
       "p1": "Je m'appelle Alexandre Maurice. Je photographie des paysages, pour l'instant ceux des Pyrénées, d'autres régions suivront.",
-      "p2": "J'aime d'abord le beau, <i>das sinnliche Scheinen der Idee</i>, tel qu'il s'accomplit dans l'art. Bien que la nature ne soit pas de l'art, elle m'impressionne tout autant : devant les grands paysages, c'est le sublime que je vois. J'essaie de rester fidèle au lieu tout en y mettant ce que j'y ai vu.",
+      "p2": "J'aime d'abord le beau, <i lang=\"de\">das sinnliche Scheinen der Idee</i>, tel qu'il s'accomplit dans l'art. Bien que la nature ne soit pas de l'art, elle m'impressionne tout autant : devant les grands paysages, c'est le sublime que je vois. J'essaie de rester fidèle au lieu tout en y mettant ce que j'y ai vu.",
       "p3": "À côté, j'ai étudié l'informatique, d'abord côté ingénierie logicielle, puis côté théorie. Je termine un master à Bordeaux. Mon CV est <a href=\"{{cvUrl}}\">ici</a>."
     },
     "site": {
@@ -26,7 +27,8 @@
       "p1": "Je voulais un endroit pour montrer mes photos, où je choisis comment elles sont vues. Leur offrir une place pérenne : les paysages changent, et chaque photo garde l'état d'un lieu à un instant donné. C'est un devoir de mémoire, à mon échelle.",
       "p2": "Pour ce qui est de l'aspect, j'aime les pages sobres, presque austères, qui se chargent vite et se parcourent sans effort. Les meilleures choses que j'ai trouvées en ligne étaient sur des sites considérés comme laids, tenus par des passionnés qui avaient simplement quelque chose à partager. Que le site soit un outil au service du contenu et non l'inverse.",
       "p3": "Je l'ai développé moi-même, avec MongoDB, Angular, Node.js et Express, et il est hébergé sur un VPS que je gère entièrement. Pas de publicité, pas de cookies, et aucun outil qui suit les visiteurs. La documentation de son API est <a href=\"{{apiDocsUrl}}\">ici</a>."
-    }
+    },
+    "legalLink": "Mentions légales"
   },
   "contact": {
     "title": "contact",
@@ -134,13 +136,16 @@
       "required": "Le titre, la date et l'image sont requis pour ajouter une photo.",
       "titleAndDate": "Le titre et la date sont requis.",
       "format": "Format non autorisé : seuls PNG et JPEG sont acceptés.",
-      "tooLarge": "Image trop volumineuse (10 Mo maximum).",
+      "tooLarge": "Image trop volumineuse (50 Mo maximum).",
       "unreadable": "Image illisible.",
       "create": "Erreur lors de l'ajout de la photo.",
       "update": "Erreur lors de la modification de la photo.",
       "reorder": "Erreur lors du changement d'ordre.",
-      "delete": "Erreur lors de la suppression de la photo."
-    }
+      "delete": "Erreur lors de la suppression de la photo.",
+      "download": "Erreur lors du téléchargement de l'original."
+    },
+    "downloadOriginal": "original",
+    "downloadOriginalTitle": "télécharger le fichier envoyé, tel quel"
   },
   "seo": {
     "works": {
@@ -164,10 +169,28 @@
     },
     "notFound": {
       "title": "alexandre maurice | page introuvable"
+    },
+    "legal": {
+      "title": "alexandre maurice | mentions légales",
+      "description": "Mentions légales du site alexandremaurice.fr."
     }
   },
   "work": {
     "loadError": "Erreur lors du chargement du travail.",
-    "noPhotos": "Aucune photo pour l'instant."
+    "noPhotos": "Aucune photo pour l'instant.",
+    "photos": "photos du travail",
+    "next": "photo suivante"
+  },
+  "legal": {
+    "title": "mentions légales",
+    "publisher": "Éditeur et directeur de la publication",
+    "publisherName": "Alexandre Maurice, particulier",
+    "host": "Hébergeur",
+    "hostCompany": "IONOS SARL, au capital de 100 000 €, RCS Sarreguemines B 431 303 775",
+    "data": "Données personnelles",
+    "dataText": "Le serveur enregistre dans ses journaux techniques l'adresse IP, la date et la page demandée de chaque visite. Ces journaux servent uniquement à la sécurité et au bon fonctionnement du site, ne sont transmis à personne et sont effacés au bout de quelques semaines. Pas de cookies, pas de mesure d'audience.",
+    "rights": "Droits",
+    "rightsText": "Photos et textes © Alexandre Maurice. Les photos peuvent être réutilisées pour un usage non commercial, à condition de créditer « Alexandre Maurice – <a href=\"https://alexandremaurice.fr\">alexandremaurice.fr</a> ». Pour tout autre usage, écrivez-moi.",
+    "hostPhone": "09 70 80 89 11"
   }
 }

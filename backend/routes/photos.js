@@ -33,6 +33,7 @@ nested.put(
 const collection = express.Router();
 
 collection.get("/:id", photoController.get);
+collection.get("/:id/original", verifyToken, photoController.downloadOriginal);
 collection.put(
   "/:id",
   verifyToken,

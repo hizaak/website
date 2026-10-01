@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
 import { AuthService } from '../../../services/api/auth.service';
@@ -11,6 +11,8 @@ const ERROR_KEYS: Record<number, string> = {
 };
 
 @Component({
+  // Updates plain fields, not signals: OnPush (the default) would miss them.
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'app-admin',
   imports: [ReactiveFormsModule, TranslatePipe],
   templateUrl: './admin.component.html',

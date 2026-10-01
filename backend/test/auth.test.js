@@ -62,6 +62,16 @@ describe("errors", () => {
     assert.equal(response.body.status, "ok");
   });
 
+  it("lets only the site call the API, without credentials", async () => {
+    const site = await request(app).get("/api/pages/works").set("Origin", "https://site.test");
+    assert.equal(site.headers["access-control-allow-origin"], "https://site.test");
+    assert.equal(site.headers["access-control-allow-credentials"], undefined);
+
+    const other = await request(app).get("/api/pages/works").set("Origin", "https://evil.test");
+    assert.notEqual(other.headers["access-control-allow-origin"], "https://evil.test");
+    assert.notEqual(other.headers["access-control-allow-origin"], "*");
+  });
+
   it("sends security headers", async () => {
     const response = await request(app).get("/").expect(200);
     assert.equal(response.headers["x-content-type-options"], "nosniff");

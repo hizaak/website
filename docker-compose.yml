@@ -1,10 +1,20 @@
+# Docker keeps the logs of each container in files that grow without limit.
+# Rotated by size (Docker cannot rotate by age): 10 files of 20 MB, so at
+# most 200 MB per container, which should hold well over two weeks of logs
+# for a site of this size.
+x-logging: &logging
+  driver: json-file
+  options:
+    max-size: "20m"
+    max-file: "10"
+
 services:
   mongodb:
     image: mongo:8
     container_name: site-perso-mongodb
     restart: always
+    logging: *logging
     environment:
-      MONGO_INITDB_DATABASE: ${MONGO_DB_NAME:-site-perso}
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USER:-admin}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD:?Set MONGO_ROOT_PASSWORD in .env}
     volumes:
@@ -24,6 +34,7 @@ services:
       dockerfile: Dockerfile
     container_name: site-perso-backend
     restart: always
+    logging: *logging
     depends_on:
       mongodb:
         condition: service_healthy
@@ -57,6 +68,7 @@ services:
         ANGULAR_ENV: ${ANGULAR_ENV:-production}
     container_name: site-perso-frontend
     restart: always
+    logging: *logging
     depends_on:
       backend:
         condition: service_healthy

@@ -117,6 +117,15 @@ const localizedRoutes: Routes = [
   },
 
   {
+    path: 'legal',
+    data: { seo: { title: 'seo.legal.title', description: 'seo.legal.description' } },
+    loadComponent: () =>
+      import('./pages/legal/legal.component').then(
+        m => m.LegalComponent
+      ),
+  },
+
+  {
     path: '**',
     data: { seo: { title: 'seo.notFound.title', noindex: true } },
     loadComponent: () =>

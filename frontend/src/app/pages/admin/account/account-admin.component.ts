@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -18,6 +18,8 @@ const ERROR_KEYS: Record<number, string> = {
 };
 
 @Component({
+  // Updates plain fields, not signals: OnPush (the default) would miss them.
+  changeDetection: ChangeDetectionStrategy.Eager,
   selector: 'app-admin-account',
   imports: [FormsModule, TranslatePipe, AdminNavComponent],
   templateUrl: './account-admin.component.html',

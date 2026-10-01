@@ -10,9 +10,25 @@
     margin: 0;
 }
 
+// Leads to the works, but still looks like the plain bold title.
+.site-name a,
+.site-name a:visited {
+    color: inherit;
+    text-decoration: none;
+}
+
+nav {
+    display: inline;
+}
+
 a,
 a:visited {
     color: blue;
+}
+
+// The current page and the current language.
+a.active {
+    font-weight: bold;
 }
 
 @media (max-width: 500px) {

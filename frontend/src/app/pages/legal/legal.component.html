@@ -1,0 +1,33 @@
+<h2>{{ 'legal.title' | translate }}</h2>
+
+<p>
+  <b>{{ 'legal.publisher' | translate }}</b>
+  <br>
+  {{ 'legal.publisherName' | translate }}
+  <br>
+  <a href="mailto:contact@alexandremaurice.fr">contact&#64;alexandremaurice.fr</a>
+</p>
+
+<p>
+  <b>{{ 'legal.host' | translate }}</b>
+  <br>
+  {{ 'legal.hostCompany' | translate }}
+  <br>
+  7 place de la Gare, BP 70109
+  <br>
+  57201 Sarreguemines Cedex, France
+  <br>
+  {{ 'legal.hostPhone' | translate }}
+</p>
+
+<p>
+  <b>{{ 'legal.data' | translate }}</b>
+  <br>
+  {{ 'legal.dataText' | translate }}
+</p>
+
+<p>
+  <b>{{ 'legal.rights' | translate }}</b>
+  <br>
+  <span [innerHTML]="'legal.rightsText' | translate"></span>
+</p>

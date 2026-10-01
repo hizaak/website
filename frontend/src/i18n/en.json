@@ -6,7 +6,8 @@
     "works": "works",
     "about": "about",
     "contact": "contact",
-    "admin": "admin"
+    "admin": "admin",
+    "label": "main navigation"
   },
   "works": {
     "disclaimer": "For now, this page is only a display test: the real work on the photos is still to be done...",
@@ -18,15 +19,16 @@
     "author": {
       "title": "about me",
       "p1": "My name is Alexandre Maurice. I photograph landscapes, for now those of the Pyrenees; other regions will follow.",
-      "p2": "First, I love beauty, <i>das sinnliche Scheinen der Idee</i>, as it is fulfilled in art. Although nature is not art, it impresses me just as much: faced with great landscapes, what I see is the sublime. I try to stay faithful to the place while putting into it what I saw there.",
+      "p2": "First, I love beauty, <i lang=\"de\">das sinnliche Scheinen der Idee</i>, as it is fulfilled in art. Although nature is not art, it impresses me just as much: faced with great landscapes, what I see is the sublime. I try to stay faithful to the place while putting into it what I saw there.",
       "p3": "Alongside this, I studied computer science, first software engineering, then theory. I'm finishing a master's degree in Bordeaux. My CV is <a href=\"{{cvUrl}}\">here</a>."
     },
     "site": {
       "title": "about this site",
-      "p1": "I wanted a place to show my photos, where I choose how they are seen. To give them a lasting home: landscapes change, and each photo keeps the state of a place at a given moment. It is a duty to remember, on my own scale.",
+      "p1": "I wanted a place to show my photos, where I choose how they are seen. To give them a lasting home: landscapes change, and each photo keeps the state of a place at a given moment. It is an act of remembrance, in my own small way.",
       "p2": "As for the look, I like sober, almost austere pages that load quickly and can be browsed effortlessly. The best things I have found online were on sites considered ugly, run by enthusiasts who simply had something to share. The site should be a tool serving the content, not the other way around.",
       "p3": "I built it myself with MongoDB, Angular, Node.js and Express, and it runs on a VPS that I manage entirely. No ads, no cookies, and no tool tracking visitors. Its API documentation is <a href=\"{{apiDocsUrl}}\">here</a>."
-    }
+    },
+    "legalLink": "Legal notice"
   },
   "contact": {
     "title": "contact",
@@ -134,13 +136,16 @@
       "required": "Title, date and image are required to add a photo.",
       "titleAndDate": "Title and date are required.",
       "format": "Unsupported format: only PNG and JPEG are accepted.",
-      "tooLarge": "Image too large (10 MB maximum).",
+      "tooLarge": "Image too large (50 MB maximum).",
       "unreadable": "Unreadable image.",
       "create": "Error while adding the photo.",
       "update": "Error while updating the photo.",
       "reorder": "Error while changing the order.",
-      "delete": "Error while deleting the photo."
-    }
+      "delete": "Error while deleting the photo.",
+      "download": "Error while downloading the original."
+    },
+    "downloadOriginal": "original",
+    "downloadOriginalTitle": "download the uploaded file, as is"
   },
   "seo": {
     "works": {
@@ -164,10 +169,28 @@
     },
     "notFound": {
       "title": "alexandre maurice | page not found"
+    },
+    "legal": {
+      "title": "alexandre maurice | legal notice",
+      "description": "Legal notice of alexandremaurice.fr."
     }
   },
   "work": {
     "loadError": "Error while loading the work.",
-    "noPhotos": "No photos yet."
+    "noPhotos": "No photos yet.",
+    "photos": "photos of the work",
+    "next": "next photo"
+  },
+  "legal": {
+    "title": "legal notice",
+    "publisher": "Publisher and director of publication",
+    "publisherName": "Alexandre Maurice, private individual",
+    "host": "Host",
+    "hostCompany": "IONOS SARL, share capital €100,000, RCS Sarreguemines B 431 303 775",
+    "data": "Personal data",
+    "dataText": "The server records the IP address, date and requested page of each visit in its technical logs. These logs are only used for the security and proper operation of the site, are shared with no one and are deleted after a few weeks. No cookies, no audience measurement.",
+    "rights": "Rights",
+    "rightsText": "Photos and texts © Alexandre Maurice. The photos may be reused for non-commercial purposes, provided you credit \"Alexandre Maurice – <a href=\"https://alexandremaurice.fr\">alexandremaurice.fr</a>\". For any other use, write to me.",
+    "hostPhone": "+33 9 70 80 89 11"
   }
 }

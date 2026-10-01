@@ -7,30 +7,38 @@
 }
 
 @if (work && photo) {
-  <div class="work-navigation">
-    <b>{{ work.title }}</b>
-    |
-    <!-- On one line: the numbers are separated by exactly one &nbsp;. -->
-    @for (item of work.photos; track item._id; let i = $index) {@if (i === currentPhotoIndex) {<b>{{ i + 1 }}</b>} @else {<a [routerLink]="['/', languageService.currentLang, 'works', work.slug, i + 1]">{{ i + 1 }}</a>}&nbsp;}
-  </div>
+  <nav class="work-navigation" [attr.aria-label]="'work.photos' | translate">
+    <b>{{ work.title }}</b><span aria-hidden="true"> | </span>
+    @for (item of work.photos; track item._id; let i = $index) {
+      @if (i === currentPhotoIndex) {
+        <b class="photo-number" aria-current="page">{{ i + 1 }}</b>
+      } @else {
+        <a class="photo-number" [routerLink]="photoLink(i)">{{ i + 1 }}</a>
+      }
+    }
+  </nav>
 
   <hr>
 
   <div class="photo-block">
-    <img
-      class="photo"
-      [src]="photoService.getPhotoUrl(photo.filename)"
-      [attr.srcset]="photoService.getPhotoSrcset(photo) || null"
-      [attr.sizes]="sizes"
-      [attr.width]="photo.width"
-      [attr.height]="photo.height"
-      [alt]="photo.title"
-    >
+    <!-- Clicking the photo shows the next one, the first after the last. -->
+    <a [routerLink]="photoLink(nextPhotoIndex)" [attr.aria-label]="'work.next' | translate">
+      <img
+        class="photo"
+        [src]="photoService.getPhotoUrl(photo.filename)"
+        [attr.srcset]="photoService.getPhotoSrcset(photo) || null"
+        [attr.sizes]="sizes"
+        [attr.width]="photo.width"
+        [attr.height]="photo.height"
+        [alt]="photo.title"
+        fetchpriority="high"
+      >
+    </a>
 
     <div class="photo-info">
       <b>{{ photo.title }}</b>
       <br>
-      {{ photo.photoDate | date: 'dd/MM/yyyy' : 'UTC' }}
+      {{ photo.photoDate | date: dateFormat : 'UTC' }}
     </div>
   </div>
 }

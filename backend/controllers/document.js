@@ -32,16 +32,15 @@ const sendNameTaken = (res, filename) =>
     code: "DOCUMENT_NAME_TAKEN",
   });
 
-exports.getAll = (req, res) => {
+exports.getAll = (req, res, next) => {
   try {
     res.status(200).json(listDocuments());
   } catch (error) {
-    console.error("Error listing documents:", error);
-    res.status(500).json({ message: "Server error.", error: error.message });
+    next(error);
   }
 };
 
-exports.create = (req, res) => {
+exports.create = (req, res, next) => {
   if (!req.file) {
     return res.status(400).json({ message: "File is missing.", code: "DOCUMENT_FILE_MISSING" });
   }
@@ -72,12 +71,11 @@ exports.create = (req, res) => {
     if (error instanceof DocumentNameError) {
       return sendNameError(res, error);
     }
-    console.error("Error creating document:", error);
-    res.status(500).json({ message: "Server error.", error: error.message });
+    next(error);
   }
 };
 
-exports.rename = (req, res) => {
+exports.rename = (req, res, next) => {
   try {
     const current = findDocumentFilename(req.params.filename);
     if (!current) {
@@ -103,12 +101,11 @@ exports.rename = (req, res) => {
     if (error instanceof DocumentNameError) {
       return sendNameError(res, error);
     }
-    console.error("Error renaming document:", error);
-    res.status(500).json({ message: "Server error.", error: error.message });
+    next(error);
   }
 };
 
-exports.delete = (req, res) => {
+exports.delete = (req, res, next) => {
   try {
     const filename = findDocumentFilename(req.params.filename);
     if (!filename) {
@@ -118,8 +115,7 @@ exports.delete = (req, res) => {
     fs.unlinkSync(documentPath(filename));
     res.status(200).json({ message: "Document deleted." });
   } catch (error) {
-    console.error("Error deleting document:", error);
-    res.status(500).json({ message: "Server error.", error: error.message });
+    next(error);
   }
 };
 

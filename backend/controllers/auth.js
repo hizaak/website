@@ -2,7 +2,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 
-exports.login = async (req, res) => {
+exports.login = async (req, res, next) => {
   const { username, password } = req.body;
 
   try {
@@ -24,12 +24,11 @@ exports.login = async (req, res) => {
       token: token,
     });
   } catch (error) {
-    console.error("Error during login:", error);
-    res.status(500).json({ message: "Server error.", error: error.message });
+    next(error);
   }
 };
 
-exports.getAccount = async (req, res) => {
+exports.getAccount = async (req, res, next) => {
   try {
     const user = await User.findById(req.userId);
     if (!user) {
@@ -38,12 +37,11 @@ exports.getAccount = async (req, res) => {
 
     res.status(200).json({ username: user.username });
   } catch (error) {
-    console.error("Error while loading account:", error);
-    res.status(500).json({ message: "Server error." });
+    next(error);
   }
 };
 
-exports.updateAccount = async (req, res) => {
+exports.updateAccount = async (req, res, next) => {
   const { currentPassword, newUsername, newPassword } = req.body;
 
   try {
@@ -75,7 +73,6 @@ exports.updateAccount = async (req, res) => {
 
     res.status(200).json({ username: user.username });
   } catch (error) {
-    console.error("Error while updating account:", error);
-    res.status(500).json({ message: "Server error." });
+    next(error);
   }
 };

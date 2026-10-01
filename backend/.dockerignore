@@ -1,0 +1,12 @@
+# The image holds the code only: secrets come from the backend/.env mounted
+# by docker-compose.yml, and uploads live in a volume.
+node_modules
+.env
+.env.*
+!.env.example
+uploads
+test
+npm-debug.log*
+Dockerfile
+.dockerignore
+docker-compose.yml

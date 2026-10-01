@@ -8,7 +8,7 @@ const {
   photoUpdateSchema,
   photoReorderSchema,
 } = require("../config/validation");
-const { uploadSingleImage } = require("../config/upload");
+const { uploadSingleImage, processUploadedImage } = require("../config/upload");
 
 // Nested under /api/works/:workId/photos
 const nested = express.Router({ mergeParams: true });
@@ -19,6 +19,7 @@ nested.post(
   verifyToken,
   uploadSingleImage("photo"),
   validateRequest(photoSchema),
+  processUploadedImage,
   photoController.create
 );
 nested.put(
@@ -37,6 +38,7 @@ collection.put(
   verifyToken,
   uploadSingleImage("photo"),
   validateRequest(photoUpdateSchema),
+  processUploadedImage,
   photoController.update
 );
 collection.delete("/:id", verifyToken, photoController.delete);

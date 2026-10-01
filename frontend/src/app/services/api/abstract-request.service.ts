@@ -1,51 +1,29 @@
-import { Injectable } from '@angular/core';
-import { HttpClient, HttpEvent, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
-@Injectable({
-  providedIn: 'root',
-})
+// Base of the API services: prefixes the API URL and logs failed requests.
 export abstract class AbstractRequestService {
-  protected apiUrl: string;
-
-  constructor(protected http: HttpClient, apiUrl: string) {
-    this.apiUrl = apiUrl;
-  }
+  constructor(protected http: HttpClient, protected apiUrl: string) { }
 
   get<T>(endpoint: string): Observable<T> {
-    return this.http.get<T>(`${this.apiUrl}/${endpoint}`).pipe(
-      catchError((error) => {
-        console.error('Error:', error);
-        return throwError(error);
-      })
-    );
+    return this.http.get<T>(`${this.apiUrl}/${endpoint}`).pipe(catchError(this.logError));
   }
 
-  post<T>(endpoint: string, body: any): Observable<T> {
-    return this.http.post<T>(`${this.apiUrl}/${endpoint}`, body).pipe(
-      catchError((error) => {
-        console.error('Error:', error);
-        return throwError(error);
-      })
-    );
+  post<T>(endpoint: string, body: unknown): Observable<T> {
+    return this.http.post<T>(`${this.apiUrl}/${endpoint}`, body).pipe(catchError(this.logError));
   }
 
-  put<T>(endpoint: string, body: any): Observable<T> {
-    return this.http.put<T>(`${this.apiUrl}/${endpoint}`, body).pipe(
-      catchError((error) => {
-        console.error('Error:', error);
-        return throwError(error);
-      })
-    );
+  put<T>(endpoint: string, body: unknown): Observable<T> {
+    return this.http.put<T>(`${this.apiUrl}/${endpoint}`, body).pipe(catchError(this.logError));
   }
 
   delete<T>(endpoint: string): Observable<T> {
-    return this.http.delete<T>(`${this.apiUrl}/${endpoint}`).pipe(
-      catchError((error) => {
-        console.error('Error:', error);
-        return throwError(error);
-      })
-    );
+    return this.http.delete<T>(`${this.apiUrl}/${endpoint}`).pipe(catchError(this.logError));
+  }
+
+  private logError(error: unknown): Observable<never> {
+    console.error('Error:', error);
+    return throwError(() => error);
   }
 }

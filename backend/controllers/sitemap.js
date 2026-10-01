@@ -18,7 +18,7 @@ const urlEntries = (path, extra = "") =>
     return `<url><loc>${SITE_URL}/${lang}${path}</loc>${alternates}${extra}</url>`;
   });
 
-exports.get = async (req, res) => {
+exports.get = async (req, res, next) => {
   try {
     const entries = [
       ...urlEntries("/works"),
@@ -52,9 +52,6 @@ exports.get = async (req, res) => {
           "\n</urlset>\n"
       );
   } catch (error) {
-    res.status(500).json({
-      message: "Server error.",
-      error: error.message,
-    });
+    next(error);
   }
 };

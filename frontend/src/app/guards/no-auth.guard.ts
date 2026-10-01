@@ -1,31 +1,9 @@
-import { Injectable } from '@angular/core';
-import {
-  CanActivate,
-  ActivatedRouteSnapshot,
-  RouterStateSnapshot,
-} from '@angular/router';
+import { inject } from '@angular/core';
+import { CanActivateFn, Router } from '@angular/router';
 import { AuthService } from '../services/api/auth.service';
 import { AdminNavigationService } from '../core/admin-navigation.service';
 
-@Injectable({
-  providedIn: 'root',
-})
-export class NoAuthGuard implements CanActivate {
-  constructor(
-    private authService: AuthService,
-    private adminNavigation: AdminNavigationService
-  ) { }
-
-  canActivate(
-    route: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot
-  ): boolean {
-    if (this.authService.isAuthenticated()) {
-      this.adminNavigation.toWorks();
-
-      return false;
-    }
-
-    return true;
-  }
-}
+// Login page: a signed-in admin goes straight to the works.
+export const noAuthGuard: CanActivateFn = (route, state) =>
+  !inject(AuthService).isAuthenticated() ||
+  inject(Router).parseUrl(inject(AdminNavigationService).urlForWorks(state.url));

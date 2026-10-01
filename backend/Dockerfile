@@ -1,23 +1,10 @@
-# ========================================
-# Build Stage
-# ========================================
-FROM node:18-alpine AS builder
+FROM node:22-alpine
 
 WORKDIR /app
 
 COPY package*.json ./
-RUN npm ci --only=production
+RUN npm ci --omit=dev
 
-# ========================================
-# Runtime Stage
-# ========================================
-FROM node:18-alpine
-
-WORKDIR /app
-
-RUN npm install -g pm2
-
-COPY --from=builder /app/node_modules ./node_modules
 COPY . .
 
 RUN mkdir -p uploads/thumbnails uploads/documents && \
@@ -25,10 +12,10 @@ RUN mkdir -p uploads/thumbnails uploads/documents && \
 
 USER node
 
-ARG PORT=3000
 ENV NODE_ENV=production
-ENV PORT=${PORT}
+ENV PORT=3000
 
-EXPOSE ${PORT}
+EXPOSE 3000
 
-CMD ["pm2-runtime", "process.yml"]
+# index.js handles SIGTERM itself: docker stop lets requests in progress end.
+CMD ["node", "index.js"]

@@ -2,7 +2,7 @@ const { getOrderedPhotosForWork } = require("../../services/photo-order");
 const { findWorkByIdOrSlug } = require("../../services/work-lookup");
 const { slugify } = require("../../utils/slug");
 
-exports.get = async (req, res) => {
+exports.get = async (req, res, next) => {
   try {
     const work = await findWorkByIdOrSlug(req.params.id);
 
@@ -23,12 +23,12 @@ exports.get = async (req, res) => {
         title: photo.title,
         photoDate: photo.photoDate,
         filename: photo.filename,
+        width: photo.width,
+        height: photo.height,
+        sizes: photo.sizes,
       })),
     });
   } catch (error) {
-    res.status(500).json({
-      message: "Server error.",
-      error: error.message,
-    });
+    next(error);
   }
 };

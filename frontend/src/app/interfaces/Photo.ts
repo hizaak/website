@@ -1,12 +1,23 @@
+// A smaller version of a photo, served from /uploads/sizes/<size>/<filename>.
+export interface PhotoSize {
+  size: number;
+  width: number;
+  height: number;
+}
+
 export interface Photo {
   _id: string;
   workId: string;
   title: string;
+  // Midnight UTC of the day the photo was taken, as an ISO string.
   photoDate: string;
   filename: string;
   thumbnailFilename?: string;
   originalFilename: string;
   mimeType: string;
+  width?: number;
+  height?: number;
+  sizes?: PhotoSize[];
   position: number;
   createdAt: string;
   updatedAt: string;
@@ -15,9 +26,9 @@ export interface Photo {
 export const ALLOWED_IMAGE_TYPES = ['image/png', 'image/jpeg'];
 export const ALLOWED_IMAGE_EXTENSIONS = ['.png', '.jpg', '.jpeg'];
 
-export function extractYearFromPhotoDate(photoDate: string): string {
-  const parts = photoDate.split('/');
-  return parts[parts.length - 1] || photoDate;
+// Value for an <input type="date">: "2023-08-14".
+export function toDateInputValue(photoDate: string): string {
+  return photoDate.slice(0, 10);
 }
 
 export function isAllowedImageFile(file: File): boolean {

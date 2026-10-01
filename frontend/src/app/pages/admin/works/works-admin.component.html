@@ -1,6 +1,8 @@
 <app-admin-nav></app-admin-nav>
 
-<p *ngIf="error" style="color: red;">{{ error }}</p>
+@if (error) {
+  <p class="error">{{ error | translate }}</p>
+}
 
 <table class="admin-table">
   <thead>
@@ -11,15 +13,17 @@
     </tr>
   </thead>
   <tbody>
-    <tr *ngFor="let work of works">
-      <td>{{ work.yearRange }}</td>
-      <td>{{ work.title }}</td>
-      <td>
-        <button type="button" (click)="openWork(work)">{{ 'admin.edit' | translate }}</button>
-        &nbsp;
-        <button type="button" (click)="deleteWork(work)">{{ 'admin.delete' | translate }}</button>
-      </td>
-    </tr>
+    @for (work of works; track work._id) {
+      <tr>
+        <td>{{ work.yearRange }}</td>
+        <td>{{ work.title }}</td>
+        <td>
+          <button type="button" (click)="openWork(work)">{{ 'admin.edit' | translate }}</button>
+          &nbsp;
+          <button type="button" (click)="deleteWork(work)">{{ 'admin.delete' | translate }}</button>
+        </td>
+      </tr>
+    }
   </tbody>
 </table>
 

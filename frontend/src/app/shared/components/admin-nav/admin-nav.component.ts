@@ -6,7 +6,6 @@ import { AdminNavigationService } from '../../../core/admin-navigation.service';
 
 @Component({
   selector: 'app-admin-nav',
-  standalone: true,
   imports: [RouterLink, RouterLinkActive, TranslatePipe],
   templateUrl: './admin-nav.component.html',
   styleUrl: './admin-nav.component.scss',

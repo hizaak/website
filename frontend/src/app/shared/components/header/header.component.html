@@ -1,29 +1,36 @@
+<!-- Shared by the desktop and mobile layouts below. -->
+<ng-template #nav>
+  <a [routerLink]="['/', languageService.currentLang, 'works']" routerLinkActive="active">{{ 'nav.works' | translate }}</a>
+  |
+  <a [routerLink]="['/', languageService.currentLang, 'contact']" routerLinkActive="active">{{ 'nav.contact' | translate }}</a>
+  |
+  <a [routerLink]="['/', languageService.currentLang, 'about']" routerLinkActive="active">{{ 'nav.about' | translate }}</a>
+  @if (authService.isAuthenticated()) {
+    |
+    <a [routerLink]="['/', languageService.currentLang, 'admin']" routerLinkActive="active">{{ 'nav.admin' | translate }}</a>
+  }
+</ng-template>
+
+<ng-template #languages>
+  <a [routerLink]="languageLink('fr')">fr</a>
+  /
+  <a [routerLink]="languageLink('en')">en</a>
+</ng-template>
+
 <header>
 
   <div class="mobile-header">
-
     <div class="mobile-top">
       <h1 class="site-name">alexandre maurice</h1>
 
       <div class="mobile-language">
-        <a [routerLink]="languageLink('fr')">fr</a>
-        /
-        <a [routerLink]="languageLink('en')">en</a>
+        <ng-container [ngTemplateOutlet]="languages"></ng-container>
       </div>
     </div>
 
     <div class="mobile-nav">
-      <a [routerLink]="['/', languageService.currentLang, 'works']" routerLinkActive="active">{{ 'nav.works' | translate }}</a>
-      |
-      <a [routerLink]="['/', languageService.currentLang, 'contact']" routerLinkActive="active">{{ 'nav.contact' | translate }}</a>
-      |
-      <a [routerLink]="['/', languageService.currentLang, 'about']" routerLinkActive="active">{{ 'nav.about' | translate }}</a>
-      <ng-container *ngIf="authService.isAuthenticated()">
-        |
-        <a [routerLink]="['/', languageService.currentLang, 'admin']" routerLinkActive="active">{{ 'nav.admin' | translate }}</a>
-      </ng-container>
+      <ng-container [ngTemplateOutlet]="nav"></ng-container>
     </div>
-
   </div>
 
   <table width="100%" class="desktop-header">
@@ -31,30 +38,11 @@
       <td align="left">
         <h1 class="site-name">alexandre maurice</h1>
         &nbsp;
-
-        <a [routerLink]="['/', languageService.currentLang, 'works']" routerLinkActive="active">{{ 'nav.works' | translate }}</a>
-
-        |
-
-        <a [routerLink]="['/', languageService.currentLang, 'contact']" routerLinkActive="active">{{ 'nav.contact' | translate }}</a>
-
-        |
-
-        <a [routerLink]="['/', languageService.currentLang, 'about']" routerLinkActive="active">{{ 'nav.about' | translate }}</a>
-
-        <ng-container *ngIf="authService.isAuthenticated()">
-
-          |
-
-          <a [routerLink]="['/', languageService.currentLang, 'admin']" routerLinkActive="active">{{ 'nav.admin' | translate }}</a>
-
-        </ng-container>
+        <ng-container [ngTemplateOutlet]="nav"></ng-container>
       </td>
 
       <td align="right">
-        <a [routerLink]="languageLink('fr')">fr</a>
-        /
-        <a [routerLink]="languageLink('en')">en</a>
+        <ng-container [ngTemplateOutlet]="languages"></ng-container>
       </td>
     </tr>
   </table>

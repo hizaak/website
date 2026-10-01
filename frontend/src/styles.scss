@@ -1,3 +1,23 @@
 html {
   font-family: monospace;
 }
+
+.error {
+  color: red;
+}
+
+.admin-table {
+  border-collapse: collapse;
+  width: 100%;
+
+  th,
+  td {
+    border: 1px solid #999;
+    padding: 6px 10px;
+    text-align: left;
+  }
+
+  thead th {
+    background: #eee;
+  }
+}

@@ -1,4 +1,7 @@
 {
+  "common": {
+    "loading": "chargement..."
+  },
   "nav": {
     "works": "travaux",
     "about": "à propos",
@@ -7,7 +10,8 @@
   },
   "works": {
     "disclaimer": "Cette page sert pour l'instant à tester l'affichage : le vrai travail sur les photos reste à faire...",
-    "quote": "De toutes les ressources, il n’en est qu’une qui viendra toujours à manquer."
+    "quote": "De toutes les ressources, il n’en est qu’une qui viendra toujours à manquer.",
+    "loadError": "Erreur lors du chargement des travaux."
   },
   "about": {
     "title": "à propos",
@@ -58,7 +62,6 @@
     "replaceImage": "remplacer image",
     "addPhoto": "ajouter une photo",
     "image": "image",
-    "loading": "chargement...",
     "documents": "documents",
     "addDocument": "ajouter un document",
     "file": "fichier",
@@ -110,6 +113,33 @@
       "sessionExpired": "Session expirée, reconnectez-vous.",
       "tooManyAttempts": "Trop de tentatives, réessayez dans 15 minutes.",
       "generic": "Erreur lors de l'enregistrement du compte."
+    },
+    "confirmDeleteWork": "Supprimer le travail \"{{title}}\" et toutes ses photos ?",
+    "confirmDeletePhoto": "Supprimer la photo \"{{title}}\" ?",
+    "loginErrors": {
+      "invalid": "Nom d'utilisateur ou mot de passe incorrect.",
+      "tooManyAttempts": "Trop de tentatives, réessayez dans 15 minutes.",
+      "generic": "Une erreur est survenue. Veuillez réessayer."
+    },
+    "workErrors": {
+      "load": "Erreur lors du chargement des travaux.",
+      "notFound": "Travail introuvable.",
+      "titleTaken": "Un travail porte déjà ce titre.",
+      "create": "Erreur lors de la création du travail.",
+      "update": "Erreur lors de la modification du travail.",
+      "delete": "Erreur lors de la suppression du travail."
+    },
+    "photoErrors": {
+      "load": "Erreur lors du chargement des photos.",
+      "required": "Le titre, la date et l'image sont requis pour ajouter une photo.",
+      "titleAndDate": "Le titre et la date sont requis.",
+      "format": "Format non autorisé : seuls PNG et JPEG sont acceptés.",
+      "tooLarge": "Image trop volumineuse (10 Mo maximum).",
+      "unreadable": "Image illisible.",
+      "create": "Erreur lors de l'ajout de la photo.",
+      "update": "Erreur lors de la modification de la photo.",
+      "reorder": "Erreur lors du changement d'ordre.",
+      "delete": "Erreur lors de la suppression de la photo."
     }
   },
   "seo": {
@@ -135,5 +165,9 @@
     "notFound": {
       "title": "alexandre maurice | page introuvable"
     }
+  },
+  "work": {
+    "loadError": "Erreur lors du chargement du travail.",
+    "noPhotos": "Aucune photo pour l'instant."
   }
 }

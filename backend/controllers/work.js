@@ -1,94 +1,19 @@
 const Work = require("../models/Work");
 const Photo = require("../models/Photo");
-const { deleteFile } = require("../config/upload");
+const { deletePhotoFiles } = require("../config/upload");
 const { findWorkByIdOrSlug } = require("../services/work-lookup");
 const { slugify } = require("../utils/slug");
+const { listWorksWithYearRange } = require("../services/work-years");
 
-exports.getAll = async (req, res) => {
+exports.getAll = async (req, res, next) => {
   try {
-    const works = await Work.aggregate([
-      {
-        $lookup: {
-          from: "photos",
-          localField: "_id",
-          foreignField: "workId",
-          as: "photos",
-        },
-      },
-      {
-        $project: {
-          title: 1,
-          slug: 1,
-          createdAt: 1,
-          updatedAt: 1,
-          years: {
-            $map: {
-              input: "$photos",
-              as: "photo",
-              in: {
-                $toInt: {
-                  $arrayElemAt: [
-                    { $split: ["$$photo.photoDate", "/"] },
-                    2,
-                  ],
-                },
-              },
-            },
-          },
-        },
-      },
-      {
-        $project: {
-          title: 1,
-          slug: 1,
-          createdAt: 1,
-          updatedAt: 1,
-          minYear: { $min: "$years" },
-          maxYear: { $max: "$years" },
-        },
-      },
-      {
-        $addFields: {
-          yearRange: {
-            $cond: [
-              { $eq: ["$minYear", null] },
-              "",
-              {
-                $cond: [
-                  { $eq: ["$minYear", "$maxYear"] },
-                  { $toString: "$minYear" },
-                  {
-                    $concat: [
-                      { $toString: "$minYear" },
-                      "-",
-                      { $toString: "$maxYear" },
-                    ],
-                  },
-                ],
-              },
-            ],
-          },
-        },
-      },
-      {
-        $sort: {
-          title: 1,
-        },
-      },
-    ]);
-    res.status(200).json(
-      works.map((work) => ({
-        ...work,
-        slug: work.slug || slugify(work.title),
-      }))
-    );
+    res.status(200).json(await listWorksWithYearRange());
   } catch (error) {
-    console.error("Error fetching works:", error);
-    res.status(500).json({ message: "Server error.", error: error.message });
+    next(error);
   }
 };
 
-exports.get = async (req, res) => {
+exports.get = async (req, res, next) => {
   try {
     const work = await findWorkByIdOrSlug(req.params.id);
     if (!work) {
@@ -96,12 +21,11 @@ exports.get = async (req, res) => {
     }
     res.status(200).json(work);
   } catch (error) {
-    console.error("Error fetching work:", error);
-    res.status(500).json({ message: "Server error.", error: error.message });
+    next(error);
   }
 };
 
-exports.create = async (req, res) => {
+exports.create = async (req, res, next) => {
   try {
     const slug = slugify(req.body.title);
     const existingWork = await findWorkByIdOrSlug(slug);
@@ -120,12 +44,11 @@ exports.create = async (req, res) => {
     if (error.code === 11000) {
       return res.status(409).json({ message: "This title already exists." });
     }
-    console.error("Error creating work:", error);
-    res.status(500).json({ message: "Server error.", error: error.message });
+    next(error);
   }
 };
 
-exports.update = async (req, res) => {
+exports.update = async (req, res, next) => {
   try {
     const nextBody = { ...req.body };
 
@@ -151,12 +74,11 @@ exports.update = async (req, res) => {
     if (error.code === 11000) {
       return res.status(409).json({ message: "This title already exists." });
     }
-    console.error("Error updating work:", error);
-    res.status(500).json({ message: "Server error.", error: error.message });
+    next(error);
   }
 };
 
-exports.delete = async (req, res) => {
+exports.delete = async (req, res, next) => {
   try {
     const work = await Work.findById(req.params.id);
     if (!work) {
@@ -164,15 +86,17 @@ exports.delete = async (req, res) => {
     }
 
     const photos = await Photo.find({ workId: work._id });
-    for (const photo of photos) {
-      deleteFile(photo.filename);
-    }
     await Photo.deleteMany({ workId: work._id });
     await Work.findByIdAndDelete(work._id);
 
+    // Files go last, so that a failed database write never leaves records
+    // pointing to deleted images.
+    for (const photo of photos) {
+      deletePhotoFiles(photo);
+    }
+
     res.status(200).json({ message: "Work deleted." });
   } catch (error) {
-    console.error("Error deleting work:", error);
-    res.status(500).json({ message: "Server error.", error: error.message });
+    next(error);
   }
 };

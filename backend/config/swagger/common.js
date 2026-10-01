@@ -26,7 +26,6 @@ const schemas = {
     description: "Returned with 500.",
     properties: {
       message: { type: "string", example: "Server error." },
-      error: { type: "string", description: "Underlying error message; not sent by every route." },
     },
   },
 };

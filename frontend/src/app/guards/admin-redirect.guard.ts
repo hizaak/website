@@ -1,32 +1,14 @@
-import { Injectable } from '@angular/core';
-import {
-  ActivatedRouteSnapshot,
-  CanActivate,
-  Router,
-  RouterStateSnapshot,
-  UrlTree,
-} from '@angular/router';
+import { inject } from '@angular/core';
+import { CanActivateFn, Router } from '@angular/router';
 import { AuthService } from '../services/api/auth.service';
 import { AdminNavigationService } from '../core/admin-navigation.service';
 
-@Injectable({
-  providedIn: 'root',
-})
-export class AdminRedirectGuard implements CanActivate {
-  constructor(
-    private authService: AuthService,
-    private router: Router,
-    private adminNavigation: AdminNavigationService
-  ) { }
+// /admin itself has no page: it leads to the works, or to the login page.
+export const adminRedirectGuard: CanActivateFn = (route, state) => {
+  const adminNavigation = inject(AdminNavigationService);
+  const target = inject(AuthService).isAuthenticated()
+    ? adminNavigation.urlForWorks(state.url)
+    : adminNavigation.urlForAuth(state.url);
 
-  canActivate(
-    route: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot
-  ): UrlTree {
-    const target = this.authService.isAuthenticated()
-      ? this.adminNavigation.urlForWorks(state.url)
-      : this.adminNavigation.urlForAuth(state.url);
-
-    return this.router.parseUrl(target);
-  }
-}
+  return inject(Router).parseUrl(target);
+};

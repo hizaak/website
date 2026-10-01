@@ -1,45 +1,61 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
+import { DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, RouterModule } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { WorkService } from '../../../services/api/work.service';
 import { PhotoService } from '../../../services/api/photo.service';
 import { AdminNavigationService } from '../../../core/admin-navigation.service';
 import { Work } from '../../../interfaces/Work';
-import { Photo, isAllowedImageFile } from '../../../interfaces/Photo';
-import { TranslatePipe } from '@ngx-translate/core';
+import { Photo, isAllowedImageFile, toDateInputValue } from '../../../interfaces/Photo';
+
+// Translation key for each error code of the photo upload API.
+const UPLOAD_ERROR_KEYS: Record<string, string> = {
+  IMAGE_FORMAT_UNSUPPORTED: 'admin.photoErrors.format',
+  IMAGE_UNREADABLE: 'admin.photoErrors.unreadable',
+  IMAGE_TOO_LARGE: 'admin.photoErrors.tooLarge',
+};
 
 @Component({
   selector: 'app-admin-work-detail',
-  standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, TranslatePipe],
+  imports: [DatePipe, FormsModule, TranslatePipe],
   templateUrl: './work-detail-admin.component.html',
   styleUrl: './work-detail-admin.component.scss',
 })
 export class WorkDetailAdminComponent implements OnInit, OnDestroy {
+  @ViewChild('newPhotoInput') newPhotoInput?: ElementRef<HTMLInputElement>;
+
   work: Work | null = null;
   photos: Photo[] = [];
   editTitle = '';
+  // Translation key.
   error: string | null = null;
+  saving = false;
 
   newPhotoTitle = '';
+  // "YYYY-MM-DD", the value of <input type="date">.
   newPhotoDate = '';
   newPhotoFile: File | null = null;
   newPhotoPreviewUrl: string | null = null;
+
   selectedPhoto: Photo | null = null;
+  editPhotoTitle = '';
+  editPhotoDate = '';
   replacePhotoFile: File | null = null;
 
   constructor(
     private route: ActivatedRoute,
     private workService: WorkService,
     public photoService: PhotoService,
-    private adminNavigation: AdminNavigationService
+    private adminNavigation: AdminNavigationService,
+    private translate: TranslateService
   ) { }
 
   ngOnInit(): void {
     const workId = this.route.snapshot.paramMap.get('workId');
     if (!workId) {
-      this.error = 'Work introuvable.';
+      this.error = 'admin.workErrors.notFound';
       return;
     }
 
@@ -57,14 +73,14 @@ export class WorkDetailAdminComponent implements OnInit, OnDestroy {
         this.work = work;
         this.editTitle = work.title;
       },
-      error: () => (this.error = 'Work introuvable.'),
+      error: () => (this.error = 'admin.workErrors.notFound'),
     });
   }
 
   loadPhotos(workId: string): void {
     this.photoService.getPhotosByWorkId(workId).subscribe({
       next: (photos) => (this.photos = photos),
-      error: () => (this.error = 'Erreur lors du chargement des photos.'),
+      error: () => (this.error = 'admin.photoErrors.load'),
     });
   }
 
@@ -78,48 +94,37 @@ export class WorkDetailAdminComponent implements OnInit, OnDestroy {
         this.work = work;
         this.error = null;
       },
-      error: (err) => {
-        this.error = err.error?.message || 'Erreur lors de la modification.';
-      },
+      error: (err) =>
+        (this.error = err?.status === 409 ? 'admin.workErrors.titleTaken' : 'admin.workErrors.update'),
     });
   }
 
   deleteWork(): void {
-    if (!this.work) {
-      return;
-    }
-
-    if (!confirm('Supprimer ce work ?')) {
+    if (!this.work || !confirm(this.translate.instant('admin.confirmDeleteWork', { title: this.work.title }))) {
       return;
     }
 
     this.workService.deleteWork(this.work._id).subscribe({
-      next: () => {
-        this.adminNavigation.toWorks();
-      },
-      error: () => (this.error = 'Erreur lors de la suppression.'),
+      next: () => this.adminNavigation.toWorks(),
+      error: () => (this.error = 'admin.workErrors.delete'),
     });
   }
 
   onNewPhotoFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0];
-    if (!file) {
-      return;
-    }
+    this.revokeNewPhotoPreview();
 
-    if (!isAllowedImageFile(file)) {
-      this.error = 'Format non autorisé. Seuls PNG et JPEG sont acceptés.';
+    if (file && !isAllowedImageFile(file)) {
+      this.error = 'admin.photoErrors.format';
       input.value = '';
       this.newPhotoFile = null;
-      this.revokeNewPhotoPreview();
       return;
     }
 
     this.error = null;
-    this.newPhotoFile = file;
-    this.revokeNewPhotoPreview();
-    this.newPhotoPreviewUrl = URL.createObjectURL(file);
+    this.newPhotoFile = file ?? null;
+    this.newPhotoPreviewUrl = file ? URL.createObjectURL(file) : null;
   }
 
   private revokeNewPhotoPreview(): void {
@@ -130,54 +135,58 @@ export class WorkDetailAdminComponent implements OnInit, OnDestroy {
   }
 
   createPhoto(): void {
-    if (!this.work || !this.newPhotoTitle.trim() || !this.newPhotoDate.trim() || !this.newPhotoFile) {
-      this.error = 'Tous les champs sont requis pour créer une photo.';
+    if (!this.work || !this.newPhotoTitle.trim() || !this.newPhotoDate || !this.newPhotoFile) {
+      this.error = 'admin.photoErrors.required';
       return;
     }
 
     const formData = new FormData();
     formData.append('title', this.newPhotoTitle.trim());
-    formData.append('photoDate', this.newPhotoDate.trim());
+    formData.append('photoDate', this.newPhotoDate);
     formData.append('photo', this.newPhotoFile);
+
+    this.saving = true;
 
     this.photoService.createPhoto(this.work._id, formData).subscribe({
       next: () => {
+        this.saving = false;
         this.newPhotoTitle = '';
         this.newPhotoDate = '';
         this.newPhotoFile = null;
+        if (this.newPhotoInput) {
+          this.newPhotoInput.nativeElement.value = '';
+        }
         this.revokeNewPhotoPreview();
         this.error = null;
         this.loadPhotos(this.work!._id);
       },
       error: (err) => {
-        this.error = err.error?.message || 'Erreur lors de la création de la photo.';
+        this.saving = false;
+        this.error = this.photoError(err, 'admin.photoErrors.create');
       },
     });
   }
 
   editPhoto(photo: Photo): void {
-    this.selectedPhoto = {
-      ...photo
-    };
+    this.selectedPhoto = photo;
+    this.editPhotoTitle = photo.title;
+    this.editPhotoDate = toDateInputValue(photo.photoDate);
     this.replacePhotoFile = null;
   }
 
   onReplaceFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
     const file = input.files?.[0];
-    if (!file) {
-      return;
-    }
 
-    if (!isAllowedImageFile(file)) {
-      this.error = 'Format non autorise. Seuls PNG et JPEG sont acceptes.';
+    if (file && !isAllowedImageFile(file)) {
+      this.error = 'admin.photoErrors.format';
       input.value = '';
       this.replacePhotoFile = null;
       return;
     }
 
     this.error = null;
-    this.replacePhotoFile = file;
+    this.replacePhotoFile = file ?? null;
   }
 
   updateSelectedPhoto(): void {
@@ -185,14 +194,14 @@ export class WorkDetailAdminComponent implements OnInit, OnDestroy {
       return;
     }
 
-    if (!this.selectedPhoto.title.trim() || !this.selectedPhoto.photoDate.trim()) {
-      this.error = 'Le titre et la date sont requis.';
+    if (!this.editPhotoTitle.trim() || !this.editPhotoDate) {
+      this.error = 'admin.photoErrors.titleAndDate';
       return;
     }
 
     const formData = new FormData();
-    formData.append('title', this.selectedPhoto.title.trim());
-    formData.append('photoDate', this.selectedPhoto.photoDate.trim());
+    formData.append('title', this.editPhotoTitle.trim());
+    formData.append('photoDate', this.editPhotoDate);
 
     if (this.replacePhotoFile) {
       formData.append('photo', this.replacePhotoFile);
@@ -205,26 +214,12 @@ export class WorkDetailAdminComponent implements OnInit, OnDestroy {
         this.error = null;
         this.loadPhotos(this.work!._id);
       },
-      error: (err) => {
-        this.error = err.error?.message || 'Erreur lors de la modification de la photo.';
-      },
+      error: (err) => (this.error = this.photoError(err, 'admin.photoErrors.update')),
     });
   }
 
-  movePhotoUp(index: number): void {
-    this.movePhoto(index, index - 1);
-  }
-
-  movePhotoDown(index: number): void {
-    this.movePhoto(index, index + 1);
-  }
-
-  private movePhoto(fromIndex: number, toIndex: number): void {
-    if (
-      !this.work ||
-      toIndex < 0 ||
-      toIndex >= this.photos.length
-    ) {
+  movePhoto(fromIndex: number, toIndex: number): void {
+    if (!this.work || toIndex < 0 || toIndex >= this.photos.length) {
       return;
     }
 
@@ -235,24 +230,21 @@ export class WorkDetailAdminComponent implements OnInit, OnDestroy {
     this.photos = reorderedPhotos;
 
     this.photoService
-      .reorderPhotos(
-        this.work._id,
-        reorderedPhotos.map((item) => item._id)
-      )
+      .reorderPhotos(this.work._id, reorderedPhotos.map((item) => item._id))
       .subscribe({
         next: (photos) => {
           this.photos = photos;
           this.error = null;
         },
         error: () => {
-          this.error = 'Erreur lors du changement d ordre.';
+          this.error = 'admin.photoErrors.reorder';
           this.loadPhotos(this.work!._id);
         },
       });
   }
 
   deletePhoto(photo: Photo): void {
-    if (!confirm(`Supprimer la photo "${photo.title}" ?`)) {
+    if (!confirm(this.translate.instant('admin.confirmDeletePhoto', { title: photo.title }))) {
       return;
     }
 
@@ -264,11 +256,17 @@ export class WorkDetailAdminComponent implements OnInit, OnDestroy {
         }
         this.loadPhotos(this.work!._id);
       },
-      error: () => (this.error = 'Erreur lors de la suppression.'),
+      error: () => (this.error = 'admin.photoErrors.delete'),
     });
   }
 
   backToList(): void {
     this.adminNavigation.toWorks();
+  }
+
+  // Upload errors the API identifies by a code get their own message.
+  private photoError(err: HttpErrorResponse, fallback: string): string {
+    const code: string | undefined = err?.error?.code;
+    return code && UPLOAD_ERROR_KEYS[code] ? UPLOAD_ERROR_KEYS[code] : fallback;
   }
 }

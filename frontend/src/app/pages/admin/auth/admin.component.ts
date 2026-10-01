@@ -1,30 +1,28 @@
 import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { AuthService } from '../../../services/api/auth.service';
-import { ToastService } from '../../../core/toast.service';
-import { AdminNavigationService } from '../../../core/admin-navigation.service';
-import { MessageService } from 'primeng/api';
-import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule } from '@angular/forms';
-import { ToastModule } from 'primeng/toast';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
+import { AuthService } from '../../../services/api/auth.service';
+import { AdminNavigationService } from '../../../core/admin-navigation.service';
+
+// Translation key for each API error status.
+const ERROR_KEYS: Record<number, string> = {
+  401: 'admin.loginErrors.invalid',
+  429: 'admin.loginErrors.tooManyAttempts',
+};
 
 @Component({
   selector: 'app-admin',
+  imports: [ReactiveFormsModule, TranslatePipe],
   templateUrl: './admin.component.html',
-  styleUrls: ['./admin.component.css'],
-  standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, ToastModule, TranslatePipe],
-  providers: [MessageService, ToastService],
 })
 export class AdminComponent {
   adminForm: FormGroup;
-  errorMessage: string = '';
+  // Translation key, so the message follows language switches.
+  error: string | null = null;
 
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
-    private toastService: ToastService,
     private adminNavigation: AdminNavigationService
   ) {
     this.adminForm = this.fb.group({
@@ -40,34 +38,9 @@ export class AdminComponent {
 
     const { username, password } = this.adminForm.value;
 
-    this.authService.login(username, password).subscribe(
-      (response) => {
-        if (response) {
-          this.adminNavigation.toWorks();
-          this.toastService.showSuccess(
-            'Connexion réussie',
-            'Bienvenue dans le dashboard'
-          );
-        } else {
-          this.errorMessage = 'Incorrect username or password.';
-          this.toastService.showError(
-            'Erreur',
-            "Nom d'utilisateur ou mot de passe incorrect"
-          );
-        }
-      },
-      (error) => {
-        if (error?.status === 401) {
-          this.errorMessage = 'Incorrect username or password.';
-        } else {
-          this.errorMessage = 'An error occurred. Please try again.';
-        }
-
-        this.toastService.showError(
-          'Erreur',
-          'Une erreur est survenue. Veuillez réessayer.'
-        );
-      }
-    );
+    this.authService.login(username, password).subscribe({
+      next: () => this.adminNavigation.toWorks(),
+      error: (err) => (this.error = ERROR_KEYS[err?.status] ?? 'admin.loginErrors.generic'),
+    });
   }
 }

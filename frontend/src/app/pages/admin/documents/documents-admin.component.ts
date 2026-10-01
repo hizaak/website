@@ -1,5 +1,6 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { HttpErrorResponse } from '@angular/common/http';
+import { DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { DocumentService } from '../../../services/api/document.service';
@@ -21,10 +22,8 @@ const KNOWN_ERROR_CODES = [
 
 @Component({
   selector: 'app-admin-documents',
-  standalone: true,
-  imports: [CommonModule, FormsModule, TranslatePipe, AdminNavComponent],
+  imports: [DatePipe, FormsModule, TranslatePipe, AdminNavComponent],
   templateUrl: './documents-admin.component.html',
-  styleUrl: './documents-admin.component.scss',
 })
 export class DocumentsAdminComponent implements OnInit {
   @ViewChild('newFileInput') newFileInput?: ElementRef<HTMLInputElement>;
@@ -173,7 +172,7 @@ export class DocumentsAdminComponent implements OnInit {
     return { value: format(bytes / (1024 * 1024)), unit: 'MB' };
   }
 
-  private showError(err: any, fallback: string): void {
+  private showError(err: HttpErrorResponse, fallback: string): void {
     const code = err.error?.code;
     this.error = KNOWN_ERROR_CODES.includes(code)
       ? `admin.documentErrors.${code}`

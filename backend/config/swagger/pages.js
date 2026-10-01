@@ -28,8 +28,11 @@ const schemas = {
           properties: {
             _id: { type: "string", example: "665a1b2c3d4e5f6789012346" },
             title: { type: "string", example: "Cirque au matin" },
-            photoDate: { type: "string", example: "14/08/2023" },
+            photoDate: { type: "string", format: "date-time", example: "2023-08-14T00:00:00.000Z" },
             filename: { type: "string", example: "550e8400-e29b-41d4-a716-446655440000.jpg" },
+            width: { type: "integer", example: 3840 },
+            height: { type: "integer", example: 2560 },
+            sizes: { type: "array", items: { $ref: "#/components/schemas/PhotoSize" } },
           },
         },
       },

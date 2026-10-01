@@ -1,13 +1,13 @@
 const Photo = require("../models/Photo");
 const Work = require("../models/Work");
-const { deleteFile, deleteThumbnail } = require("../config/upload");
+const { deletePhotoFiles } = require("../config/upload");
 const {
   getNextPhotoPosition,
   getOrderedPhotosForWork,
   reorderWorkPhotos,
 } = require("../services/photo-order");
 
-exports.getByWorkId = async (req, res) => {
+exports.getByWorkId = async (req, res, next) => {
   try {
     const work = await Work.findById(req.params.workId);
     if (!work) {
@@ -17,12 +17,11 @@ exports.getByWorkId = async (req, res) => {
     const photos = await getOrderedPhotosForWork(req.params.workId);
     res.status(200).json(photos);
   } catch (error) {
-    console.error("Error fetching photos by work:", error);
-    res.status(500).json({ message: "Server error.", error: error.message });
+    next(error);
   }
 };
 
-exports.create = async (req, res) => {
+exports.create = async (req, res, next) => {
   if (!req.file) {
     return res.status(400).json({ message: "Image file is missing." });
   }
@@ -30,8 +29,7 @@ exports.create = async (req, res) => {
   try {
     const work = await Work.findById(req.params.workId);
     if (!work) {
-      deleteFile(req.file.filename);
-      deleteThumbnail(req.file.thumbnailFilename);
+      deletePhotoFiles(req.file);
       return res.status(404).json({ message: "Work not found." });
     }
 
@@ -43,6 +41,7 @@ exports.create = async (req, res) => {
       thumbnailFilename: req.file.thumbnailFilename,
       originalFilename: req.file.originalname,
       mimeType: req.file.mimetype,
+      ...req.file.dimensions,
       position: await getNextPhotoPosition(work._id),
     });
 
@@ -50,15 +49,13 @@ exports.create = async (req, res) => {
     res.status(201).json(photo);
   } catch (error) {
     if (req.file) {
-      deleteFile(req.file.filename);
-      deleteThumbnail(req.file.thumbnailFilename);
+      deletePhotoFiles(req.file);
     }
-    console.error("Error creating photo:", error);
-    res.status(500).json({ message: "Server error.", error: error.message });
+    next(error);
   }
 };
 
-exports.get = async (req, res) => {
+exports.get = async (req, res, next) => {
   try {
     const photo = await Photo.findById(req.params.id);
     if (!photo) {
@@ -66,20 +63,21 @@ exports.get = async (req, res) => {
     }
     res.status(200).json(photo);
   } catch (error) {
-    console.error("Error fetching photo:", error);
-    res.status(500).json({ message: "Server error.", error: error.message });
+    next(error);
   }
 };
 
-exports.update = async (req, res) => {
+exports.update = async (req, res, next) => {
   try {
     const photo = await Photo.findById(req.params.id);
     if (!photo) {
       return res.status(404).json({ message: "Photo not found." });
     }
 
-    const previousFilename = photo.filename;
-    const previousThumbnailFilename = photo.thumbnailFilename;
+    const previousFiles = {
+      filename: photo.filename,
+      thumbnailFilename: photo.thumbnailFilename,
+    };
 
     if (req.body.title !== undefined) {
       photo.title = req.body.title;
@@ -93,45 +91,43 @@ exports.update = async (req, res) => {
       photo.thumbnailFilename = req.file.thumbnailFilename;
       photo.originalFilename = req.file.originalname;
       photo.mimeType = req.file.mimetype;
+      photo.set(req.file.dimensions);
     }
 
     await photo.save();
 
-    if (req.file && previousFilename !== photo.filename) {
-      deleteFile(previousFilename);
-      deleteThumbnail(previousThumbnailFilename);
+    if (req.file) {
+      deletePhotoFiles(previousFiles);
     }
 
     res.status(200).json(photo);
   } catch (error) {
     if (req.file) {
-      deleteFile(req.file.filename);
-      deleteThumbnail(req.file.thumbnailFilename);
+      deletePhotoFiles(req.file);
     }
-    console.error("Error updating photo:", error);
-    res.status(500).json({ message: "Server error.", error: error.message });
+    next(error);
   }
 };
 
-exports.delete = async (req, res) => {
+exports.delete = async (req, res, next) => {
   try {
     const photo = await Photo.findById(req.params.id);
     if (!photo) {
       return res.status(404).json({ message: "Photo not found." });
     }
 
-    deleteFile(photo.filename);
-    deleteThumbnail(photo.thumbnailFilename);
+    // Files go last, so that a failed database write never leaves a record
+    // pointing to a deleted image.
     await Photo.findByIdAndDelete(photo._id);
+    deletePhotoFiles(photo);
 
     res.status(200).json({ message: "Photo deleted." });
   } catch (error) {
-    console.error("Error deleting photo:", error);
-    res.status(500).json({ message: "Server error.", error: error.message });
+    next(error);
   }
 };
 
-exports.reorder = async (req, res) => {
+exports.reorder = async (req, res, next) => {
   try {
     const work = await Work.findById(req.params.workId);
     if (!work) {
@@ -148,7 +144,6 @@ exports.reorder = async (req, res) => {
 
     res.status(200).json(photos);
   } catch (error) {
-    console.error("Error reordering photos:", error);
-    res.status(500).json({ message: "Server error.", error: error.message });
+    next(error);
   }
 };

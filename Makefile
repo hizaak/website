@@ -1,96 +1,62 @@
-.PHONY: help setup dev prod logs stop clean
+.PHONY: help setup dev-db prod build logs logs-backend logs-frontend logs-db stop restart clean shell-backend shell-mongodb lint test
 
 help:
-	@echo "╔═══════════════════════════════════════════════════════════════╗"
-	@echo "║          Site Personnel - Commandes de Développement          ║"
-	@echo "╚═══════════════════════════════════════════════════════════════╝"
-	@echo ""
-	@echo "📋 Commandes disponibles:"
-	@echo "  make setup              Setup initial du projet"
-	@echo "  make dev                Lancer en mode développement"
-	@echo "  make prod               Lancer en mode production"
-	@echo "  make build              Builder les images Docker"
-	@echo "  make logs               Voir les logs"
-	@echo "  make logs-backend       Voir les logs du backend"
-	@echo "  make logs-frontend      Voir les logs du frontend"
-	@echo "  make logs-db            Voir les logs de la base de données"
-	@echo "  make stop               Arrêter les conteneurs"
-	@echo "  make restart            Redémarrer les conteneurs"
-	@echo "  make clean              Nettoyer tout (conteneurs + volumes)"
-	@echo "  make shell-backend      Accéder au shell du backend"
-	@echo "  make shell-mongodb      Accéder au shell MongoDB"
-	@echo "  make install-deps       Installer les dépendances npm"
-	@echo ""
+	@echo "Commandes disponibles :"
+	@echo "  make setup          Installer les dépendances et créer les fichiers .env"
+	@echo "  make dev-db         Lancer le MongoDB de développement (backend/docker-compose.yml)"
+	@echo "  make prod           Construire et lancer la production, en attendant les healthchecks"
+	@echo "  make build          Reconstruire les images Docker"
+	@echo "  make logs           Voir les logs (logs-backend, logs-frontend, logs-db)"
+	@echo "  make stop           Arrêter les conteneurs"
+	@echo "  make restart        Redémarrer les conteneurs"
+	@echo "  make clean          Supprimer conteneurs ET volumes (efface la base !)"
+	@echo "  make shell-backend  Shell dans le conteneur backend"
+	@echo "  make shell-mongodb  mongosh dans le conteneur MongoDB"
+	@echo "  make lint           Linter le backend et le frontend"
+	@echo "  make test           Lancer les tests du backend et du frontend"
 
 setup:
-	@echo "🔧 Setup initial du projet..."
-	@cp .env.example .env
-	@echo "✓ Copie .env créée"
-	@cp backend/.env.example backend/.env 2>/dev/null || true
-	@cp frontend/.env.example frontend/.env 2>/dev/null || true
-	@cd backend && npm install
-	@cd frontend && npm install
-	@echo "✅ Setup terminé!"
-	@echo ""
-	@echo "⚠️  N'oublie pas de configurer tes variables dans .env"
-	@echo "   Notamment: JWT_SECRET, MONGO_ROOT_PASSWORD"
+	npm run setup
 
-dev:
-	@echo "🚀 Lancement en mode développement..."
-	docker-compose -f docker-compose.yml up -d
-	@echo ""
-	@echo "✅ Services lancés!"
-	@echo "   📱 Frontend: http://localhost:4200"
-	@echo "   🔌 Backend:  http://localhost:3000"
-	@echo "   🗄️  MongoDB:  mongodb://localhost:27017"
+dev-db:
+	docker compose -f backend/docker-compose.yml up -d
 
 prod:
-	@echo "🚀 Lancement en mode production..."
-	docker-compose -f docker-compose.yml up -d --build
-	@echo ""
-	@echo "✅ Services lancés en production!"
-	@echo "   🌐 Application: http://localhost"
+	docker compose up -d --build --wait
 
 build:
-	@echo "🔨 Construction des images Docker..."
-	docker-compose build --no-cache
-	@echo "✅ Build terminé!"
+	docker compose build --no-cache
 
 logs:
-	docker-compose logs -f
+	docker compose logs -f
 
 logs-backend:
-	docker-compose logs -f backend
+	docker compose logs -f backend
 
 logs-frontend:
-	docker-compose logs -f frontend
+	docker compose logs -f frontend
 
 logs-db:
-	docker-compose logs -f mongodb
+	docker compose logs -f mongodb
 
 stop:
-	@echo "⛔ Arrêt des services..."
-	docker-compose down
-	@echo "✅ Services arrêtés!"
+	docker compose down
 
 restart:
-	@echo "🔄 Redémarrage des services..."
-	docker-compose restart
-	@echo "✅ Services redémarrés!"
+	docker compose restart
 
 clean:
-	@echo "🧹 Nettoyage complet..."
-	docker-compose down -v
-	@echo "✅ Conteneurs et volumes supprimés!"
+	docker compose down -v
 
 shell-backend:
-	docker-compose exec backend /bin/sh
+	docker compose exec backend /bin/sh
 
+# Credentials from the root .env.
 shell-mongodb:
-	docker-compose exec mongodb mongosh -u admin -p admin
+	docker compose exec mongodb sh -c 'mongosh -u "$$MONGO_INITDB_ROOT_USERNAME" -p "$$MONGO_INITDB_ROOT_PASSWORD"'
 
-install-deps:
-	@echo "📦 Installation des dépendances..."
-	cd backend && npm install
-	cd ../frontend && npm install
-	@echo "✅ Dépendances installées!"
+lint:
+	npm run lint
+
+test:
+	npm test

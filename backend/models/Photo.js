@@ -1,6 +1,17 @@
 const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
+// An intermediate version of the photo (see PHOTO_SIZES in config/upload.js),
+// served from /uploads/sizes/<size>/<filename>.
+const photoSizeSchema = new Schema(
+  {
+    size: { type: Number, required: true },
+    width: { type: Number, required: true },
+    height: { type: Number, required: true },
+  },
+  { _id: false }
+);
+
 const photoSchema = new Schema(
   {
     workId: {
@@ -13,10 +24,10 @@ const photoSchema = new Schema(
       required: true,
       trim: true,
     },
+    // Day the photo was taken, stored at midnight UTC.
     photoDate: {
-      type: String,
+      type: Date,
       required: true,
-      trim: true,
     },
     filename: {
       type: String,
@@ -32,6 +43,17 @@ const photoSchema = new Schema(
     mimeType: {
       type: String,
       required: true,
+    },
+    // Dimensions of the stored original.
+    width: {
+      type: Number,
+    },
+    height: {
+      type: Number,
+    },
+    sizes: {
+      type: [photoSizeSchema],
+      default: undefined,
     },
     position: {
       type: Number,

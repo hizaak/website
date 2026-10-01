@@ -1,29 +1,36 @@
-<app-not-found *ngIf="notFound"></app-not-found>
+@if (notFound) {
+  <app-not-found></app-not-found>
+}
 
-<div *ngIf="work && selectedPhoto && currentPhotoInfo">
+@if (error) {
+  <p>{{ error | translate }}</p>
+}
 
+@if (work && photo) {
   <div class="work-navigation">
     <b>{{ work.title }}</b>
     |
-    <ng-container *ngFor="let photo of work.photos; let i = index"><a *ngIf="i !== currentPhotoIndex" [routerLink]="['/', languageService.currentLang, 'works', work.slug, i + 1]">{{ i + 1 }}</a><b *ngIf="i === currentPhotoIndex">{{ i + 1 }}</b>&nbsp;</ng-container>
+    <!-- On one line: the numbers are separated by exactly one &nbsp;. -->
+    @for (item of work.photos; track item._id; let i = $index) {@if (i === currentPhotoIndex) {<b>{{ i + 1 }}</b>} @else {<a [routerLink]="['/', languageService.currentLang, 'works', work.slug, i + 1]">{{ i + 1 }}</a>}&nbsp;}
   </div>
 
   <hr>
 
   <div class="photo-block">
-
-    <img *ngIf="photoUrl" [src]="photoUrl" [alt]="selectedPhoto.title" class="photo">
+    <img
+      class="photo"
+      [src]="photoService.getPhotoUrl(photo.filename)"
+      [attr.srcset]="photoService.getPhotoSrcset(photo) || null"
+      [attr.sizes]="sizes"
+      [attr.width]="photo.width"
+      [attr.height]="photo.height"
+      [alt]="photo.title"
+    >
 
     <div class="photo-info">
-
-      <b>{{ selectedPhoto.title }}</b>
-
+      <b>{{ photo.title }}</b>
       <br>
-
-      {{ selectedPhoto.photoDate }}
-
+      {{ photo.photoDate | date: 'dd/MM/yyyy' : 'UTC' }}
     </div>
-
   </div>
-
-</div>
+}

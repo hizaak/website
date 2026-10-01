@@ -277,7 +277,6 @@ const deletePhotoFiles = ({ filename, thumbnailFilename, originalFile }) => {
 };
 
 module.exports = {
-  upload,
   uploadSingleImage,
   processUploadedImage,
   uploadSingleDocument,
@@ -288,11 +287,8 @@ module.exports = {
   ORIGINALS_DIR,
   PHOTO_SIZES,
   PUBLISHED_MIME,
-  sizeDir,
   originalPath,
   deletePhotoFiles,
   writeThumbnail,
   writeSizes,
-  ALLOWED_MIMES,
-  ALLOWED_EXTENSIONS,
 };

@@ -27,8 +27,8 @@ export interface Photo {
   updatedAt: string;
 }
 
-export const ALLOWED_IMAGE_TYPES = ['image/png', 'image/jpeg'];
-export const ALLOWED_IMAGE_EXTENSIONS = ['.png', '.jpg', '.jpeg'];
+const ALLOWED_IMAGE_TYPES = ['image/png', 'image/jpeg'];
+const ALLOWED_IMAGE_EXTENSIONS = ['.png', '.jpg', '.jpeg'];
 
 // Value for an <input type="date">: "2023-08-14".
 export function toDateInputValue(photoDate: string): string {

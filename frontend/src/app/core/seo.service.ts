@@ -8,7 +8,7 @@ import { Subscription } from 'rxjs';
 import { environment } from '../../environments/environment';
 
 // Translation keys a route declares in its `data.seo`.
-export interface SeoRouteData {
+interface SeoRouteData {
   title: string;
   description?: string;
   noindex?: boolean;

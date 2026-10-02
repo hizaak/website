@@ -2,15 +2,18 @@
 # First setup of a development machine.
 set -e
 
+cd "$(dirname "$0")"
+
 if ! docker compose version > /dev/null 2>&1; then
-    echo "Docker (avec docker compose) n'est pas installé : https://docs.docker.com/get-docker/"
+    echo "Docker (with docker compose) is not installed: https://docs.docker.com/get-docker/"
     exit 1
 fi
 
-npm run setup
+npm run setup:deps
+bash configure-env.sh
 
 echo ""
-echo "Prêt. Renseigne les secrets dans .env et backend/.env, puis :"
-echo "  make dev-db              MongoDB de développement"
-echo "  npm run dev:backend      API sur http://localhost:3000"
-echo "  npm run dev:frontend     Site sur http://localhost:4200"
+echo "Ready:"
+echo "  make dev-db              Development MongoDB"
+echo "  npm run dev:backend      API on http://localhost:3000"
+echo "  npm run dev:frontend     Site on http://localhost:4200"

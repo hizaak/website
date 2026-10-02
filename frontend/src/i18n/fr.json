@@ -36,7 +36,7 @@
   },
   "notFound": {
     "text": "Cette page n'existe pas.",
-    "back": "retour aux travaux"
+    "back": "retour à l'accueil"
   },
   "admin": {
     "login": "connexion admin",
@@ -148,6 +148,10 @@
     "downloadOriginalTitle": "télécharger le fichier envoyé, tel quel"
   },
   "seo": {
+    "home": {
+      "title": "alexandre maurice | accueil",
+      "description": "Site d'Alexandre Maurice, photographe de paysage. Photographies des Pyrénées."
+    },
     "works": {
       "title": "alexandre maurice | travaux",
       "description": "Photographies de paysages des Pyrénées par Alexandre Maurice."

@@ -37,7 +37,7 @@
 
   <div class="mobile-header">
     <div class="mobile-top">
-      <h1 class="site-name"><a [routerLink]="['/', languageService.currentLang, 'works']">alexandre maurice</a></h1>
+      <h1 class="site-name"><a [routerLink]="['/', languageService.currentLang]">alexandre maurice</a></h1>
 
       <div class="mobile-language">
         <ng-container [ngTemplateOutlet]="languages"></ng-container>
@@ -55,7 +55,7 @@
     <tbody>
       <tr>
         <td align="left">
-          <h1 class="site-name"><a [routerLink]="['/', languageService.currentLang, 'works']">alexandre maurice</a></h1>
+          <h1 class="site-name"><a [routerLink]="['/', languageService.currentLang]">alexandre maurice</a></h1>
           &nbsp;
           <ng-container [ngTemplateOutlet]="nav"></ng-container>
         </td>

@@ -4,7 +4,7 @@ import { noAuthGuard } from './guards/no-auth.guard';
 import { adminRedirectGuard } from './guards/admin-redirect.guard';
 import { detectBrowserLanguage } from './core/language.service';
 
-const redirectToDefaultLanguage = () => `${detectBrowserLanguage()}/works`;
+const redirectToDefaultLanguage = () => detectBrowserLanguage();
 
 // Addresses without a language (/works, /about...) keep their path, so that
 // an unknown one ends on the "page not found" page rather than the home page.
@@ -12,10 +12,16 @@ const redirectWithLanguage: RedirectFunction = ({ url }) =>
   `/${detectBrowserLanguage()}/${url.map(segment => segment.path).join('/')}`;
 
 const localizedRoutes: Routes = [
+  // Reached through the bare address of the site, or the site name in the
+  // header: it has no link in the menu.
   {
     path: '',
-    redirectTo: 'works',
     pathMatch: 'full',
+    data: { seo: { title: 'seo.home.title', description: 'seo.home.description' } },
+    loadComponent: () =>
+      import('./pages/home/home.component').then(
+        m => m.HomeComponent
+      ),
   },
 
   {

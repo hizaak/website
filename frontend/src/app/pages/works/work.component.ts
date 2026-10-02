@@ -9,17 +9,7 @@ import { WorkPage, WorkPagePhoto } from '../../interfaces/pages/WorkPage';
 import { LanguageService } from '../../core/language.service';
 import { SeoService } from '../../core/seo.service';
 import { NotFoundComponent } from '../not-found/not-found.component';
-
-// Must match the max-width of .photo in work.component.scss, so that the
-// browser picks the right version from the srcset.
-const PHOTO_SIZES_ATTRIBUTE = '(max-width: 768px) 100vw, calc(100vw - 100px)';
-
-// French readers expect 14/08/2023; for anyone else that order is ambiguous
-// (08/14 in the US), so English spells the month out: 14 Aug 2023.
-const DATE_FORMATS: Record<'fr' | 'en', string> = {
-  fr: 'dd/MM/yyyy',
-  en: 'd MMM yyyy',
-};
+import { DATE_FORMATS, PHOTO_SIZES_ATTRIBUTE } from './photo-display';
 
 @Component({
   // Updates plain fields, not signals: OnPush (the default) would miss them.

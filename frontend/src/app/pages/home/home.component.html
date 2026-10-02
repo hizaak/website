@@ -1,0 +1,20 @@
+@if (photo) {
+  <div class="photo-block">
+    <img
+      class="photo"
+      [src]="photoService.getPhotoUrl(photo.filename)"
+      [attr.srcset]="photoService.getPhotoSrcset(photo) || null"
+      [attr.sizes]="sizes"
+      [attr.width]="photo.width"
+      [attr.height]="photo.height"
+      [alt]="photo.title"
+      fetchpriority="high"
+    >
+
+    <div class="photo-info">
+      <b>{{ photo.title }}</b>
+      <br>
+      {{ photo.photoDate | date: dateFormat : 'UTC' }}
+    </div>
+  </div>
+}

@@ -25,6 +25,7 @@ const urlEntries = (path, extra = "") => {
 exports.get = async (req, res, next) => {
   try {
     const entries = [
+      ...urlEntries(""),
       ...urlEntries("/works"),
       ...urlEntries("/about"),
       ...urlEntries("/contact"),

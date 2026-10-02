@@ -1,0 +1,19 @@
+// A photo shown on its own: as large as the window allows, below the header.
+// Shared by the work and home pages.
+.photo {
+    display: block;
+
+    width: auto;
+    height: auto;
+
+    max-width: calc(100vw - 100px);
+    // svh: the height left when the mobile browser bars are shown, so the
+    // photo is never cut by them.
+    max-height: calc(100svh - 200px);
+}
+
+@media (max-width: 768px) {
+    .photo {
+        max-width: 100%;
+    }
+}

@@ -10,6 +10,7 @@ const API_URL = process.env.PROD_URL || "https://api.alexandremaurice.fr";
 const TEXTS = {
   fr: {
     locale: "fr_FR",
+    home: { title: "alexandre maurice | accueil", description: "Site d'Alexandre Maurice, photographe de paysage. Photographies des Pyrénées." },
     pages: {
       works: { title: "alexandre maurice | travaux", description: "Photographies de paysages des Pyrénées par Alexandre Maurice." },
       about: { title: "alexandre maurice | à propos", description: "Alexandre Maurice photographie les paysages des Pyrénées. Qui je suis et pourquoi ce site existe." },
@@ -20,6 +21,7 @@ const TEXTS = {
   },
   en: {
     locale: "en_US",
+    home: { title: "alexandre maurice | home", description: "Website of Alexandre Maurice, landscape photographer. Photographs of the Pyrenees." },
     pages: {
       works: { title: "alexandre maurice | works", description: "Landscape photographs of the Pyrenees by Alexandre Maurice." },
       about: { title: "alexandre maurice | about", description: "Alexandre Maurice photographs the landscapes of the Pyrenees. Who I am and why this site exists." },
@@ -84,8 +86,8 @@ const describe = async (path) => {
     }
   }
 
-  // Any other address gets the description of the works page.
-  const page = Object.hasOwn(texts.pages, section) ? texts.pages[section] : texts.pages.works;
+  // The home page (/, /fr, /en), and any other address.
+  const page = Object.hasOwn(texts.pages, section) ? texts.pages[section] : texts.home;
 
   return {
     lang,
@@ -106,7 +108,7 @@ exports.get = async (req, res, next) => {
 
     const meta = [
       ["name", "description", page.description],
-      ["property", "og:site_name", "alexandre maurice"],
+      ["property", "og:site_name", "Alexandre Maurice"],
       ["property", "og:type", "website"],
       ["property", "og:locale", page.locale],
       ["property", "og:url", url],

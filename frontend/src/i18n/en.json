@@ -36,7 +36,7 @@
   },
   "notFound": {
     "text": "This page does not exist.",
-    "back": "back to works"
+    "back": "back to the home page"
   },
   "admin": {
     "login": "admin login",
@@ -148,6 +148,10 @@
     "downloadOriginalTitle": "download the uploaded file, as is"
   },
   "seo": {
+    "home": {
+      "title": "alexandre maurice | home",
+      "description": "Website of Alexandre Maurice, landscape photographer. Photographs of the Pyrenees."
+    },
     "works": {
       "title": "alexandre maurice | works",
       "description": "Landscape photographs of the Pyrenees by Alexandre Maurice."

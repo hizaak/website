@@ -4,6 +4,7 @@ export const API_ENDPOINTS = {
     account: 'account',
   },
   pages: {
+    home: 'api/pages/home',
     works: 'api/pages/works',
     work: (id: string) => `api/pages/work/${id}`,
   },

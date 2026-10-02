@@ -23,7 +23,7 @@ describe("sitemap", () => {
 
     const { text } = await request(app).get("/sitemap.xml").expect(200);
 
-    for (const path of ["/works", "/about", "/contact", "/legal", "/works/gavarnie/1", "/works/gavarnie/2"]) {
+    for (const path of ["", "/works", "/about", "/contact", "/legal", "/works/gavarnie/1", "/works/gavarnie/2"]) {
       assert.match(text, new RegExp(`<loc>https://alexandremaurice.fr/fr${path}</loc>`));
       assert.match(text, new RegExp(`<loc>https://alexandremaurice.fr/en${path}</loc>`));
     }
@@ -59,16 +59,16 @@ describe("link previews", () => {
     assert.equal(metaContent(text, "og:image:alt"), "Brèche");
   });
 
-  it("describe the fixed pages, and fall back to the works page for anything else", async () => {
+  it("describe the fixed pages, and fall back to the home page for anything else", async () => {
     const about = await request(app).get("/__preview/en/about").expect(200);
     assert.equal(metaContent(about.text, "og:title"), "alexandre maurice | about");
 
     const legal = await request(app).get("/__preview/fr/legal").expect(200);
     assert.equal(metaContent(legal.text, "og:title"), "alexandre maurice | mentions légales");
 
-    for (const path of ["/fr/locale", "/fr/constructor", "/fr/work", "/fr/__proto__"]) {
+    for (const path of ["/fr", "/fr/locale", "/fr/constructor", "/fr/work", "/fr/__proto__"]) {
       const { text } = await request(app).get(`/__preview${path}`).expect(200);
-      assert.equal(metaContent(text, "og:title"), "alexandre maurice | travaux", path);
+      assert.equal(metaContent(text, "og:title"), "alexandre maurice | accueil", path);
     }
   });
 });

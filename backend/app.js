@@ -8,6 +8,7 @@ const { specs, uiOptions } = require("./config/swagger");
 const { UPLOAD_DIR, ORIGINALS_DIR } = require("./config/upload");
 
 const authRoutes = require("./routes/auth");
+const homePageRoutes = require("./routes/pages/home");
 const worksPageRoutes = require("./routes/pages/works");
 const workPageRoutes = require("./routes/pages/work");
 const workRoutes = require("./routes/works");
@@ -65,6 +66,7 @@ app.use("/documents", documentRoutes.files);
 app.get("/sitemap.xml", sitemapController.get);
 app.use("/__preview", previewController.get);
 app.use("/__exists", previewController.exists);
+app.use("/api/pages/home", homePageRoutes);
 app.use("/api/pages/works", worksPageRoutes);
 app.use("/api/pages/work", workPageRoutes);
 

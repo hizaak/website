@@ -26,7 +26,7 @@
       "title": "about this site",
       "p1": "I wanted a place to show my photos, where I choose how they are seen. To give them a lasting home: landscapes change, and each photo keeps the state of a place at a given moment. It is an act of remembrance, in my own small way.",
       "p2": "As for the look, I like sober, almost austere pages that load quickly and can be browsed effortlessly. The best things I have found online were on sites considered ugly, run by enthusiasts who simply had something to share. The site should be a tool serving the content, not the other way around.",
-      "p3": "I built it myself with MongoDB, Angular, Node.js and Express, and it runs on a VPS that I manage entirely. No ads, no cookies, and no tool tracking visitors. Its API documentation is <a href=\"{{apiDocsUrl}}\">here</a>."
+      "p3": "I built it myself with MongoDB, Angular, Node.js and Express, and it runs on a VPS that I manage entirely. No ads, no cookies, and no tool tracking visitors. Its source code is <a href=\"{{sourceUrl}}\">here</a>, and its API documentation <a href=\"{{apiDocsUrl}}\">there</a>."
     },
     "legalLink": "Legal notice"
   },

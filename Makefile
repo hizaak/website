@@ -1,22 +1,26 @@
-.PHONY: help setup dev-db prod build logs logs-backend logs-frontend logs-db stop restart clean shell-backend shell-mongodb lint test
+.PHONY: help setup env dev-db prod build logs logs-backend logs-frontend logs-db stop restart clean shell-backend shell-mongodb lint test
 
 help:
-	@echo "Commandes disponibles :"
-	@echo "  make setup          Installer les dépendances et créer les fichiers .env"
-	@echo "  make dev-db         Lancer le MongoDB de développement (backend/docker-compose.yml)"
-	@echo "  make prod           Construire et lancer la production, en attendant les healthchecks"
-	@echo "  make build          Reconstruire les images Docker"
-	@echo "  make logs           Voir les logs (logs-backend, logs-frontend, logs-db)"
-	@echo "  make stop           Arrêter les conteneurs"
-	@echo "  make restart        Redémarrer les conteneurs"
-	@echo "  make clean          Supprimer conteneurs ET volumes (efface la base !)"
-	@echo "  make shell-backend  Shell dans le conteneur backend"
-	@echo "  make shell-mongodb  mongosh dans le conteneur MongoDB"
-	@echo "  make lint           Linter le backend et le frontend"
-	@echo "  make test           Lancer les tests du backend et du frontend"
+	@echo "Available commands:"
+	@echo "  make setup          Install dependencies and configure the .env files"
+	@echo "  make env            Configure the .env files (secrets and passwords)"
+	@echo "  make dev-db         Start the development MongoDB (backend/docker-compose.yml)"
+	@echo "  make prod           Build and start production, waiting for the health checks"
+	@echo "  make build          Rebuild the Docker images"
+	@echo "  make logs           Follow the logs (logs-backend, logs-frontend, logs-db)"
+	@echo "  make stop           Stop the containers"
+	@echo "  make restart        Restart the containers"
+	@echo "  make clean          Remove containers AND volumes (erases the database!)"
+	@echo "  make shell-backend  Shell in the backend container"
+	@echo "  make shell-mongodb  mongosh in the MongoDB container"
+	@echo "  make lint           Lint the backend and the frontend"
+	@echo "  make test           Run the backend and frontend tests"
 
 setup:
-	npm run setup
+	bash setup.sh
+
+env:
+	bash configure-env.sh
 
 dev-db:
 	docker compose -f backend/docker-compose.yml up -d

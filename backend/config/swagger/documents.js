@@ -173,7 +173,7 @@ const paths = {
       tags: [tag.name],
       summary: "Download a document",
       description: [
-        "Public URL of a document, also served at https://alexandremaurice.fr/documents/{name}.",
+        "Public URL of a document, also served at https://www.alexandremaurice.fr/documents/{name}.",
         "Every document except `cv` is sent with `X-Robots-Tag: noindex`;",
         "everything except PDFs is sandboxed (`Content-Security-Policy: sandbox`).",
       ].join(" "),

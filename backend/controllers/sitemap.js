@@ -2,7 +2,7 @@ const Work = require("../models/Work");
 const { getOrderedPhotosForWork } = require("../services/photo-order");
 const { escapeXml } = require("../utils/escape");
 
-const SITE_URL = process.env.SITE_URL || "https://alexandremaurice.fr";
+const SITE_URL = process.env.SITE_URL || "https://www.alexandremaurice.fr";
 const API_URL = process.env.PROD_URL || "https://api.alexandremaurice.fr";
 const LANGS = ["fr", "en"];
 // Version shown to visitors whose language is neither French nor English.

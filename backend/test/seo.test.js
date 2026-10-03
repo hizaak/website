@@ -24,12 +24,12 @@ describe("sitemap", () => {
     const { text } = await request(app).get("/sitemap.xml").expect(200);
 
     for (const path of ["", "/works", "/about", "/contact", "/legal", "/works/gavarnie/1", "/works/gavarnie/2"]) {
-      assert.match(text, new RegExp(`<loc>https://alexandremaurice.fr/fr${path}</loc>`));
-      assert.match(text, new RegExp(`<loc>https://alexandremaurice.fr/en${path}</loc>`));
+      assert.match(text, new RegExp(`<loc>https://www.alexandremaurice.fr/fr${path}</loc>`));
+      assert.match(text, new RegExp(`<loc>https://www.alexandremaurice.fr/en${path}</loc>`));
     }
     assert.match(
       text,
-      /hreflang="x-default" href="https:\/\/alexandremaurice.fr\/en\/works\/gavarnie\/1"/
+      /hreflang="x-default" href="https:\/\/www.alexandremaurice.fr\/en\/works\/gavarnie\/1"/
     );
     assert.doesNotMatch(text, /gavarnie\/3/);
   });

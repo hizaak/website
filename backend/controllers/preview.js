@@ -3,7 +3,7 @@ const { findWorkByIdOrSlug } = require("../services/work-lookup");
 const Work = require("../models/Work");
 const { escapeXml } = require("../utils/escape");
 
-const SITE_URL = process.env.SITE_URL || "https://alexandremaurice.fr";
+const SITE_URL = process.env.SITE_URL || "https://www.alexandremaurice.fr";
 const API_URL = process.env.PROD_URL || "https://api.alexandremaurice.fr";
 
 // Same texts as the "seo" block of frontend/src/i18n/*.json.

@@ -1,6 +1,6 @@
 # alexandre maurice
 
-Source code of [alexandremaurice.fr](https://alexandremaurice.fr), a landscape photography portfolio.
+Source code of [alexandremaurice.fr](https://www.alexandremaurice.fr), a landscape photography portfolio.
 
 The site presents series of photographs in French and English. It was designed and built end to end: the public site, the API behind it, a full admin interface, the hosting setup and an automated deployment pipeline.
 

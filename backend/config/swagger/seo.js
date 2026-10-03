@@ -36,7 +36,7 @@ const paths = {
       tags: [tag.name],
       summary: "Sitemap of the site",
       description:
-        "Every page in French and English, with one entry per photo. Also served at https://alexandremaurice.fr/sitemap.xml.",
+        "Every page in French and English, with one entry per photo. Also served at https://www.alexandremaurice.fr/sitemap.xml.",
       responses: {
         200: {
           description: "Sitemap",

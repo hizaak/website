@@ -20,7 +20,7 @@
       "title": "à propos de moi",
       "p1": "Je m'appelle Alexandre Maurice. Je photographie des paysages, pour l'instant ceux des Pyrénées, d'autres régions suivront.",
       "p2": "J'aime d'abord le beau, <i lang=\"de\">das sinnliche Scheinen der Idee</i>, tel qu'il s'accomplit dans l'art. Bien que la nature ne soit pas de l'art, elle m'impressionne tout autant : devant les grands paysages, c'est le sublime que je vois. J'essaie de rester fidèle au lieu tout en y mettant ce que j'y ai vu.",
-      "p3": "À côté, j'ai étudié l'informatique, d'abord côté ingénierie logicielle, puis côté théorie. Je termine un master à Bordeaux. Mon CV est <a href=\"{{cvUrl}}\">ici</a>."
+      "p3": "À côté, j'ai étudié l'informatique, d'abord côté ingénierie logicielle, puis côté théorie. Je termine un master à Bordeaux. Mon CV est <a href=\"{{cvFrUrl}}\">ici</a> (<span lang=\"en\">English CV <a href=\"{{cvEnUrl}}\">here</a></span>)."
     },
     "site": {
       "title": "à propos du site",

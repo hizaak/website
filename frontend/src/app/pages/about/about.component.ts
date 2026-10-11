@@ -10,6 +10,7 @@ import { LanguageService } from '../../core/language.service';
   selector: 'app-about',
   imports: [RouterLink, TranslatePipe],
   templateUrl: './about.component.html',
+  styleUrl: './about.component.scss',
 })
 export class AboutComponent {
   // Document uploaded from the admin under the name "cv".

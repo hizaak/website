@@ -1,10 +1,12 @@
 <h2>{{ 'about.author.title' | translate }}</h2>
 
+<img class="portrait" src="/images/alexandre-maurice.jpg" width="600" height="338" alt="Alexandre Maurice">
+
 <p>{{ 'about.author.p1' | translate }}</p>
 <p [innerHTML]="'about.author.p2' | translate"></p>
 <p [innerHTML]="'about.author.p3' | translate: { cvUrl }"></p>
 
-<h2>{{ 'about.site.title' | translate }}</h2>
+<h2 class="after-portrait">{{ 'about.site.title' | translate }}</h2>
 
 <p>{{ 'about.site.p1' | translate }}</p>
 <p>{{ 'about.site.p2' | translate }}</p>

@@ -1,0 +1,27 @@
+// Same width as the paragraphs (see styles.scss), so the photo floats
+// against the right edge of the text rather than of the window.
+:host {
+  display: block;
+  max-width: 120ch;
+}
+
+.portrait {
+  float: right;
+  width: 300px;
+  height: auto;
+  margin: 0 0 10px 22px;
+}
+
+.after-portrait {
+  clear: both;
+}
+
+// On narrow screens the photo spans the full width, above the text.
+@media (max-width: 600px) {
+  .portrait {
+    float: none;
+    display: block;
+    width: 100%;
+    margin: 0 0 10px;
+  }
+}

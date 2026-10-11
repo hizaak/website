@@ -13,8 +13,8 @@ import { LanguageService } from '../../core/language.service';
   styleUrl: './about.component.scss',
 })
 export class AboutComponent {
-  // Documents uploaded from the admin under the names "cv" and "cv-en".
-  cvFrUrl = `${environment.documentsUrl}/cv`;
+  // Documents uploaded from the admin under the names "cv-fr" and "cv-en".
+  cvFrUrl = `${environment.documentsUrl}/cv-fr`;
   cvEnUrl = `${environment.documentsUrl}/cv-en`;
   apiDocsUrl = `${environment.apiUrl}/api-docs/`;
   sourceUrl = 'https://github.com/hizaak/website';
